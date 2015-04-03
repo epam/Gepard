@@ -1,0 +1,32 @@
+/*==========================================================================
+ Copyright 2004-2015 EPAM Systems
+
+ This file is part of Gepard.
+
+ Gepard is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Gepard is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
+===========================================================================*/
+
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    compile "junit:junit:4.8.1"
+    compile 'gsbase:gsbase:2.0'
+    compile 'jakarta-regexp:jakarta-regexp:1.4'
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'org.slf4j:slf4j-log4j12:1.7.7'
+    compile 'com.sun.mail:javax.mail:1.5.2'
+    compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'net.sf.opencsv:opencsv:2.3'
+    compile 'org.springframework:spring-core:4.1.3.RELEASE'
+    testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
+}

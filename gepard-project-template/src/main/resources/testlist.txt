@@ -1,0 +1,5 @@
+#########################################
+# Tests for demonstration Purpose only
+#########################################
+
+com.epam.gepard.examples.core.basic.SampleOtherTest,,1

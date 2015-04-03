@@ -1,0 +1,47 @@
+/*==========================================================================
+ Copyright 2004-2015 EPAM Systems
+
+ This file is part of Gepard.
+
+ Gepard is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Gepard is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
+===========================================================================*/
+plugins {
+    id "com.jfrog.artifactory" version "3.0.1"
+}
+
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile project(':gepard-core')
+}
+
+artifactory {
+    contextUrl = "${epmsepg_artifactory_contextUrl}"   //The base Artifactory URL for the publisher
+    publish {
+        //A closure defining publishing information
+        repository {
+            repoKey = "${epmsepg_artifactory_repoKey}"        //The Artifactory repository key to publish to
+            username = "${epmsepg_artifactory_username}"      //The publisher user name
+            password = "${epmsepg_artifactory_password}"      //The publisher password
+            maven = true
+        }
+        defaults {
+            publications ('mavenJava')
+        }
+    }
+}
+
+artifactoryPublish {
+    dependsOn jar
+}

@@ -1,0 +1,31 @@
+apply plugin: 'application'
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "com.epam.gepard:gepard-core:3.0.17"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+mainClassName = "com.epam.gepard.AllTestRunner"
+def appArgs = ["$buildDir/resources/main/testprj.properties"]
+
+run {
+    doFirst {
+        logger.lifecycle('\n ====================================================================')
+        logger.lifecycle('\n Running Gepard tests with gradle,')
+        logger.lifecycle('\n if you would like to see Gepard output properly, use -q parameter.')
+        logger.lifecycle('\n ====================================================================')
+        logger.lifecycle('\n')
+    }
+    args = appArgs
+    logging.captureStandardOutput LogLevel.QUIET
+}
+

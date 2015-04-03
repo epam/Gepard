@@ -1,0 +1,150 @@
+/*==========================================================================
+ Copyright 2004-2015 EPAM Systems
+
+ This file is part of Gepard.
+
+ Gepard is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Gepard is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
+===========================================================================*/
+apply plugin: "sonar-runner"
+
+allprojects {
+    group = 'com.epam.gepard'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+    apply plugin: 'jacoco'
+
+    repositories {
+        jcenter()
+    }
+
+    version = "$componentVersion"+'.'+"$buildNumber"
+
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+
+    sourceCompatibility = 1.7
+
+    def checkstyleCommonReportDir = new File(rootProject.buildDir.absolutePath , '/reports/checkstyle')
+    def checkstyleSubProjectReportFile = new File(project.buildDir.absolutePath , '/reports/checkstyle/main.xml')
+    checkstyle.configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
+    checkstyle.configProperties = ['samedir' : "$rootDir/config/checkstyle"]
+    checkstyle.toolVersion = '6.1.1'
+    checkstyle.ignoreFailures = true
+    checkstyleMain << {
+        //noinspection GroovyAssignabilityCheck
+        ant.xslt(in: reports.xml.destination,
+                style: new File("$rootDir/config/checkstyle/checkstyle-noframes-sorted.xsl"),
+                out: new File(checkstyleCommonReportDir, project.name + '-main.html'))
+        copy {  //collect xml-s
+            from checkstyleSubProjectReportFile
+            into checkstyleCommonReportDir
+            rename { String filename -> project.name + '-main.xml' }
+        }
+    }
+
+    jar {
+        manifest.attributes( 'provider': 'gradle')
+        manifest.attributes( 'Implementation-Title': "$componentName-$version")
+    }
+
+    task copyJarToDistributions (type: Copy) {
+        from("$buildDir/libs/")
+        into("$buildDir/distributions")
+    }
+
+    task createPom << {
+        pom {
+        }.writeTo("$buildDir/distributions/$project.name-${version}.pom")
+    }
+    createPom.dependsOn(copyJarToDistributions)
+
+    task sourceZip(type: Zip) {
+        from 'src'
+        classifier 'sources'
+        extension 'jar'
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourceZip
+                pom.withXml {
+                    asNode().appendNode('description', 'Gepard - Test Automation Framework')
+                }
+            }
+        }
+    }
+}
+
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "${sonar_host_url}"
+        property "sonar.jdbc.url", "jdbc:mysql://localhost:3306/sonar"
+        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
+        property "sonar.jdbc.username", "${sonar_jdbc_username}"
+        property "sonar.jdbc.password", "${sonar_jdbc_password}"
+    }
+}
+
+configurations {
+    jacoco {
+    }
+}
+
+dependencies {
+    jacoco 'org.jacoco:org.jacoco.ant:0.6.2.201302030002'
+}
+
+task jacocoReport(type: JacocoReport) {
+    dependsOn = subprojects.test
+    subprojects.each {
+        additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+        sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+        classDirectories = files(subprojects.sourceSets.main.output)
+        executionData = files(subprojects.jacocoTestReport.executionData)
+        reports {
+            html.enabled = true
+            xml.enabled = true
+            csv.enabled = false
+            html.destination "build/reports/jacoco"
+        }
+        onlyIf = {
+            true
+        }
+        doFirst {
+            executionData = files(executionData.findAll {
+                it.exists()
+            })
+        }
+    }
+}
+
+task createJavadocs(type: Javadoc) {
+    destinationDir file("$buildDir/javadoc")
+    source subprojects*.javadoc*.source
+    classpath = files(subprojects*.javadoc*.classpath)
+    failOnError false
+}
+
+task createProjectTemplateZip << {
+    ant.zip(destfile: project.buildDir.absolutePath + "/gepard-project-template-$version" + ".zip") {
+        fileset(dir: rootProject.rootDir.absolutePath + '/gepard-project-template', defaultexcludes:"no")
+    }
+}

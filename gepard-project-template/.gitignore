@@ -1,0 +1,11 @@
+/.gradle/
+/.idea/
+/build/
+/*.iml
+/*/*.iml
+/gepard.ipr
+/gepard.iws
+.checkstyle
+.classpath
+.project
+.settings/

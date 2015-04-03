@@ -1,0 +1,55 @@
+/*==========================================================================
+ Copyright 2004-2015 EPAM Systems
+
+ This file is part of Gepard.
+
+ Gepard is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Gepard is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
+===========================================================================*/
+apply plugin:'application'
+
+repositories {
+    maven { url "http://www.soapui.org/repository/maven2" }
+}
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    compile project(':gepard-core')
+    compile project(':gepard-gherkin-jbehave')
+    compile project(':gepard-gherkin-cucumber')
+    compile project(':gepard-android')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    compile ('com.smartbear.soapui:soapui:5.1.2') {
+        exclude (module:'jtidy')
+        exclude (module:'cajo')
+    }
+    runtime 'net.sf.jtidy:jtidy:r938'
+}
+
+//noinspection GroovyUnusedAssignment
+mainClassName = "com.epam.gepard.AllTestRunner"
+def appArgs = ["$buildDir/resources/main/default.properties,$buildDir/resources/main/gepard.properties"]
+
+//noinspection GroovyAssignabilityCheck
+run {
+    doFirst {
+        logger.lifecycle('\n ====================================================================')
+        logger.lifecycle('\n Running Gepard tests with gradle,')
+        logger.lifecycle('\n if you would like to see Gepard output properly, use -q parameter.')
+        logger.lifecycle('\n ====================================================================')
+        logger.lifecycle('\n')
+    }
+    args = appArgs
+    logging.captureStandardOutput LogLevel.QUIET
+}
+

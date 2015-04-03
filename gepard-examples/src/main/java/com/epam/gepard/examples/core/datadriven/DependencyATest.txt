@@ -1,0 +1,15 @@
+##################################
+# Tests for demonstration Purpose only....
+# Use % sign as separator!
+##################################
+0A%E%This is OK
+0B%EP%This is OK
+0C%EPA%WIllFAIL
+0D%EPAM%This is OK
+0E%S%WILLFAIL
+0F%Y%This is OK
+10%S%This is OK
+11%T%WILLFAIL
+12.a%E%This is OK
+12.bA%M%WILLFAIL?
+13A%S%This is OK
