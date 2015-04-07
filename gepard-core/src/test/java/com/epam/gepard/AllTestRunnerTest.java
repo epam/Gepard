@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Properties;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -88,10 +89,15 @@ public class AllTestRunnerTest {
         Environment.setProperty(Environment.GEPARD_FILTER_EXPRESSION, "?");
     }
 
+    @After
+    public void tearDown() {
+        Environment.getProperties().clear();
+    }
+
     @Test
     public void testRunAll() throws Exception {
         //GIVEN
-        String testListFile = "./build/resources/test/testlist.txt";
+        String testListFile = "src/test/resources/testlist.txt";
         Whitebox.setInternalState(underTest, "executorThreadManager", executorThreadManager);
         Environment.resetProperty(Environment.GEPARD_LOAD_AND_EXIT, "false");
         //WHEN
@@ -110,8 +116,8 @@ public class AllTestRunnerTest {
     @Test(expected = ShutDownException.class)
     public void testRunAllWhenGepardLoadAndExitFalse() throws Exception {
         //GIVEN
-        String testListFile = "./build/resources/test/testlist.txt";
-        Environment.resetProperty(Environment.GEPARD_LOAD_AND_EXIT, "true");
+        String testListFile = "src/test/resources/testlist.txt";
+        Environment.setProperty(Environment.GEPARD_LOAD_AND_EXIT, "true");
         //WHEN
         underTest.runAll(testListFile, consoleWriter);
         //THEN expected Exception
