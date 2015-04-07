@@ -55,20 +55,23 @@ public class ResultCollectorTest {
     @Mock
     private LogFileWriter csvLog;
 
+    private Environment environment;
+
     private ResultCollector underTest;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        environment = new Environment();
         underTest = new ResultCollector();
     }
 
     @Test
     public void testWaitForExecutionEndAndCollectResults() throws InterruptedException {
         //GIVEN
-        Environment.resetProperty(Environment.GEPARD_TEST_TIMEOUT, "100");
+        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
         Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<String, TestClassExecutionData>();
-        TestClassExecutionData executionData = new TestClassExecutionData("testID");
+        TestClassExecutionData executionData = new TestClassExecutionData("testID", environment);
         Whitebox.setInternalState(executionData, "lock", -1);
         Whitebox.setInternalState(executionData, "testURL", "testURL");
         Whitebox.setInternalState(executionData, "countDummy", 0);
@@ -90,9 +93,9 @@ public class ResultCollectorTest {
     @Test
     public void testWaitForExecutionEndAndCollectResultsWithTwoDatas() throws InterruptedException {
         //GIVEN
-        Environment.resetProperty(Environment.GEPARD_TEST_TIMEOUT, "100");
+        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
         Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<String, TestClassExecutionData>();
-        TestClassExecutionData executionData = new TestClassExecutionData("testID");
+        TestClassExecutionData executionData = new TestClassExecutionData("testID", environment);
         Whitebox.setInternalState(executionData, "lock", -1);
         Whitebox.setInternalState(executionData, "testURL", "testURL");
         Whitebox.setInternalState(executionData, "countDummy", 0);

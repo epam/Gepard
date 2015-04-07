@@ -26,7 +26,6 @@ import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -54,12 +53,15 @@ public class ReportFinalizerTest {
     @Mock
     private TestScript script;
 
+    private Environment environment;
+
     private ReportFinalizer underTest;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        underTest = new ReportFinalizer();
+        environment = new Environment();
+        underTest = new ReportFinalizer(environment);
         Environment.setScript(script);
         given(allTestResults.getRunned()).willReturn(10);
         given(allTestResults.getFailed()).willReturn(2);
@@ -68,11 +70,6 @@ public class ReportFinalizerTest {
         given(allTestResults.getNotApplicable()).willReturn(0);
         given(gSuite.getUsedTc()).willReturn(5);
         given(gSuite.getNumberTc()).willReturn(4);
-    }
-
-    @After
-    public void resetEnvironment() {
-        Environment.resetProperty(Environment.GEPARD_PUBLIC_ENABLED, "false");
     }
 
     @Test
@@ -136,9 +133,9 @@ public class ReportFinalizerTest {
         //GIVEN
         long elapsedTime = 100000L;
         Calendar cal = Calendar.getInstance();
-        Environment.resetProperty(Environment.GEPARD_PUBLIC_ENABLED, "true");
-        Environment.resetProperty(Environment.GEPARD_PUBLIC_PATH, "test");
-        Environment.resetProperty(Environment.GEPARD_PUBLIC_RESULT, "path");
+        environment.setProperty(Environment.GEPARD_PUBLIC_ENABLED, "true");
+        environment.setProperty(Environment.GEPARD_PUBLIC_PATH, "test");
+        environment.setProperty(Environment.GEPARD_PUBLIC_RESULT, "path");
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);

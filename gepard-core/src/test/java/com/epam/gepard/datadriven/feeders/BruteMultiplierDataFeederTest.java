@@ -20,13 +20,14 @@ package com.epam.gepard.datadriven.feeders;
 ===========================================================================*/
 
 import java.util.Collection;
+
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import com.epam.gepard.datadriven.DataDrivenParameterArray;
-
 
 /**
  * Unit tests for {@link BruteMultiplierDataFeeder}.
@@ -46,7 +47,7 @@ public class BruteMultiplierDataFeederTest {
         //GIVEN
         int expected = GepardDataFeeder.INIT_FAILED_WITH_INVALID_PARAMETER;
         //WHEN
-        int actual = underTest.init("com.epam.test.TestClass", null);
+        int actual = underTest.init("com.epam.test.TestClass", null, null);
         //THEN
         Assert.assertEquals(expected, actual);
     }
@@ -56,7 +57,7 @@ public class BruteMultiplierDataFeederTest {
         //GIVEN
         int expected = 0;
         //WHEN
-        int actual = underTest.init("com.epam.test.TestClass", "2");
+        int actual = underTest.init("com.epam.test.TestClass", "2", null);
         //THEN
         Assert.assertEquals(expected, actual);
     }
@@ -66,7 +67,7 @@ public class BruteMultiplierDataFeederTest {
         //GIVEN
         int expected = GepardDataFeeder.INIT_FAILED_WITH_PARAMETER_ERROR;
         //WHEN
-        int actual = underTest.init("com.epam.test.TestClass", "-2");
+        int actual = underTest.init("com.epam.test.TestClass", "-2", null);
         //THEN
         Assert.assertEquals(expected, actual);
     }
@@ -76,7 +77,7 @@ public class BruteMultiplierDataFeederTest {
         //GIVEN
         int expected = GepardDataFeeder.INIT_FAILED_WITH_INVALID_PARAMETER;
         //WHEN
-        int actual = underTest.init("com.epam.test.TestClass", "bla");
+        int actual = underTest.init("com.epam.test.TestClass", "bla", null);
         //THEN
         Assert.assertEquals(expected, actual);
     }

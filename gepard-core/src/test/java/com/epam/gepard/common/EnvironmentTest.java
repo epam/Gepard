@@ -1,7 +1,7 @@
 package com.epam.gepard.common;
 
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -11,16 +11,18 @@ import org.junit.Test;
  */
 public class EnvironmentTest {
 
-    @After
-    public void tearDown() {
-        Environment.getProperties().clear();
+    private Environment underTest;
+
+    @Before
+    public void setUp() {
+        underTest = new Environment();
     }
 
     @Test
     public void testReadingMultipleValidPropertyFilesShouldLoadProperly() {
         //GIVEN nothing
         //WHEN
-        boolean result = Environment.setUp("src/test/resources/testprj.properties,src/test/resources/a.txt,src/test/resources/b.txt");
+        boolean result = underTest.setUp("src/test/resources/testprj.properties,src/test/resources/a.txt,src/test/resources/b.txt");
         //THEN
         Assert.assertTrue(result);
     }
@@ -29,9 +31,9 @@ public class EnvironmentTest {
     public void testReadingMultipleValidPropertyFilesShouldSetProperties() {
         //GIVEN nothing
         //WHEN
-        Environment.setUp("src/test/resources/testprj.properties,src/test/resources/a.txt,src/test/resources/b.txt");
+        underTest.setUp("src/test/resources/testprj.properties,src/test/resources/a.txt,src/test/resources/b.txt");
         //THEN
-        String result = Environment.getProperty("URL." + Environment.getProperty("TSID"));
+        String result = underTest.getProperty("URL." + underTest.getProperty("TSID"));
         Assert.assertEquals(result, "http://blahqa1.com");
     }
 
@@ -39,7 +41,7 @@ public class EnvironmentTest {
     public void testSetUpWithEmptyStringShouldNotTryToLoadProperties() {
         //GIVEN nothing
         //WHEN
-        boolean result = Environment.setUp("");
+        boolean result = underTest.setUp("");
         //THEN
         Assert.assertFalse(result);
     }
@@ -48,7 +50,7 @@ public class EnvironmentTest {
     public void testSetUpWithNonExistingPropertyFileShouldNotLoadProperties() {
         //GIVEN
         //WHEN
-        boolean result = Environment.setUp("idontexist.properties");
+        boolean result = underTest.setUp("idontexist.properties");
         //THEN
         Assert.assertFalse(result);
     }
@@ -56,9 +58,9 @@ public class EnvironmentTest {
     @Test
     public void testGetBooleanPropertyWhenPropertyValueStartsWithTrueShouldReturnTrue() {
         //GIVEN
-        Environment.setProperty("xyz", "true programmers drink juice");
+        underTest.setProperty("xyz", "true programmers drink juice");
         //WHEN
-        boolean result = Environment.getBooleanProperty("xyz");
+        boolean result = underTest.getBooleanProperty("xyz");
         //THEN
         Assert.assertTrue(result);
     }
@@ -66,9 +68,9 @@ public class EnvironmentTest {
     @Test
     public void testGetBooleanPropertyWhenPropertyValueDoesNotStartWithTrueShouldReturnFalse() {
         //GIVEN
-        Environment.setProperty("xyz", "poser programmers drink juice");
+        underTest.setProperty("xyz", "poser programmers drink juice");
         //WHEN
-        boolean result = Environment.getBooleanProperty("xyz");
+        boolean result = underTest.getBooleanProperty("xyz");
         //THEN
         Assert.assertFalse(result);
     }
@@ -77,7 +79,7 @@ public class EnvironmentTest {
     public void testGetBooleanPropertyWhenPropertyValueDoesNotExistShouldReturnFalse() {
         //GIVEN nothing
         //WHEN
-        boolean result = Environment.getBooleanProperty("xyz");
+        boolean result = underTest.getBooleanProperty("xyz");
         //THEN
         Assert.assertFalse(result);
     }

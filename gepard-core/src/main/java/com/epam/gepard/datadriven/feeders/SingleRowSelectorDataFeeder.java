@@ -1,4 +1,5 @@
 package com.epam.gepard.datadriven.feeders;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -18,6 +19,7 @@ package com.epam.gepard.datadriven.feeders;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import com.epam.gepard.common.Environment;
 import com.epam.gepard.datadriven.DataDrivenParameterArray;
 import com.epam.gepard.datadriven.DataFeederLoader;
 
@@ -33,7 +35,7 @@ public class SingleRowSelectorDataFeeder implements GepardDataFeeder {
     private int selectedRow;
 
     @Override
-    public int init(String testClassName, String parameter) {
+    public int init(final String testClassName, final String parameter, final Environment environment) {
         int returnValue = 0;
         try {
             selectedRow = Integer.valueOf(parameter);
@@ -47,14 +49,13 @@ public class SingleRowSelectorDataFeeder implements GepardDataFeeder {
         return returnValue;
     }
 
-
     @Override
-    public int calculateRuns(String className, int inputRows) {
+    public int calculateRuns(final String className, final int inputRows) {
         return 1;
     }
 
     @Override
-    public DataDrivenParameterArray calculateParameterArray(String className, DataDrivenParameterArray inputParameterArray) {
+    public DataDrivenParameterArray calculateParameterArray(final String className, final DataDrivenParameterArray inputParameterArray) {
         DataDrivenParameterArray myArray = new DataDrivenParameterArray();
         //need to have input array
         if (inputParameterArray == null) {
@@ -67,9 +68,8 @@ public class SingleRowSelectorDataFeeder implements GepardDataFeeder {
         //the new parameter array is one of the rows of the existing array
         if ((myArray != null) && (selectedRow > inputParameterArray.size())) {
             //ups, cannot select this row
-            String error = "PARAMETER ERROR: During the load of: " + className + " cannot select the requested row."
-                    + "\nRequested: " + selectedRow + ", available: " + inputParameterArray.size()
-                    + "\nCheck both testlist.txt and class.txt/csv file, Now exiting...";
+            String error = "PARAMETER ERROR: During the load of: " + className + " cannot select the requested row." + "\nRequested: " + selectedRow
+                    + ", available: " + inputParameterArray.size() + "\nCheck both testlist.txt and class.txt/csv file, Now exiting...";
             DataFeederLoader.reportError(error);
             myArray = null; //we should not continue as it is a wrong chain
         }

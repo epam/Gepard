@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import com.epam.gepard.common.Environment;
 import com.epam.gepard.datadriven.feeders.GepardDataFeeder;
 import com.epam.gepard.exception.ShutDownException;
 
@@ -49,12 +50,15 @@ public class DataFeederLoaderTest {
     @Mock
     private DataDrivenParameterArray outputParameterArray;
 
+    private Environment environment;
+
     private DataFeederLoader underTest;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        underTest = new DataFeederLoader("com.epam.test.TestClass", "");
+        environment = new Environment();
+        underTest = new DataFeederLoader("com.epam.test.TestClass", "", environment);
     }
 
     @Test

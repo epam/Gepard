@@ -1,4 +1,5 @@
 package com.epam.gepard.examples.soapui;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -34,8 +35,9 @@ public class SoapUITestBase extends SoapUITestCase {
      * @throws Exception in case of test failure
      */
     public void testSoapUISampleAuthenticationExample() {
-        String projectFile = Environment.getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-Authentication-Project-soapui-project.xml");
-        setProjectFile(projectFile);   // Specify test project XML local file path, can use URL instead
+        String projectFile = getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat(
+                "/soapui-examples/Sample-Authentication-Project-soapui-project.xml");
+        setProjectFile(projectFile); // Specify test project XML local file path, can use URL instead
         //run the SoapUI test
         runSoapUITest();
     }
@@ -45,7 +47,7 @@ public class SoapUITestBase extends SoapUITestCase {
      * @throws Exception in case of test failure
      */
     public void testSoapUISampleSOAPProjectExample() throws Exception {
-        String projectFile = Environment.getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-SOAP-Project-soapui-project.xml");
+        String projectFile = getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-SOAP-Project-soapui-project.xml");
 
         //run the mock service first
         SoapUIMockServiceRunner mockServiceRunner = new SoapUIMockServiceRunner();
@@ -53,7 +55,7 @@ public class SoapUITestBase extends SoapUITestCase {
         mockServiceRunner.run();
 
         //run the SoapUI test
-        setProjectFile(projectFile);   // Specify test project XML local file path, can use URL instead
+        setProjectFile(projectFile); // Specify test project XML local file path, can use URL instead
         runSoapUITest();
 
         mockServiceRunner.stopAll();
@@ -64,7 +66,7 @@ public class SoapUITestBase extends SoapUITestCase {
      * @throws Exception in case of test failure
      */
     public void testSoapUISampleRESTProjectExample() throws Exception {
-        String projectFile = Environment.getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-REST-Project-soapui-project.xml");
+        String projectFile = getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-REST-Project-soapui-project.xml");
 
         //run the mock service first
         SoapUIMockServiceRunner mockServiceRunner = new SoapUIMockServiceRunner();
@@ -72,7 +74,7 @@ public class SoapUITestBase extends SoapUITestCase {
         mockServiceRunner.run();
 
         //run the SoapUI test
-        setProjectFile(projectFile);   // Specify test project XML local file path, can use URL instead
+        setProjectFile(projectFile); // Specify test project XML local file path, can use URL instead
         runSoapUITest();
 
         mockServiceRunner.stopAll();

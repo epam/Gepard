@@ -83,16 +83,21 @@ public class GenericListTestSuite extends TestSuite {
     private int usedTc; // = 0; //number of used Test Classes - will be used at report
     private int numberTc; // = 0; //number of TCs
 
+    private Environment environment;
+
     /**
      * This class builds up the Junit Test suite (including loading data-driven tests).
      *
      * @param testListFile is the filename of the testlist file.
      * @param filter       is the filter of the test classes.
+     * @param environment holds the properties of the application
      * @throws IOException in case testlist file cannot be accessed properly
      * @throws ClassNotFoundException in case the specified feeder class is not available.
      */
-    public GenericListTestSuite(final String testListFile, final ExpressionTestFilter filter) throws IOException, ClassNotFoundException {
+    public GenericListTestSuite(final String testListFile, final ExpressionTestFilter filter, final Environment environment) throws IOException,
+        ClassNotFoundException {
         super("GenericListTestSuite");
+        this.environment = environment;
         LineNumberReader listReader = new LineNumberReader(new InputStreamReader(new FileInputStream(testListFile)));
         String originalLine;
         while ((originalLine = listReader.readLine()) != null) {
@@ -115,7 +120,7 @@ public class GenericListTestSuite extends TestSuite {
                 DataFeederLoader dataFeeder = null;
                 if ((testDescriptor.length > TESTLIST_FEEDER_DESCRIPTOR_FIELD) && (!testDescriptor[TESTLIST_FEEDER_DESCRIPTOR_FIELD].isEmpty())) {
                     //this is a data driven TC
-                    dataFeeder = new DataFeederLoader(clazz.getName(), testDescriptor[TESTLIST_FEEDER_DESCRIPTOR_FIELD]);
+                    dataFeeder = new DataFeederLoader(clazz.getName(), testDescriptor[TESTLIST_FEEDER_DESCRIPTOR_FIELD], environment);
                     count = dataFeeder.calculateRuns(clazz.getName(), count);
                     DataDrivenParameterArray parameterArray = dataFeeder.calculateParameterArray(clazz.getName(), null);
                     dataFeeder.reserveParameterArray(parameterArray);
@@ -142,7 +147,7 @@ public class GenericListTestSuite extends TestSuite {
     }
 
     private Integer detectTestClassTimeout(final Class<?> clazz, final String[] testDescriptor) {
-        String toString = Environment.getProperty(Environment.GEPARD_TEST_TIMEOUT, DEFAULT_TIMEOUT_IN_SECS);
+        String toString = environment.getProperty(Environment.GEPARD_TEST_TIMEOUT, DEFAULT_TIMEOUT_IN_SECS);
         Integer timeout = Integer.valueOf(DEFAULT_TIMEOUT_IN_SECS);
         if ((testDescriptor.length > TESTLIST_TIMEOUT_FIELD) && (!testDescriptor[TESTLIST_TIMEOUT_FIELD].isEmpty())) {
             //has timeout value
@@ -261,7 +266,7 @@ public class GenericListTestSuite extends TestSuite {
             // More annotation handling should be added here to handle more test types
             if (clazz.isAnnotationPresent(TestClass.class)) {
                 returnSuite = CommonTestCase.suiteHelper(clazz, clazz.getAnnotation(TestClass.class).id(), clazz.getAnnotation(TestClass.class)
-                        .name(), null);
+                        .name(), null, environment);
             } else {
                 //no proper annotation at Test Class, cannot continue
                 AllTestRunner.CONSOLE_LOG.info("\nERROR: @TestClass annotation is missing at class: " + clazz.getCanonicalName() + "Please fix!");
@@ -293,8 +298,7 @@ public class GenericListTestSuite extends TestSuite {
                     + "\nPlease ensure that a class is listed only one time in the list!\nNow exiting...");
             AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_DUPLICATED);
         }
-
-        TestClassExecutionData classData = new TestClassExecutionData(id);
+        TestClassExecutionData classData = new TestClassExecutionData(id, environment);
         classData.setTimeout(timeout);
         classData.setClassName(clazz.getName());
         classData.setDataFeederLoader(dataFeeder);
@@ -395,7 +399,7 @@ public class GenericListTestSuite extends TestSuite {
     }
 
     public static void setTestClassMap(final Map<String, TestClassExecutionData> testClassMap) {
-        GenericListTestSuite.testClassMap =  new LinkedHashMap<>(testClassMap);
+        GenericListTestSuite.testClassMap = new LinkedHashMap<>(testClassMap);
     }
 
 }

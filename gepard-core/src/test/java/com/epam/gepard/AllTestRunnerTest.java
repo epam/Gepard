@@ -25,7 +25,6 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Properties;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -75,23 +74,23 @@ public class AllTestRunnerTest {
     @Mock
     private TestFailureReporter failureReporter;
 
+    private Environment environment;
+
     @InjectMocks
     private AllTestRunner underTest;
 
     @Before
     public void setup() {
-        underTest = new AllTestRunner();
+        environment = new Environment();
+        underTest = new AllTestRunner(environment, reportFinalizer, failureReporter, logFolderCreator);
         MockitoAnnotations.initMocks(this);
-        given(logFileWriterFactory.createSpecificLogWriter(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).willReturn(htmlLog)
-                .willReturn(csvLog).willReturn(quickLog);
-        Environment.setProperty(Environment.GEPARD_INSPECTOR_TEST_FACTORY, "com.epam.gepard.inspector.dummy.DummyFactory");
-        Environment.setProperty(Environment.GEPARD_FILTER_CLASS, "com.epam.gepard.filter.DefaultTestFilter");
-        Environment.setProperty(Environment.GEPARD_FILTER_EXPRESSION, "?");
-    }
-
-    @After
-    public void tearDown() {
-        Environment.getProperties().clear();
+        Whitebox.setInternalState(underTest, "logFileWriterFactory", logFileWriterFactory);
+        given(
+                logFileWriterFactory.createSpecificLogWriter(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+                        Mockito.any(Environment.class))).willReturn(htmlLog).willReturn(csvLog).willReturn(quickLog);
+        environment.setProperty(Environment.GEPARD_INSPECTOR_TEST_FACTORY, "com.epam.gepard.inspector.dummy.DummyFactory");
+        environment.setProperty(Environment.GEPARD_FILTER_CLASS, "com.epam.gepard.filter.DefaultTestFilter");
+        environment.setProperty(Environment.GEPARD_FILTER_EXPRESSION, "?");
     }
 
     @Test
@@ -99,12 +98,13 @@ public class AllTestRunnerTest {
         //GIVEN
         String testListFile = "src/test/resources/testlist.txt";
         Whitebox.setInternalState(underTest, "executorThreadManager", executorThreadManager);
-        Environment.resetProperty(Environment.GEPARD_LOAD_AND_EXIT, "false");
+        environment.setProperty(Environment.GEPARD_LOAD_AND_EXIT, "false");
         //WHEN
         underTest.runAll(testListFile, consoleWriter);
         //THEN
         verify(logFolderCreator).prepareOutputFolders();
-        verify(executorThreadManager).initiateAndStartExecutorThreads();
+        verify(executorThreadManager).initiateAndStartExecutorThreads(environment.getProperty(Environment.GEPARD_THREADS),
+                environment.getProperty(Environment.GEPARD_XML_RESULT_PATH));
         verify(htmlLog).insertBlock(eq("Header"), Mockito.any(Properties.class));
         verify(csvLog).insertBlock(eq("Header"), Mockito.any(Properties.class));
         verify(quickLog).insertBlock(eq("Header"), Mockito.any(Properties.class));
@@ -117,7 +117,7 @@ public class AllTestRunnerTest {
     public void testRunAllWhenGepardLoadAndExitFalse() throws Exception {
         //GIVEN
         String testListFile = "src/test/resources/testlist.txt";
-        Environment.setProperty(Environment.GEPARD_LOAD_AND_EXIT, "true");
+        environment.setProperty(Environment.GEPARD_LOAD_AND_EXIT, "true");
         //WHEN
         underTest.runAll(testListFile, consoleWriter);
         //THEN expected Exception

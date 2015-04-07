@@ -97,6 +97,8 @@ public class LogFileWriter {
      */
     private final Map<String, String> blocks = new HashMap<>();
 
+    private final Environment environment;
+
     /**
      * Constructor for Logger.
      * It splits the containment of the template file into blocks according to the block-separators.
@@ -104,11 +106,13 @@ public class LogFileWriter {
      *
      * @param logTemplatePath The path where the template is located.
      * @param logPath         The path where the output file should be put.
+     * @param environment holds the properties of the application
      */
-    public LogFileWriter(final String logTemplatePath, final String logPath) {
+    public LogFileWriter(final String logTemplatePath, final String logPath, final Environment environment) {
         // storing path data
         this.logTemplatePath = formatPathName(logTemplatePath);
         this.logPath = formatPathName(logPath);
+        this.environment = environment;
 
         openTemplateFileForReading(logTemplatePath);
         openLogFileForWriting(logPath);
@@ -293,7 +297,7 @@ public class LogFileWriter {
     }
 
     private Properties copyPropertiesToFinalProperties(final Properties props) {
-        Properties result = new Properties(Environment.getProperties());
+        Properties result = new Properties(environment.getProperties());
         if (props != null) {
             String key;
             String value;

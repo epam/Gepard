@@ -105,9 +105,11 @@ public abstract class CommonTestCase extends TestCase {
      * @param scriptID is the ID of the script - may come from annotation.
      * @param scriptName is the name of the script - may come from annotation.
      * @param parameterNames is the names of the parameters - may come from annotation too.
+     * @param environment holds the application properties
      * @return with the JUnit TestSuite object.
      */
-    public static Test suiteHelper(final Class testClass, final String scriptID, final String scriptName, final String[] parameterNames) {
+    public static Test suiteHelper(final Class testClass, final String scriptID, final String scriptName, final String[] parameterNames,
+            final Environment environment) {
         //first either reset the counter or increase it, based on the given test class name
         String testClassName = testClass.getName();
         if ((CommonTestCase.actualTestClassName == null) || (!CommonTestCase.actualTestClassName.contentEquals(testClassName))) {
@@ -127,19 +129,19 @@ public abstract class CommonTestCase extends TestCase {
         }
         classData.setTestStriptName(scriptName + extension);
 
-        return new GenericTestSuite(testClass, scriptID, scriptName + extension);
+        return new GenericTestSuite(testClass, scriptID, scriptName + extension, environment);
     }
 
     /**
      * Set-ups the main test logger - the HTML logger.
      */
     protected void setUpLogger() {
-        fileUtil.createDirectory(Environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory());
+        fileUtil.createDirectory(getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory());
         String name;
         name = getName() + classData.getDrivenDataRowNo();
-        mainTestLogger = logFileWriterFactory.createCustomWriter(Environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/"
-                + "temp_generictestcase.html", Environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory() + "/" + name
-                + ".html");
+        mainTestLogger = logFileWriterFactory.createCustomWriter(getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/"
+                + "temp_generictestcase.html", getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory() + "/" + name + ".html",
+                classData.getEnvironment());
     }
 
     @Override
@@ -324,8 +326,8 @@ public abstract class CommonTestCase extends TestCase {
      * @param name - refers to the name of property needed to return.
      * @return the value of the property represented as a String.
      */
-    public static String getProperty(final String name) {
-        return Environment.getProperty(name);
+    public String getProperty(final String name) {
+        return classData.getEnvironment().getProperty(name);
     }
 
     /**

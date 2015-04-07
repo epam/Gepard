@@ -32,6 +32,15 @@ import com.epam.gepard.generic.GenericListTestSuite;
  */
 public class ConsoleWriter {
     private static final Logger CONSOLE_LOG = LoggerFactory.getLogger("console");
+    private Environment environment;
+
+    /**
+     * Constructs a new instance of {@link Environment}.
+     * @param environment holds the properties of the application
+     */
+    public ConsoleWriter(final Environment environment) {
+        this.environment = environment;
+    }
 
     /**
      * Prints out the starting failure message block.
@@ -58,12 +67,12 @@ public class ConsoleWriter {
      * @param propFileList is list of given property files at starting.
      */
     public void printParameterInfoBlock(final String propFileList) {
-        CONSOLE_LOG.info("Templates path:    " + Environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH));
-        CONSOLE_LOG.info("Test Result path:  " + Environment.getProperty(Environment.GEPARD_RESULT_PATH));
+        CONSOLE_LOG.info("Templates path:    " + environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH));
+        CONSOLE_LOG.info("Test Result path:  " + environment.getProperty(Environment.GEPARD_RESULT_PATH));
         CONSOLE_LOG.info("Prop file list:    " + propFileList);
-        CONSOLE_LOG.info("Filter class:      " + Environment.getProperty(Environment.GEPARD_FILTER_CLASS));
-        CONSOLE_LOG.info("Filter expr:       " + Environment.getProperty(Environment.GEPARD_FILTER_EXPRESSION));
-        CONSOLE_LOG.info("Testlist file:     " + Environment.getProperty(Environment.GEPARD_TESTLIST_FILE));
+        CONSOLE_LOG.info("Filter class:      " + environment.getProperty(Environment.GEPARD_FILTER_CLASS));
+        CONSOLE_LOG.info("Filter expr:       " + environment.getProperty(Environment.GEPARD_FILTER_EXPRESSION));
+        CONSOLE_LOG.info("Testlist file:     " + environment.getProperty(Environment.GEPARD_TESTLIST_FILE));
     }
 
     /**

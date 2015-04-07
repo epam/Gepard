@@ -1,4 +1,5 @@
 package com.epam.gepard.datadriven.feeders;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -18,11 +19,11 @@ package com.epam.gepard.datadriven.feeders;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for LabelBasedDataFeeder and related classes.
@@ -37,7 +38,6 @@ public class LabelBasedDataFeederTest {
     private static final int ERROR_FEEDER_FILE_CONTENT_ERROR = -20;
     private LabelBasedDataFeeder underTest;
 
-
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -50,7 +50,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         // and the parameter is null
         //when
-        int returnValue = underTest.init(className, null);
+        int returnValue = underTest.init(className, null, null);
         //then
         assertEquals(ERROR_FEEDER_RELATION_WRONG_FORMAT, returnValue);
     }
@@ -61,7 +61,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_RELATION_WRONG_FORMAT, returnValue);
     }
@@ -72,7 +72,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_RELATION_WRONG_FORMAT, returnValue);
     }
@@ -83,7 +83,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(0, returnValue); //this should be OK
     }
@@ -94,7 +94,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[DEFAULT]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(0, returnValue); //this should be ok
     }
@@ -105,7 +105,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[:x]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_RELATION_WRONG_ROW_NUMBER, returnValue);
     }
@@ -116,7 +116,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[:::BADTYPE]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_RELATION_LABEL_TYPE_IS_MISSING, returnValue);
     }
@@ -127,7 +127,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[DEFAULT]+[DEFAULT]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_DUPLICATED, returnValue);
     }
@@ -138,7 +138,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[]+[DEFAULT]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_DUPLICATED, returnValue);
     }
@@ -149,7 +149,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[]+[]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_DUPLICATED, returnValue);
     }
@@ -160,7 +160,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[com/epam/gepard/datadriven/feeders/a.txt]+[com/epam/gepard/datadriven/feeders/b.txt]x[com/epam/gepard/datadriven/feeders/c.txt]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(0, returnValue); //this should be ok
     }
@@ -171,7 +171,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[com/epam/gepard/datadriven/feeders/a.txt].[com/epam/gepard/datadriven/feeders/b.txt]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_RELATION_EXCEPTION, returnValue);
     }
@@ -182,7 +182,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[com/epam/gepard/datadriven/feeders/badcontent.txt]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(ERROR_FEEDER_FILE_CONTENT_ERROR, returnValue);
     }
@@ -193,7 +193,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[com/epam/gepard/datadriven/feeders/csv.csv]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(0, returnValue); //this should be ok
     }

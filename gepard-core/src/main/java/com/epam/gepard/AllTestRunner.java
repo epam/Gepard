@@ -87,15 +87,31 @@ public class AllTestRunner extends TestRunner {
 
     private static ExecutorThreadManager executorThreadManager = new ExecutorThreadManager();
 
-    private TimeoutHandler timeoutHandler = new TimeoutHandler();
-    private RemoteControlHandler remoteControlHandler = new RemoteControlHandler();
+    private final TimeoutHandler timeoutHandler = new TimeoutHandler();
+    private final RemoteControlHandler remoteControlHandler = new RemoteControlHandler();
 
-    private ReportFinalizer reportFinalizer = new ReportFinalizer();
-    private LogFinalizer logFinalizer = new LogFinalizer();
-    private ResultCollector resultCollector = new ResultCollector();
-    private TestFailureReporter failureReporter = new TestFailureReporter();
-    private LogFolderCreator logFolderCreator = new LogFolderCreator();
-    private LogFileWriterFactory logFileWriterFactory = new LogFileWriterFactory();
+    private ReportFinalizer reportFinalizer;
+    private final LogFinalizer logFinalizer = new LogFinalizer();
+    private final ResultCollector resultCollector = new ResultCollector();
+    private TestFailureReporter failureReporter;
+    private LogFolderCreator logFolderCreator;
+    private final LogFileWriterFactory logFileWriterFactory = new LogFileWriterFactory();
+    private final Environment environment;
+
+    /**
+     * Constructs a new instance of {@link AllTestRunner}.
+     * @param environment the environment which will hold the properties
+     * @param reportFinalizer used for finalizing the information
+     * @param failureReporter used for generating a file report in case of test failure
+     * @param logFolderCreator handles the creation and deletion of the log folders
+     */
+    public AllTestRunner(final Environment environment, final ReportFinalizer reportFinalizer, final TestFailureReporter failureReporter,
+            final LogFolderCreator logFolderCreator) {
+        this.environment = environment;
+        this.reportFinalizer = reportFinalizer;
+        this.failureReporter = failureReporter;
+        this.logFolderCreator = logFolderCreator;
+    }
 
     /**
      * Sets the Application under test version to be reported in the logs.
@@ -114,8 +130,16 @@ public class AllTestRunner extends TestRunner {
      */
     public static void main(final String[] args) {
         Thread.currentThread().setName("GEPARD Main");
-        AllTestRunner runner = new AllTestRunner();
-        ConsoleWriter consoleWriter = new ConsoleWriter();
+        Environment environment = new Environment();
+        ReportFinalizer reportFinalizer = new ReportFinalizer(environment);
+        TestFailureReporter failureReporter = new TestFailureReporter(environment);
+        LogFolderCreator logFolderCreator = new LogFolderCreator(environment);
+        AllTestRunner runner = new AllTestRunner(environment, reportFinalizer, failureReporter, logFolderCreator);
+        runner.doStuff(args);
+    }
+
+    private void doStuff(final String[] args) {
+        ConsoleWriter consoleWriter = new ConsoleWriter(environment);
         String propFileList;
         String testListFile = null;
         try {
@@ -126,22 +150,23 @@ public class AllTestRunner extends TestRunner {
             }
 
             propFileList = args[0];
-            initProperties(propFileList);
+            initProperties(environment, propFileList);
 
             consoleWriter.printParameterInfoBlock(propFileList);
-            testListFile = Environment.getProperty(Environment.GEPARD_TESTLIST_FILE);
+            testListFile = environment.getProperty(Environment.GEPARD_TESTLIST_FILE);
 
             //initiate the remote control if requested
-            if (Environment.getBooleanProperty(Environment.GEPARD_REMOTE_ENABLED)) {
-                AllTestRunner.gepardRemote = new RemoteControlHandlerThread(runner.getRemoteControlHandler(), new ServerSocketFactory());
+            if (environment.getBooleanProperty(Environment.GEPARD_REMOTE_ENABLED)) {
+                int gepardPort = Integer.parseInt(environment.getProperty(Environment.GEPARD_REMOTE_PORT));
+                AllTestRunner.gepardRemote = new RemoteControlHandlerThread(getRemoteControlHandler(), new ServerSocketFactory(), gepardPort);
                 AllTestRunner.gepardRemote.setName("GEPARD Remote Control"); //set its name
                 AllTestRunner.gepardRemote.start(); //start remote control
             }
 
             //initiate the timeout handler thread
-            initiateTheTimeoutHandlerThread(runner);
+            initiateTheTimeoutHandlerThread(this);
             //if full remote control, then wait for the kill sign
-            if (Environment.getBooleanProperty(Environment.GEPARD_REMOTE_FULL_CONTROL)) {
+            if (environment.getBooleanProperty(Environment.GEPARD_REMOTE_FULL_CONTROL)) {
                 initiateGepardRemoteControl();
             }
             //not remote control driven, so run the tests
@@ -150,7 +175,7 @@ public class AllTestRunner extends TestRunner {
                     ExitCode.EXIT_CODE_BAD_SETUP);
         }
         try {
-            runner.runAll(testListFile, consoleWriter);
+            runAll(testListFile, consoleWriter);
         } catch (ShutDownException e) {
             exitFromGepard(e.getExitCode());
         } catch (ComplexGepardException e) {
@@ -162,14 +187,14 @@ public class AllTestRunner extends TestRunner {
         exitFromGepard();
     }
 
-    private static void initiateTheTimeoutHandlerThread(final AllTestRunner runner) {
+    private void initiateTheTimeoutHandlerThread(final AllTestRunner runner) {
         AllTestRunner.gepardTimeout = new TimeoutHandlerThread(runner.getTimeoutHandler());
         AllTestRunner.gepardTimeout.setName("GEPARD Timeout Handler"); //set its name
         AllTestRunner.gepardTimeout.start(); //start remote control
     }
 
-    private static void initProperties(final String propFileList) {
-        if (!Environment.setUp(propFileList)) {
+    private static void initProperties(final Environment environment, final String propFileList) {
+        if (!environment.setUp(propFileList)) {
             exitFromGepard(ExitCode.EXIT_CODE_WRONG_PROPERTY_FILE);
         }
     }
@@ -218,7 +243,7 @@ public class AllTestRunner extends TestRunner {
         GenericListTestSuite gSuite = tryToCreateTestSuiteList(testListFile);
 
         handleTestListLoadTestCase();
-        applicationUnderTestVersion = Environment.getProperty(Environment.APPLICATION_UNDER_TEST_VERSION);
+        applicationUnderTestVersion = environment.getProperty(Environment.APPLICATION_UNDER_TEST_VERSION);
 
         //variable for multi thread results
         AllTestResults allTestResults = new AllTestResults();
@@ -226,7 +251,7 @@ public class AllTestRunner extends TestRunner {
         //now remember when we started the test
         long startTime = System.currentTimeMillis();
         //take care about the threads
-        executorThreadManager.initiateAndStartExecutorThreads();
+        initiateAndStartExecutorThreads();
 
         //now the test is running, we have nothing else to do just prepare the summary result, first the header
         Properties props = new Properties();
@@ -234,11 +259,11 @@ public class AllTestRunner extends TestRunner {
         props.setProperty("Date", gSuite.formatDate(cal));
         //set up Loggers
         LogFileWriter htmlLog = logFileWriterFactory.createSpecificLogWriter("index.html", "html",
-                Environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH));
+                environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH), environment);
         LogFileWriter csvLog = logFileWriterFactory.createSpecificLogWriter("results.csv", "csv",
-                Environment.getProperty(Environment.GEPARD_CSV_RESULT_PATH));
+                environment.getProperty(Environment.GEPARD_CSV_RESULT_PATH), environment);
         LogFileWriter quickLog = logFileWriterFactory.createSpecificLogWriter("results.plain", "plain",
-                Environment.getProperty(Environment.GEPARD_RESULT_PATH));
+                environment.getProperty(Environment.GEPARD_RESULT_PATH), environment);
         prepareHeaders(props, htmlLog, csvLog, quickLog);
 
         Environment.setScript(Environment.createTestScript("" + GenericListTestSuite.formatDateTime(cal)));
@@ -261,8 +286,14 @@ public class AllTestRunner extends TestRunner {
         CONSOLE_LOG.info("Gepard Test Done.");
     }
 
+    private void initiateAndStartExecutorThreads() {
+        String t = environment.getProperty(Environment.GEPARD_THREADS);
+        String logPath = environment.getProperty(Environment.GEPARD_XML_RESULT_PATH);
+        executorThreadManager.initiateAndStartExecutorThreads(t, logPath);
+    }
+
     private void setupTestFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        String tfactory = Environment.getProperty(Environment.GEPARD_INSPECTOR_TEST_FACTORY);
+        String tfactory = environment.getProperty(Environment.GEPARD_INSPECTOR_TEST_FACTORY);
         CONSOLE_LOG.info("");
         Environment.setFactory((TestFactory) Class.forName(tfactory).newInstance());
     }
@@ -274,19 +305,19 @@ public class AllTestRunner extends TestRunner {
     }
 
     private void handleTestListLoadTestCase() {
-        if (Environment.getBooleanProperty(Environment.GEPARD_LOAD_AND_EXIT)) {
+        if (environment.getBooleanProperty(Environment.GEPARD_LOAD_AND_EXIT)) {
             CONSOLE_LOG.info("\nLoad and Exit is requested...");
             throw new ShutDownException(ExitCode.EXIT_CODE_OK);
         }
     }
 
     private GenericListTestSuite tryToCreateTestSuiteList(final String testListFile) throws IOException, ClassNotFoundException {
-        String filterClass = Environment.getProperty(Environment.GEPARD_FILTER_CLASS);
-        String filterExpr = Environment.getProperty(Environment.GEPARD_FILTER_EXPRESSION);
+        String filterClass = environment.getProperty(Environment.GEPARD_FILTER_CLASS);
+        String filterExpr = environment.getProperty(Environment.GEPARD_FILTER_EXPRESSION);
         ExpressionTestFilter filter = tryToCreateTestFilter(filterClass, filterExpr);
         GenericListTestSuite gSuite = null;
         if (testListFile != null) {
-            gSuite = new GenericListTestSuite(testListFile, filter);
+            gSuite = new GenericListTestSuite(testListFile, filter, environment);
         } else {
             CONSOLE_LOG.info("No test list file is available.");
             throw new ShutDownException(ExitCode.EXIT_CODE_BAD_SETUP);

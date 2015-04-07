@@ -19,6 +19,7 @@ package com.epam.gepard.datadriven.feeders;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import com.epam.gepard.common.Environment;
 import com.epam.gepard.datadriven.DataDrivenParameterArray;
 import com.epam.gepard.generic.GenericListTestSuite;
 
@@ -36,13 +37,13 @@ public class FakeDataFeeder implements GepardDataFeeder {
     private String parameter;
 
     @Override
-    public int init(String testClassName, String parameter) {
+    public int init(final String testClassName, final String parameter, final Environment environment) {
         this.parameter = parameter;
         return 0;
     }
 
     @Override
-    public int calculateRuns(String className, int inputRows) {
+    public int calculateRuns(final String className, final int inputRows) {
         return inputRows; // do nothing with the array
     }
 
@@ -51,7 +52,7 @@ public class FakeDataFeeder implements GepardDataFeeder {
      * @return
      */
     @Override
-    public DataDrivenParameterArray calculateParameterArray(String className, DataDrivenParameterArray inputParameterArray) {
+    public DataDrivenParameterArray calculateParameterArray(final String className, final DataDrivenParameterArray inputParameterArray) {
         //put the param in the global data storage
         GenericListTestSuite.getGlobalDataStorage().put("XFakeDataFeeder-" + className, parameter);
         //do nothing

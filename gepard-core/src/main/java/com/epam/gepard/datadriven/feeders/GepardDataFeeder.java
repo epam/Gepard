@@ -19,6 +19,7 @@ package com.epam.gepard.datadriven.feeders;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import com.epam.gepard.common.Environment;
 import com.epam.gepard.datadriven.DataDrivenParameterArray;
 
 /**
@@ -54,9 +55,10 @@ public interface GepardDataFeeder {
      *
      * @param testClassName is the name of the actual test class
      * @param parameter coming from the testlist file
+     * @param environment holds the properties of the application
      * @return with 0 if everything was OK, or <code>&lt;</code>0 if something is wrong.
      */
-    int init(String testClassName, String parameter);
+    int init(String testClassName, String parameter, Environment environment);
 
     /**
      * Get info about the total number of test class executions. I.e. how many times the test class should be executed.
