@@ -72,12 +72,11 @@ public class UtilTest extends TestCase {
         String appVersion = "appVersion";
         given(packageProvider.getPackageOfObject(underTest)).willReturn(packageOfUnderTest);
         given(packageOfUnderTest.getImplementationTitle()).willReturn(appTitle);
-        given(packageOfUnderTest.getImplementationVersion()).willReturn(appVersion);
         //when
         String response = underTest.getGepardVersion();
         //then
         Assert.assertNotNull(response);
-        Assert.assertTrue(response.equals(appTitle + " " + appVersion));
+        Assert.assertTrue(response.equals(appTitle));
     }
 
     public void testAlertText() throws Exception {

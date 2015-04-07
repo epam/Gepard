@@ -94,9 +94,8 @@ public class Util {
     public String getGepardVersion() {
         Package pack = packageProvider.getPackageOfObject(this);
         String implementationTitle = pack.getImplementationTitle();
-        String implementationVersion = pack.getImplementationVersion();
-        if ((implementationTitle != null) && (implementationVersion != null)) {
-            return implementationTitle + " " + implementationVersion;
+        if (implementationTitle != null) {
+            return implementationTitle;
         }
         return VERSION_NOT_FOUND;
     }

@@ -198,4 +198,16 @@ public class LabelBasedDataFeederTest {
         assertEquals(0, returnValue); //this should be ok
     }
 
+    @Test
+    public void testInitUseRandomSeleaction() {
+        //given
+        String className = this.getClass().getCanonicalName();
+        String parameter = "[:::RANDOM]";
+        //when
+        int returnValue = underTest.init(className, parameter);
+        //then
+        assertEquals(0, returnValue); //this should be ok
+
+    }
+
 }
