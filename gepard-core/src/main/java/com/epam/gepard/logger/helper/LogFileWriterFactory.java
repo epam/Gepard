@@ -32,14 +32,14 @@ public class LogFileWriterFactory {
      * Creates a new instance of {@link LogFileWriter}.
      * @param currentFile the name of the file that will be used by the writer.
      * @param extension is the extension of the file.
-     * @param resultPath is the path where the file should be stored.
+     * @param resultPathKey is the property key of the path where the file should be stored.
      * @param environment holds the properties of the application
      * @return the new instance
      */
-    public LogFileWriter createSpecificLogWriter(final String currentFile, final String extension, final String resultPath,
+    public LogFileWriter createSpecificLogWriter(final String currentFile, final String extension, final String resultPathKey,
             final Environment environment) {
         LogFileWriter logWriter = new LogFileWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generic."
-                + extension, resultPath + "/" + currentFile, environment);
+                + extension, environment.getProperty(resultPathKey) + "/" + currentFile, environment);
         return logWriter;
     }
 

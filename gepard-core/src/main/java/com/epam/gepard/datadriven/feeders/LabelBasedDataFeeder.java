@@ -208,8 +208,8 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
                         rowNumber = Integer.parseInt(tokens[FEEDER_ROW_NUMBER]);
                     }
                 } catch (NumberFormatException e) {
-                    String reportError = "Error in LabelBasedDataFeeder: Second feeder token must be empty or valid number," + " got: "
-                            + tokens[FEEDER_ROW_NUMBER];
+                    String reportError = "Error in LabelBasedDataFeeder: Second feeder token must be empty or valid number,"
+                            + " got: " + tokens[FEEDER_ROW_NUMBER];
                     throw new DataFeederException(reportError, ERROR_FEEDER_RELATION_WRONG_ROW_NUMBER);
                 }
                 feederDetails.setRowNumber(rowNumber);

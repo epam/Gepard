@@ -43,9 +43,9 @@ public class ExecutorThreadManager {
     /**
      * Initializes and then starts executor threads.
      * @param threadCountText number of threads to use as a {@link String}
-     * @param logPath the path to use for making reports
+     * @param xmlResultPath the path to use for making xml reports
      */
-    public void initiateAndStartExecutorThreads(final String threadCountText, final String logPath) {
+    public void initiateAndStartExecutorThreads(final String threadCountText, final String xmlResultPath) {
         loadThreadCount(threadCountText);
 
         Util util = new Util();
@@ -56,7 +56,7 @@ public class ExecutorThreadManager {
         //init threads. Note: always the max number of threads are created, just some of them is enabled for TC execution.
         //the purpose is to keep the possibility of dynamically change the number of active threads during run-time (see remote control)
         for (int ti = 0; ti < MAX_EXEC_THREADS; ti++) {
-            threads[ti] = new TestClassExecutionThread(logPath);
+            threads[ti] = new TestClassExecutionThread(xmlResultPath);
             threads[ti].setName("Exec" + ti); //set its name
             threads[ti].setEnabled(ti < threadCount); //enable tc execution for the selected threads
             threads[ti].start(); //start

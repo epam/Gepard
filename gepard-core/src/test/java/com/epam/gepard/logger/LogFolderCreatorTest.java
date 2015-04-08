@@ -47,8 +47,9 @@ public class LogFolderCreatorTest {
     @Test
     public void testPrepareOutputFolders() {
         //GIVEN
-        String[] resultPaths = new String[]{"build/bla/xml", "build/bla/csv", "build/bla/html"};
-        environment.setProperty(Environment.GEPARD_RESULT_PATH, "build/bla");
+        String[] resultPaths = new String[]{"build/tmp/logFolderCreatorTest/xml", "build/tmp/logFolderCreatorTest/csv",
+            "build/tmp/logFolderCreatorTest/html"};
+        environment.setProperty(Environment.GEPARD_RESULT_PATH, "build/tmp/logFolderCreatorTest");
         environment.setProperty(Environment.GEPARD_XML_RESULT_PATH, resultPaths[0]);
         environment.setProperty(Environment.GEPARD_CSV_RESULT_PATH, resultPaths[1]);
         environment.setProperty(Environment.GEPARD_HTML_RESULT_PATH, resultPaths[2]);

@@ -258,12 +258,9 @@ public class AllTestRunner extends TestRunner {
         Calendar cal = Calendar.getInstance();
         props.setProperty("Date", gSuite.formatDate(cal));
         //set up Loggers
-        LogFileWriter htmlLog = logFileWriterFactory.createSpecificLogWriter("index.html", "html",
-                environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH), environment);
-        LogFileWriter csvLog = logFileWriterFactory.createSpecificLogWriter("results.csv", "csv",
-                environment.getProperty(Environment.GEPARD_CSV_RESULT_PATH), environment);
-        LogFileWriter quickLog = logFileWriterFactory.createSpecificLogWriter("results.plain", "plain",
-                environment.getProperty(Environment.GEPARD_RESULT_PATH), environment);
+        LogFileWriter htmlLog = logFileWriterFactory.createSpecificLogWriter("index.html", "html", Environment.GEPARD_HTML_RESULT_PATH, environment);
+        LogFileWriter csvLog = logFileWriterFactory.createSpecificLogWriter("results.csv", "csv", Environment.GEPARD_CSV_RESULT_PATH, environment);
+        LogFileWriter quickLog = logFileWriterFactory.createSpecificLogWriter("results.plain", "plain", Environment.GEPARD_RESULT_PATH, environment);
         prepareHeaders(props, htmlLog, csvLog, quickLog);
 
         Environment.setScript(Environment.createTestScript("" + GenericListTestSuite.formatDateTime(cal)));
@@ -287,9 +284,9 @@ public class AllTestRunner extends TestRunner {
     }
 
     private void initiateAndStartExecutorThreads() {
-        String t = environment.getProperty(Environment.GEPARD_THREADS);
-        String logPath = environment.getProperty(Environment.GEPARD_XML_RESULT_PATH);
-        executorThreadManager.initiateAndStartExecutorThreads(t, logPath);
+        String threads = environment.getProperty(Environment.GEPARD_THREADS);
+        String xmlResultPath = environment.getProperty(Environment.GEPARD_XML_RESULT_PATH);
+        executorThreadManager.initiateAndStartExecutorThreads(threads, xmlResultPath);
     }
 
     private void setupTestFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {

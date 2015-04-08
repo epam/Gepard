@@ -51,21 +51,21 @@ public class TestClassExecutionThread extends Thread {
     private boolean enabled; // = false; //weather TC execution enabled for this thread or not
     private final JUnitCore core = new JUnitCore();
     private TestClassExecutionData classData; // = null; //points to the actual tc, under exec
-    private String logPath;
+    private String xmlResultPath;
 
     /**
      * Constructs a new instance of {@link TestClassExecutionThread}.
-     * @param logPath the path to use for report generation
+     * @param xmlResultPath the path to use for xml report generation
      */
-    public TestClassExecutionThread(final String logPath) {
-        this.logPath = logPath;
+    public TestClassExecutionThread(final String xmlResultPath) {
+        this.xmlResultPath = xmlResultPath;
     }
 
     @Override
     public void run() {
         String me = this.getName();
-        core.addListener(new XmlRunReporter(new File(logPath)));
-        core.addListener(new XmlRunReporter(new File(logPath), true));
+        core.addListener(new XmlRunReporter(new File(xmlResultPath)));
+        core.addListener(new XmlRunReporter(new File(xmlResultPath), true));
         //forever loop we have
         while (true) {
             tryToExecuteATest(me);
