@@ -80,7 +80,7 @@ public class AllTestRunner extends TestRunner {
      */
     private static int exitCode; //java exit code
 
-    private static String applicationUnderTestVersion;
+    private static String systemUnderTestVersion;
 
     private static TimeoutHandlerThread gepardTimeout;
     private static RemoteControlHandlerThread gepardRemote;
@@ -118,8 +118,8 @@ public class AllTestRunner extends TestRunner {
      *
      * @param verString is the version string (build number).
      */
-    public static void setApplicationUnderTestVersion(final String verString) {
-        applicationUnderTestVersion = verString;
+    public static void setSystemUnderTestVersion(final String verString) {
+        systemUnderTestVersion = verString;
     }
 
     /**
@@ -243,7 +243,7 @@ public class AllTestRunner extends TestRunner {
         GenericListTestSuite gSuite = tryToCreateTestSuiteList(testListFile);
 
         handleTestListLoadTestCase();
-        applicationUnderTestVersion = environment.getProperty(Environment.APPLICATION_UNDER_TEST_VERSION);
+        systemUnderTestVersion = environment.getProperty(Environment.SYSTEM_UNDER_TEST_VERSION);
 
         //variable for multi thread results
         AllTestResults allTestResults = new AllTestResults();
@@ -272,7 +272,7 @@ public class AllTestRunner extends TestRunner {
         //close threads, if any
         executorThreadManager.closeRunningThreads();
         //After running the tests, finalize the report
-        reportFinalizer.finalizeTheReport(gSuite, allTestResults, applicationUnderTestVersion, endTime - startTime, props);
+        reportFinalizer.finalizeTheReport(gSuite, allTestResults, systemUnderTestVersion, endTime - startTime, props);
 
         logFinalizer.finalizeLogs(props, htmlLog, csvLog, quickLog, executorThreadManager.getThreadCount());
         CONSOLE_LOG.info("\n");

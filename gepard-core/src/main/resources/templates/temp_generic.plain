@@ -16,7 +16,7 @@ Test Sets Executed: %TCSrunned%
 Test Cases used: %TCUsed%
 
 Build date/version is %Version%.
-Test Environment: %TSID%
+Test Environment: %TEID%
 Test evaluation took %SecondsTime% seconds.
 Test was finished at %DateTime%.
 <!--End of Footer-->

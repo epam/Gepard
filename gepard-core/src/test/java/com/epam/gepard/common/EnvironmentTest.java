@@ -33,7 +33,7 @@ public class EnvironmentTest {
         //WHEN
         underTest.setUp("src/test/resources/testprj.properties,src/test/resources/a.txt,src/test/resources/b.txt");
         //THEN
-        String result = underTest.getProperty("URL." + underTest.getProperty("TSID"));
+        String result = underTest.getProperty("URL." + underTest.getProperty("TEID"));
         Assert.assertEquals(result, "http://blahqa1.com");
     }
 

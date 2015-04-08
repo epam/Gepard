@@ -76,8 +76,8 @@ public class ReportFinalizer {
             applicationVersion = "undetected";
         }
         props.setProperty("Version", applicationVersion);
-        String tsid = environment.getProperty(Environment.TEST_SYSTEM_ID, "Unknown");
-        props.setProperty("TSID", tsid);
+        String teid = environment.getProperty(Environment.TEST_ENVIRONMENT_ID, "Unknown");
+        props.setProperty("TEID", teid);
         props.setProperty("TCSrunned", String.valueOf(GenericListTestSuite.getTestClassCount()));
         props.setProperty("TCUsed", Integer.toString(gSuite.getUsedTc()));
         props.setProperty("TCNumber", Integer.toString(gSuite.getNumberTc()));

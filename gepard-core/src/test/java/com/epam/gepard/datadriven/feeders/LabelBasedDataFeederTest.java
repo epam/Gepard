@@ -204,7 +204,7 @@ public class LabelBasedDataFeederTest {
         String className = this.getClass().getCanonicalName();
         String parameter = "[:::RANDOM]";
         //when
-        int returnValue = underTest.init(className, parameter);
+        int returnValue = underTest.init(className, parameter, null);
         //then
         assertEquals(0, returnValue); //this should be ok
 

@@ -94,7 +94,7 @@ public class ReportFinalizerTest {
         verify(props).setProperty("SecondsTime", "" + expectedDuration);
         verify(props).setProperty("DateTime", GenericListTestSuite.formatDateTime(cal));
         verify(props).setProperty("Version", APPLICATION_VERSION);
-        verify(props).setProperty("TSID", "Unknown");
+        verify(props).setProperty("TEID", "Unknown");
         verify(props).setProperty("TCUsed", Integer.toString(5));
         verify(props).setProperty("TCNumber", Integer.toString(4));
         verify(props).setProperty("ResultURLHTML", "");
@@ -122,7 +122,7 @@ public class ReportFinalizerTest {
         verify(props).setProperty("SecondsTime", "" + expectedDuration);
         verify(props).setProperty("DateTime", GenericListTestSuite.formatDateTime(cal));
         verify(props).setProperty("Version", "undetected");
-        verify(props).setProperty("TSID", "Unknown");
+        verify(props).setProperty("TEID", "Unknown");
         verify(props).setProperty("TCUsed", Integer.toString(5));
         verify(props).setProperty("TCNumber", Integer.toString(4));
         verify(props).setProperty("ResultURLHTML", "");
@@ -153,7 +153,7 @@ public class ReportFinalizerTest {
         verify(props).setProperty("SecondsTime", "" + expectedDuration);
         verify(props).setProperty("DateTime", GenericListTestSuite.formatDateTime(cal));
         verify(props).setProperty("Version", APPLICATION_VERSION);
-        verify(props).setProperty("TSID", "Unknown");
+        verify(props).setProperty("TEID", "Unknown");
         verify(props).setProperty("TCUsed", Integer.toString(5));
         verify(props).setProperty("TCNumber", Integer.toString(4));
         verify(props).setProperty("ResultURLHTML", "Test Results will be available <a href=test/path>here.</a><br/>");

@@ -79,10 +79,10 @@ public class SampleOtherTest extends OtherTestCase {
         fail("THIS IS BAD NO TIMEOUT OCCURRED!");
     }
 
-    public void testSetApplicationUnderTestVersion() {
-        logComment("This is a sample on how to set the AUT (Application Under Test) value, that is visible in the test report.");
+    public void testSetSystemUnderTestVersion() {
+        logComment("This is a sample on how to set the SUT (System Under Test) value, that is visible in the test report.");
         Util util = new Util();
-        AllTestRunner.setApplicationUnderTestVersion(util.getGepardVersion());
+        AllTestRunner.setSystemUnderTestVersion(util.getGepardVersion());
     }
 
 }

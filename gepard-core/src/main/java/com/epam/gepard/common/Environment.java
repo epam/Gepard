@@ -44,7 +44,7 @@ import com.epam.gepard.inspector.TestScript;
  * Also supports setting a property, but it is only stored in the memory (ie. the property file
  * will not reflect the changes. Useful for properties which are only needed in the lifetime of this class).
  *
- * @author dora.gal, Tamas Godan, Adam_Csaba_Kiraly
+ * @author dora.gal, Tamas Godan, Adam_Csaba_Kiraly, tkohegyi
  */
 public final class Environment {
 
@@ -78,8 +78,8 @@ public final class Environment {
     public static final String GEPARD_REMOTE_PORT = "gepard.remote.port";
     public static final String GEPARD_REMOTE_FULL_CONTROL = "gepard.remote.fullcontrol";
 
-    public static final String APPLICATION_UNDER_TEST_VERSION = "application-under-test.version";
-    public static final String TEST_SYSTEM_ID = "TSID";
+    public static final String SYSTEM_UNDER_TEST_VERSION = "system-under-test.version";
+    public static final String TEST_ENVIRONMENT_ID = "TEID";
 
     private static final String DELIMITER = ",";
     private static TestFactory factory;
