@@ -135,10 +135,10 @@ public class AllTestRunner extends TestRunner {
         TestFailureReporter failureReporter = new TestFailureReporter(environment);
         LogFolderCreator logFolderCreator = new LogFolderCreator(environment);
         AllTestRunner runner = new AllTestRunner(environment, reportFinalizer, failureReporter, logFolderCreator);
-        runner.doStuff(args);
+        runner.execute(args);
     }
 
-    private void doStuff(final String[] args) {
+    private void execute(final String[] args) {
         ConsoleWriter consoleWriter = new ConsoleWriter(environment);
         String propFileList;
         String testListFile = null;
