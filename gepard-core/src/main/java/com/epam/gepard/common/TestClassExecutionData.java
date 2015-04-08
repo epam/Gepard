@@ -81,8 +81,7 @@ public final class TestClassExecutionData {
      */
     //Timeout handler
     private long heart; // 0 healthy, <0 less healthy
-    @SuppressWarnings("FieldCanBeLocal")
-    private final long defaultTimeout = Long.parseLong(Environment.getProperty(Environment.GEPARD_TEST_TIMEOUT));
+    private final long defaultTimeout;
     private long timeout;
     /**
      * The test name that will appear in the log.
@@ -97,12 +96,16 @@ public final class TestClassExecutionData {
     private Test tc;
 
     private String originalLine;
+    private Environment environment;
 
     /**
      * Test execution data for a Test Class (inherited TestCase class).
      * @param id is the Test Class identifier (test class + rownumber)
+     * @param environment holds the properties of the application
      */
-    public TestClassExecutionData(final String id) {
+    public TestClassExecutionData(final String id, final Environment environment) {
+        this.environment = environment;
+        this.defaultTimeout = Long.parseLong(environment.getProperty(Environment.GEPARD_TEST_TIMEOUT));
         setDeathTimeout(defaultTimeout); //initiate the timeout
         systemOut = new StringBuilder();
         this.id = id;
@@ -418,5 +421,9 @@ public final class TestClassExecutionData {
 
     public void setTestURL(final String testURL) {
         this.testURL = testURL;
+    }
+
+    public Environment getEnvironment() {
+        return environment;
     }
 }

@@ -35,24 +35,33 @@ import com.epam.gepard.util.FileUtil;
  */
 public class LogFolderCreator {
     private static final Logger CONSOLE_LOG = LoggerFactory.getLogger("console");
+    private Environment environment;
+
+    /**
+     * Constructs a new instance of {@link LogFolderCreator}.
+     * @param environment holds the properties of the application
+     */
+    public LogFolderCreator(final Environment environment) {
+        this.environment = environment;
+    }
 
     /**
      * Deletes the old result folder and then creates a folder to every log files.
      */
     public void prepareOutputFolders() {
         //Clean-up the result folders
-        deleteFolder(Environment.getProperty(Environment.GEPARD_RESULT_PATH));
+        deleteFolder(environment.getProperty(Environment.GEPARD_RESULT_PATH));
 
         //Create result folders
-        createFolder(Environment.getProperty(Environment.GEPARD_RESULT_PATH), "Cannot create general result dir: ");
-        createFolder(Environment.getProperty(Environment.GEPARD_XML_RESULT_PATH), "Cannot create XML result dir: ");
-        createFolder(Environment.getProperty(Environment.GEPARD_CSV_RESULT_PATH), "Cannot create CSV result dir: ");
-        createFolder(Environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH), "Cannot create HTML result dir: ");
+        createFolder(environment.getProperty(Environment.GEPARD_RESULT_PATH), "Cannot create general result dir: ");
+        createFolder(environment.getProperty(Environment.GEPARD_XML_RESULT_PATH), "Cannot create XML result dir: ");
+        createFolder(environment.getProperty(Environment.GEPARD_CSV_RESULT_PATH), "Cannot create CSV result dir: ");
+        createFolder(environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH), "Cannot create HTML result dir: ");
     }
 
     private void deleteFolder(final String filePath) {
         File logdir = new File(filePath);
-        FileUtil.deleteDir(logdir);     //it may happen that delete don't work
+        FileUtil.deleteDir(logdir); //it may happen that delete don't work
     }
 
     private void createFolder(final String filePath, final String errorMessage) {

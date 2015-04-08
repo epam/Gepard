@@ -36,6 +36,15 @@ import com.epam.gepard.util.FileUtil;
  * @author Zsolt Kiss Gere, Laszlo Toth, Tamas Godan, Tamas Kohegyi, Tibor Kovacs
  */
 public class TestFailureReporter {
+    private Environment environment;
+
+    /**
+     * Constructs a new instance of {@link TestFailureReporter}.
+     * @param environment holds the properties of the application
+     */
+    public TestFailureReporter(final Environment environment) {
+        this.environment = environment;
+    }
 
     /**
      * Generate the testlist-failure.txt file to help re-execution.
@@ -74,8 +83,8 @@ public class TestFailureReporter {
     }
 
     private void writeContentToFile(final String content) {
-        String path = Environment.getProperty(Environment.GEPARD_TESTLIST_FAILURE_PATH);
-        String fileName = Environment.getProperty(Environment.GEPARD_TESTLIST_FAILURE_FILE);
+        String path = environment.getProperty(Environment.GEPARD_TESTLIST_FAILURE_PATH);
+        String fileName = environment.getProperty(Environment.GEPARD_TESTLIST_FAILURE_FILE);
         try {
             File f = new File(path + "/" + fileName);
             FileUtil.writeToFile(content, f);

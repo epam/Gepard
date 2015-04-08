@@ -32,12 +32,14 @@ public class LogFileWriterFactory {
      * Creates a new instance of {@link LogFileWriter}.
      * @param currentFile the name of the file that will be used by the writer.
      * @param extension is the extension of the file.
-     * @param resultPath is the path where the file should be stored.
+     * @param resultPathKey is the property key of the path where the file should be stored.
+     * @param environment holds the properties of the application
      * @return the new instance
      */
-    public LogFileWriter createSpecificLogWriter(final String currentFile, final String extension, final String resultPath) {
-        LogFileWriter logWriter = new LogFileWriter(Environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generic."
-                + extension, resultPath + "/" + currentFile);
+    public LogFileWriter createSpecificLogWriter(final String currentFile, final String extension, final String resultPathKey,
+            final Environment environment) {
+        LogFileWriter logWriter = new LogFileWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generic."
+                + extension, environment.getProperty(resultPathKey) + "/" + currentFile, environment);
         return logWriter;
     }
 
@@ -45,9 +47,10 @@ public class LogFileWriterFactory {
      * Creates a new instance of {@link LogFileWriter}.
      * @param logTemplatePath The path where the template is located.
      * @param logPath The path where the output file should be put.
+     * @param environment holds the properties of the application
      * @return a new instance of {@link LogFileWriter}
      */
-    public LogFileWriter createCustomWriter(final String logTemplatePath, final String logPath) {
-        return new LogFileWriter(logTemplatePath, logPath);
+    public LogFileWriter createCustomWriter(final String logTemplatePath, final String logPath, final Environment environment) {
+        return new LogFileWriter(logTemplatePath, logPath, environment);
     }
 }

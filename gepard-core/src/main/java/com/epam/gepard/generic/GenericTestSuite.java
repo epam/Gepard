@@ -80,6 +80,7 @@ public class GenericTestSuite extends TestSuite {
     private int dummyCount;
     private int naCount;
     private final int dataDrivenId;
+    private final Environment environment;
 
     /**
      * This is the object of the test class to store test class execution data.
@@ -92,9 +93,11 @@ public class GenericTestSuite extends TestSuite {
      * @param theClass Test class
      * @param testID   test ID
      * @param testName test name
+     * @param environment holds the properties of the application
      */
-    public GenericTestSuite(final Class<? extends TestCase> theClass, final String testID, final String testName) {
+    public GenericTestSuite(final Class<? extends TestCase> theClass, final String testID, final String testName, final Environment environment) {
         super(theClass);
+        this.environment = environment;
         dataDrivenId = CommonTestCase.getActualDataRow();
         gr = new GenericResult(testID, testName);
         unPackClassNameandDir(theClass);
@@ -249,10 +252,10 @@ public class GenericTestSuite extends TestSuite {
         o.setTestCaseSet(Environment.createTestCaseSet(gr.getName(), Environment.getScript()));
 
         //crate result info for Test Set (class)
-        createDirectory(Environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir);
+        createDirectory(environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir);
         String dataDrivenName = getDataDrivenClassName();
-        htmlLog = new LogFileWriter(Environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generictestsuite.html",
-                Environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir + "/" + dataDrivenName + ".html");
+        htmlLog = new LogFileWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generictestsuite.html",
+                environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir + "/" + dataDrivenName + ".html", environment);
         Properties props = new Properties();
         props.setProperty("ID", gr.getID());
         props.setProperty("Name", gr.getName());

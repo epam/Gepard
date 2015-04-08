@@ -25,7 +25,6 @@ import static org.mockito.Matchers.eq;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,15 +50,12 @@ public class SimpleMultiplierDataFeederTest {
     private SimpleMultiplierDataFeederFileLoader arrayLoader;
     @InjectMocks
     private SimpleMultiplierDataFeeder underTest;
+    private Environment environment;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @After
-    public void tearDown() {
-        Environment.getProperties().clear();
+        environment = new Environment();
     }
 
     @Test
@@ -68,7 +64,7 @@ public class SimpleMultiplierDataFeederTest {
         String classname = "classname";
         String parameter = "2";
         //WHEN
-        int response = underTest.init(classname, parameter);
+        int response = underTest.init(classname, parameter, environment);
         //THEN
         Assert.assertTrue(response == 0);
     }
@@ -79,7 +75,7 @@ public class SimpleMultiplierDataFeederTest {
         String classname = "classname";
         String parameter = "blah";
         //WHEN
-        int response = underTest.init(classname, parameter);
+        int response = underTest.init(classname, parameter, environment);
         //THEN
         Assert.assertTrue(response == -1);
     }
@@ -90,7 +86,7 @@ public class SimpleMultiplierDataFeederTest {
         String classname = "classname";
         String parameter = "-2";
         //WHEN
-        int response = underTest.init(classname, parameter);
+        int response = underTest.init(classname, parameter, environment);
         //THEN
         Assert.assertTrue(response == -2);
     }
@@ -100,7 +96,7 @@ public class SimpleMultiplierDataFeederTest {
         //GIVEN
         String classname = "classname";
         int parameter = 2;
-        underTest.init(classname, String.valueOf(parameter));
+        underTest.init(classname, String.valueOf(parameter), environment);
         //WHEN
         int response = underTest.calculateRuns(classname, parameter);
         //THEN
@@ -112,7 +108,8 @@ public class SimpleMultiplierDataFeederTest {
         //GIVEN
         Whitebox.setInternalState(underTest, "multiplier", 2);
         Whitebox.setInternalState(underTest, "arrayLoader", arrayLoader);
-        Environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
+        Whitebox.setInternalState(underTest, "environment", environment);
+        environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
         given(arrayLoader.loadFile(Mockito.any(ConfigFileInfo.class), eq(2))).willReturn(parameterArray);
         given(parameterArray.isEmpty()).willReturn(false);
         given(parameterArray.size()).willReturn(2);
@@ -127,7 +124,8 @@ public class SimpleMultiplierDataFeederTest {
         //GIVEN
         Whitebox.setInternalState(underTest, "multiplier", 2);
         Whitebox.setInternalState(underTest, "arrayLoader", arrayLoader);
-        Environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
+        Whitebox.setInternalState(underTest, "environment", environment);
+        environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
         given(arrayLoader.loadFile(Mockito.any(ConfigFileInfo.class), eq(2))).willReturn(parameterArray);
         given(parameterArray.isEmpty()).willReturn(true);
         //WHEN
@@ -141,7 +139,8 @@ public class SimpleMultiplierDataFeederTest {
         //GIVEN
         Whitebox.setInternalState(underTest, "multiplier", 2);
         Whitebox.setInternalState(underTest, "arrayLoader", arrayLoader);
-        Environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
+        Whitebox.setInternalState(underTest, "environment", environment);
+        environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
         given(arrayLoader.loadFile(Mockito.any(ConfigFileInfo.class), eq(2))).willReturn(parameterArray);
         given(parameterArray.isEmpty()).willReturn(false);
         given(parameterArray.size()).willReturn(1);
@@ -156,7 +155,8 @@ public class SimpleMultiplierDataFeederTest {
         //GIVEN
         Whitebox.setInternalState(underTest, "multiplier", 2);
         Whitebox.setInternalState(underTest, "arrayLoader", arrayLoader);
-        Environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
+        Whitebox.setInternalState(underTest, "environment", environment);
+        environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
         given(arrayLoader.loadFile(Mockito.any(ConfigFileInfo.class), eq(2))).willReturn(parameterArray);
         given(parameterArray.isEmpty()).willReturn(false);
         given(parameterArray.size()).willReturn(1);
@@ -173,7 +173,8 @@ public class SimpleMultiplierDataFeederTest {
         String[] secondRow = new String[]{"second"};
         Whitebox.setInternalState(underTest, "multiplier", 2);
         Whitebox.setInternalState(underTest, "arrayLoader", arrayLoader);
-        Environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
+        Whitebox.setInternalState(underTest, "environment", environment);
+        environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
         given(arrayLoader.loadFile(Mockito.any(ConfigFileInfo.class), eq(2))).willReturn(parameterArray);
         given(parameterArray.isEmpty()).willReturn(false);
         given(parameterArray.size()).willReturn(2);
@@ -196,7 +197,8 @@ public class SimpleMultiplierDataFeederTest {
         String[] secondRow = new String[]{"second"};
         Whitebox.setInternalState(underTest, "multiplier", 2);
         Whitebox.setInternalState(underTest, "arrayLoader", arrayLoader);
-        Environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
+        Whitebox.setInternalState(underTest, "environment", environment);
+        environment.setProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE, new File("src/test/resources").getAbsolutePath());
         given(arrayLoader.loadFile(Mockito.any(ConfigFileInfo.class), eq(2))).willReturn(parameterArray);
         given(parameterArray.isEmpty()).willReturn(false);
         given(parameterArray.size()).willReturn(2);

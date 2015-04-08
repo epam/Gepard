@@ -29,7 +29,6 @@ import org.junit.runner.JUnitCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.GepardConstants;
 import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.generic.GenericListTestSuite;
@@ -52,13 +51,21 @@ public class TestClassExecutionThread extends Thread {
     private boolean enabled; // = false; //weather TC execution enabled for this thread or not
     private final JUnitCore core = new JUnitCore();
     private TestClassExecutionData classData; // = null; //points to the actual tc, under exec
+    private String xmlResultPath;
+
+    /**
+     * Constructs a new instance of {@link TestClassExecutionThread}.
+     * @param xmlResultPath the path to use for xml report generation
+     */
+    public TestClassExecutionThread(final String xmlResultPath) {
+        this.xmlResultPath = xmlResultPath;
+    }
 
     @Override
     public void run() {
         String me = this.getName();
-        String logPath = Environment.getProperty(Environment.GEPARD_XML_RESULT_PATH);
-        core.addListener(new XmlRunReporter(new File(logPath)));
-        core.addListener(new XmlRunReporter(new File(logPath), true));
+        core.addListener(new XmlRunReporter(new File(xmlResultPath)));
+        core.addListener(new XmlRunReporter(new File(xmlResultPath), true));
         //forever loop we have
         while (true) {
             tryToExecuteATest(me);
@@ -190,7 +197,8 @@ public class TestClassExecutionThread extends Thread {
             blockingInfo.setBlockerInUse(true); //now locks the blocker it in the map
             blockingInfo.setActualClass(o.getClassName());
             blockingInfo.setOverload(blockingInfo.getOverload() + 1);
-            additionalInfo = ", with Blocker: " + blockerString + " Class:" + blockingInfo.getActualClass() + " Overload:" + blockingInfo.getOverload();
+            additionalInfo = ", with Blocker: " + blockerString + " Class:" + blockingInfo.getActualClass() + " Overload:"
+                    + blockingInfo.getOverload();
         }
         o.lock();
         return "got Class to execute:" + o.getID() + additionalInfo;

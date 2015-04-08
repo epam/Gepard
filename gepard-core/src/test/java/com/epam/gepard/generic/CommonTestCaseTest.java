@@ -5,7 +5,6 @@ import static org.mockito.BDDMockito.given;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,25 +37,23 @@ public class CommonTestCaseTest {
     @Mock
     private FileUtil fileUtil;
 
+    private Environment environment;
+
     private CommonTestCase underTest;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        genericListTestSuite = new GenericListTestSuite("src/test/resources/testlist.txt", filter);
+        environment = new Environment();
+        genericListTestSuite = new GenericListTestSuite("src/test/resources/testlist.txt", filter, environment);
         underTest = new CommonTestCaseImplementationForTesting();
         underTest.setMainTestLogger(mainTestLogger);
-    }
-
-    @After
-    public void tearDown() {
-        Environment.getProperties().clear();
     }
 
     @Test
     public void testSuiteHelperWithNonDataDrivenTestClassShouldCreateTest() {
         //GIVEN
-        Environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
+        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
         Class<?> testClass = TestMock.class;
         String scriptID = "id";
         String scriptName = "name";
@@ -64,7 +61,7 @@ public class CommonTestCaseTest {
         Map<String, TestClassExecutionData> testClassMap = createTestClassMap();
         Whitebox.setInternalState(genericListTestSuite, "testClassMap", testClassMap);
         //WHEN
-        GenericTestSuite result = (GenericTestSuite) CommonTestCase.suiteHelper(testClass, scriptID, scriptName, parameterNames);
+        GenericTestSuite result = (GenericTestSuite) CommonTestCase.suiteHelper(testClass, scriptID, scriptName, parameterNames, environment);
         //THEN
         Assert.assertEquals("name", result.getTestName());
         Assert.assertEquals("id", result.getTestID());
@@ -72,7 +69,7 @@ public class CommonTestCaseTest {
 
     private Map<String, TestClassExecutionData> createTestClassMap() {
         Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<>();
-        TestClassExecutionData classData = new TestClassExecutionData("id");
+        TestClassExecutionData classData = new TestClassExecutionData("id", environment);
         testClassMap.put("com.epam.gepard.generic.TestMock/0", classData);
         return testClassMap;
     }
@@ -123,10 +120,10 @@ public class CommonTestCaseTest {
     @Test
     public void testSetUpLogger() {
         //GIVEN
-        Environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
-        Environment.setProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH, "ABC123");
-        Environment.setProperty(Environment.GEPARD_HTML_RESULT_PATH, "DEF456");
-        TestClassExecutionData classData = new TestClassExecutionData("id");
+        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
+        environment.setProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH, "ABC123");
+        environment.setProperty(Environment.GEPARD_HTML_RESULT_PATH, "DEF456");
+        TestClassExecutionData classData = new TestClassExecutionData("id", environment);
         Whitebox.setInternalState(underTest, "classData", classData);
         LogFileWriterFactory logFileWriterFactory = Mockito.mock(LogFileWriterFactory.class);
         Whitebox.setInternalState(underTest, "logFileWriterFactory", logFileWriterFactory);
@@ -135,7 +132,7 @@ public class CommonTestCaseTest {
         underTest.setUpLogger();
         //THEN
         Mockito.verify(logFileWriterFactory).createCustomWriter("ABC123/temp_generictestcase.html",
-                "DEF456/com/epam/gepard/generic/CommonTestCaseImplementationForTesting0//testPassed0.html");
+                "DEF456/com/epam/gepard/generic/CommonTestCaseImplementationForTesting0//testPassed0.html", environment);
     }
 
     @Test
@@ -169,8 +166,8 @@ public class CommonTestCaseTest {
     public void testGetTestParametersWithDataDrivenTestShouldReturnTestParameters() {
         //GIVEN
         String[] expected = new String[]{"1", "2"};
-        Environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
-        TestClassExecutionData classData = new TestClassExecutionData("id");
+        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
+        TestClassExecutionData classData = new TestClassExecutionData("id", environment);
         DataDrivenParameters drivenData = Mockito.mock(DataDrivenParameters.class);
         given(drivenData.getParameters()).willReturn(expected);
         classData.setDrivenData(drivenData);
@@ -182,8 +179,8 @@ public class CommonTestCaseTest {
     }
 
     private void givenBasicTestClassExecutionData() {
-        Environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
-        TestClassExecutionData classData = new TestClassExecutionData("id");
+        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
+        TestClassExecutionData classData = new TestClassExecutionData("id", environment);
         Whitebox.setInternalState(underTest, "classData", classData);
     }
 

@@ -30,14 +30,12 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.Whitebox;
 
-import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.threads.handler.KillCommandHandler;
 import com.epam.gepard.common.threads.handler.RemoteControlHandler;
 import com.epam.gepard.common.threads.helper.ServerSocketFactory;
@@ -68,15 +66,9 @@ public class RemoteControlHandlerThreadTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        Environment.setProperty(Environment.GEPARD_REMOTE_PORT, "1");
-        underTest = new RemoteControlHandlerThread(handler, gepardServerSocketFactory);
+        underTest = new RemoteControlHandlerThread(handler, gepardServerSocketFactory, 1);
         underTest.setSleepTime(1);
         Whitebox.setInternalState(underTest, "killCommandHandler", killCommandHandler);
-    }
-
-    @After
-    public void tearDown() {
-        Environment.getProperties().clear();
     }
 
     @Test

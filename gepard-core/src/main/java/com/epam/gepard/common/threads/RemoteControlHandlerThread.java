@@ -29,7 +29,6 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.GepardConstants;
 import com.epam.gepard.common.threads.handler.KillCommandHandler;
 import com.epam.gepard.common.threads.handler.RemoteControlHandler;
@@ -59,17 +58,20 @@ public class RemoteControlHandlerThread extends Thread {
     private KillCommandHandler killCommandHandler;
     private boolean running;
     private long sleepTime = GepardConstants.ONE_SECOND_LENGTH.getConstant();
+    private final int gepardPort;
 
     /**
      * Constructor of the thread.
      * @param handler should be the AllTestRunner (main Gepard) class.
      * @param serverSocketFactory the factory for creating the {@link ServerSocket}
+     * @param gepardPort the port the server socket will be bound to
      */
-    public RemoteControlHandlerThread(final RemoteControlHandler handler, final ServerSocketFactory serverSocketFactory) {
+    public RemoteControlHandlerThread(final RemoteControlHandler handler, final ServerSocketFactory serverSocketFactory, final int gepardPort) {
         super();
         this.handler = handler;
         this.gepardServerSocketFactory = serverSocketFactory;
         this.killCommandHandler = new KillCommandHandler();
+        this.gepardPort = gepardPort;
     }
 
     @Override
@@ -100,7 +102,6 @@ public class RemoteControlHandlerThread extends Thread {
 
     private boolean tryInitiateService() {
         boolean result = false;
-        int gepardPort = Integer.parseInt(Environment.getProperty(Environment.GEPARD_REMOTE_PORT));
         try {
             gepardServerSocket = gepardServerSocketFactory.create(gepardPort);
             LOGGER.debug("Gepard Remote Control Service is started on port: " + gepardPort);

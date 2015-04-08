@@ -28,28 +28,31 @@ import org.junit.Test;
 
 import com.epam.gepard.common.Environment;
 
-
 /**
  * Unit tests for {@link LogFolderCreator}.
  * @author Tibor_Kovacs
  */
 public class LogFolderCreatorTest {
 
+    private Environment environment;
+
     private LogFolderCreator underTest;
 
     @Before
     public void setup() {
-        underTest = new LogFolderCreator();
+        environment = new Environment();
+        underTest = new LogFolderCreator(environment);
     }
 
     @Test
     public void testPrepareOutputFolders() {
         //GIVEN
-        String[] resultPaths = new String[]{"build/bla/xml", "build/bla/csv", "build/bla/html"};
-        Environment.resetProperty(Environment.GEPARD_RESULT_PATH, "build/bla");
-        Environment.resetProperty(Environment.GEPARD_XML_RESULT_PATH, resultPaths[0]);
-        Environment.resetProperty(Environment.GEPARD_CSV_RESULT_PATH, resultPaths[1]);
-        Environment.resetProperty(Environment.GEPARD_HTML_RESULT_PATH, resultPaths[2]);
+        String[] resultPaths = new String[]{"build/tmp/logFolderCreatorTest/xml", "build/tmp/logFolderCreatorTest/csv",
+            "build/tmp/logFolderCreatorTest/html"};
+        environment.setProperty(Environment.GEPARD_RESULT_PATH, "build/tmp/logFolderCreatorTest");
+        environment.setProperty(Environment.GEPARD_XML_RESULT_PATH, resultPaths[0]);
+        environment.setProperty(Environment.GEPARD_CSV_RESULT_PATH, resultPaths[1]);
+        environment.setProperty(Environment.GEPARD_HTML_RESULT_PATH, resultPaths[2]);
         //WHEN
         underTest.prepareOutputFolders();
         //THEN

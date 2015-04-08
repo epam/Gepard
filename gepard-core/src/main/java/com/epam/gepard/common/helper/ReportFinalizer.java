@@ -34,6 +34,16 @@ import com.epam.gepard.helper.AllTestResults;
  */
 public class ReportFinalizer {
 
+    private Environment environment;
+
+    /**
+     * Constructs a new instance of {@link ReportFinalizer}.
+     * @param environment holds the properties of the application
+     */
+    public ReportFinalizer(final Environment environment) {
+        this.environment = environment;
+    }
+
     /**
      * Sets all necessary information into the information holder object.
      * @param gSuite is the current test suite.
@@ -66,14 +76,14 @@ public class ReportFinalizer {
             applicationVersion = "undetected";
         }
         props.setProperty("Version", applicationVersion);
-        String tsid = Environment.getProperty(Environment.TEST_SYSTEM_ID, "Unknown");
+        String tsid = environment.getProperty(Environment.TEST_SYSTEM_ID, "Unknown");
         props.setProperty("TSID", tsid);
         props.setProperty("TCSrunned", String.valueOf(GenericListTestSuite.getTestClassCount()));
         props.setProperty("TCUsed", Integer.toString(gSuite.getUsedTc()));
         props.setProperty("TCNumber", Integer.toString(gSuite.getNumberTc()));
-        String resultUrl = Environment.getProperty(Environment.GEPARD_PUBLIC_PATH) + "/" + Environment.getProperty(Environment.GEPARD_PUBLIC_RESULT);
+        String resultUrl = environment.getProperty(Environment.GEPARD_PUBLIC_PATH) + "/" + environment.getProperty(Environment.GEPARD_PUBLIC_RESULT);
         String resultUrlHtml = "Test Results will be available <a href=" + resultUrl + ">here.</a><br/>";
-        if (Environment.getBooleanProperty(Environment.GEPARD_PUBLIC_ENABLED)) {
+        if (environment.getBooleanProperty(Environment.GEPARD_PUBLIC_ENABLED)) {
             props.setProperty("ResultURLHTML", resultUrlHtml);
         } else {
             props.setProperty("ResultURLHTML", "");

@@ -105,7 +105,7 @@ public abstract class SoapUITestCase extends CommonTestCase {
      */
     public SoapUITestCase() {
         super("dummy-name");
-        soapUILogPath = Environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + this.getClass().getName().replace('.', '/')
+        soapUILogPath = getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + this.getClass().getName().replace('.', '/')
                 + CommonTestCase.getActualDataRow() + "/";
         logFileName = soapUILogPath + "soapui.log";
         logFile = new File(logFileName);
@@ -168,8 +168,9 @@ public abstract class SoapUITestCase extends CommonTestCase {
         if (logFile.exists() && logFile.length() > 0) {
             //now we ensured that SoapUI log is available
             String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
-            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + "See original " + logName + "." + addStr + "<div id=\"div_"
-                    + divStep + "\" style=\"display:none\"><br>\n");
+            getMainTestLogger().insertText(
+                    "<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + "See original " + logName + "." + addStr + "<div id=\"div_" + divStep
+                            + "\" style=\"display:none\"><br>\n");
             try {
                 LineNumberReader listreader = new LineNumberReader(new InputStreamReader(new FileInputStream(logFileName), UTF8));
                 String line; //to hold the line actually loaded
@@ -308,9 +309,9 @@ public abstract class SoapUITestCase extends CommonTestCase {
         int step = getStep() + 1;
         if (getMainTestLogger() != null) {
             String addStr = " <small>[<a href=\"javascript:showhide('div_" + step + "');\">details</a>]</small>";
-            getMainTestLogger().insertText(String.format(
-                    "<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">%s%s<div id=\"div_%d\" style=\"display:none\"><br>%s</div></td></tr>", text, addStr,
-                    step, description));
+            getMainTestLogger().insertText(
+                    String.format("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">%s%s<div id=\"div_%d\" style=\"display:none\"><br>%s</div></td></tr>",
+                            text, addStr, step, description));
         }
         increaseStep();
     }

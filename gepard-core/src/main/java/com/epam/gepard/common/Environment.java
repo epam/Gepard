@@ -44,7 +44,7 @@ import com.epam.gepard.inspector.TestScript;
  * Also supports setting a property, but it is only stored in the memory (ie. the property file
  * will not reflect the changes. Useful for properties which are only needed in the lifetime of this class).
  *
- * @author dora.gal, Tamas Godan
+ * @author dora.gal, Tamas Godan, Adam_Csaba_Kiraly
  */
 public final class Environment {
 
@@ -81,13 +81,10 @@ public final class Environment {
     public static final String APPLICATION_UNDER_TEST_VERSION = "application-under-test.version";
     public static final String TEST_SYSTEM_ID = "TSID";
 
-    private static final Properties PROPERTIES = new AntProperties();
     private static final String DELIMITER = ",";
     private static TestFactory factory;
     private static TestScript script;
-
-    private Environment() {
-    }
+    private final Properties properties = new AntProperties();
 
     /**
      * This method sets up the global variables needed for the application.
@@ -97,7 +94,7 @@ public final class Environment {
      * @param propFiles - The name of the property file with the whole path.
      * @return with true if property file was loaded properly, otherwise with false
      */
-    public static boolean setUp(final String propFiles) {
+    public boolean setUp(final String propFiles) {
         boolean isLoadedProperly = true;
         if ("".equals(propFiles.trim())) {
             AllTestRunner.CONSOLE_LOG.info("No property files has been loaded into Environment class.");
@@ -109,7 +106,7 @@ public final class Environment {
                 propFile = strParts[i];
                 try {
                     InputStream inp = new FileInputStream(propFile);
-                    PROPERTIES.load(inp);
+                    properties.load(inp);
                     inp.close();
                 } catch (IOException e) {
                     AllTestRunner.CONSOLE_LOG.info("Cannot load property file: " + propFile);
@@ -125,8 +122,8 @@ public final class Environment {
      *
      * @return a Property object that holds the properties.
      */
-    public static Properties getProperties() {
-        return PROPERTIES;
+    public Properties getProperties() {
+        return properties;
     }
 
     /**
@@ -135,8 +132,8 @@ public final class Environment {
      * @param name - refers to the name of property needed to return.
      * @return the value of the property represented as a String.
      */
-    public static String getProperty(final String name) {
-        return PROPERTIES.getProperty(name);
+    public String getProperty(final String name) {
+        return properties.getProperty(name);
     }
 
     /**
@@ -145,9 +142,9 @@ public final class Environment {
      * @param name is the name of the boolean property we are interested in.
      * @return with the value of the boolean property.
      */
-    public static boolean getBooleanProperty(final String name) {
+    public boolean getBooleanProperty(final String name) {
         boolean result = false;
-        String b = PROPERTIES.getProperty(name);
+        String b = properties.getProperty(name);
         if (b != null) {
             result = b.startsWith("true");
         }
@@ -162,8 +159,8 @@ public final class Environment {
      *             this environment.
      * @return the value of the property represented as a String.
      */
-    public static String getProperty(final String name, final String def) {
-        return PROPERTIES.getProperty(name, def);
+    public String getProperty(final String name, final String def) {
+        return properties.getProperty(name, def);
     }
 
     /**
@@ -172,8 +169,8 @@ public final class Environment {
      * @param name  Name of the property
      * @param value Value of the property
      */
-    public static void setProperty(final String name, final String value) {
-        PROPERTIES.setProperty(name, value);
+    public void setProperty(final String name, final String value) {
+        properties.setProperty(name, value);
     }
 
     /**
@@ -181,11 +178,11 @@ public final class Environment {
      * @param name  Name of the property
      * @param value Value of the property
      */
-    public static void resetProperty(final String name, final String value) {
-        if (PROPERTIES.getProperty(name) != null) {
-            PROPERTIES.remove(name);
+    public void resetProperty(final String name, final String value) {
+        if (properties.getProperty(name) != null) {
+            properties.remove(name);
         }
-        PROPERTIES.setProperty(name, value);
+        properties.setProperty(name, value);
     }
 
     public static void setFactory(final TestFactory factory) {

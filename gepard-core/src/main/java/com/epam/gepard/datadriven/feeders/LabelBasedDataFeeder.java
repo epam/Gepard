@@ -1,4 +1,5 @@
 package com.epam.gepard.datadriven.feeders;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -18,17 +19,6 @@ package com.epam.gepard.datadriven.feeders;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.common.Environment;
-import com.epam.gepard.datadriven.DataDrivenParameterArray;
-import com.epam.gepard.datadriven.DataFeederLoader;
-import com.epam.gepard.datadriven.feeders.labelbasedfeederhelper.LabelBasedFeederDetails;
-import com.epam.gepard.datadriven.feeders.labelbasedfeederhelper.LabelBasedFeederFileLoader;
-import com.epam.gepard.datadriven.feeders.labelbasedfeederhelper.LabelBasedFeederRelation;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +26,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.epam.gepard.common.Environment;
+import com.epam.gepard.datadriven.DataDrivenParameterArray;
+import com.epam.gepard.datadriven.DataFeederLoader;
+import com.epam.gepard.datadriven.feeders.labelbasedfeederhelper.LabelBasedFeederDetails;
+import com.epam.gepard.datadriven.feeders.labelbasedfeederhelper.LabelBasedFeederFileLoader;
+import com.epam.gepard.datadriven.feeders.labelbasedfeederhelper.LabelBasedFeederRelation;
 
 /**
  * The Class LabelBasedDataFeeder.
@@ -103,14 +105,16 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
 
     private String testClassName;
 
-    public void setTestClassName(String testClassName) {
+    private Environment environment;
+
+    public void setTestClassName(final String testClassName) {
         this.testClassName = testClassName;
     }
 
     @Override
-    public int init(final String testClassName, final String parameter) {
+    public int init(final String testClassName, final String parameter, final Environment environment) {
         int result = 0;
-
+        this.environment = environment;
         try {
             setTestClassName(testClassName); //reserve it for future use
             // load feeders
@@ -150,7 +154,8 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
         String feederDescriptor = (parameter.lastIndexOf("[") > parameter.indexOf("]")) ? parameter.replaceFirst("\\[.*?\\]", "") : parameter;
         feederRelations = Arrays.asList(feederDescriptor.split("\\[.*?\\]"));
         if (feeders.size() != feederRelations.size() + 1) {
-            String errorMessage = "Error occurred during processing FeederDescriptor: " + parameter
+            String errorMessage = "Error occurred during processing FeederDescriptor: "
+                    + parameter
                     + "\nFeeder relation number must equal to Feeders - 1."
                     + "\nFormat: [FEEDER1:NUMBER_OF_ROWS1:LABEL1:TestParameter.LABEL_TYPE1]+[FEEDER2:NUMBER_OF_ROWS2:LABEL2:TestParameter.LABEL_TYPE2]x[...]";
             throw new DataFeederException(errorMessage, ERROR_FEEDER_RELATION_INCORRECT);
@@ -161,7 +166,8 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
             for (int i = 1; i < feeders.size(); i++) {
                 LabelBasedFeederRelation relation = LabelBasedFeederRelation.getByValue(feederRelations.get(i - 1));
                 if (relation == null) {
-                    throw new DataFeederException("Error occurred during processing FeederDescriptor. Possible feeder relations are: +, x", ERROR_FEEDER_RELATION_EXCEPTION);
+                    throw new DataFeederException("Error occurred during processing FeederDescriptor. Possible feeder relations are: +, x",
+                            ERROR_FEEDER_RELATION_EXCEPTION);
                 }
                 feeders.get(i).setFeederRelation(relation);
             }
@@ -179,16 +185,18 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
         if (feederDescriptors.length == 0) {
             //this was "].[" most probably
             throw new DataFeederException("Error occurred during processing parameter: " + parameter
-                    + ", seems default feeder is duplicated.\nExpected format: [FEEDER1:NUMBER_OF_ROWS1:LABEL1:TestParameter.LABEL_TYPE1]...", ERROR_FEEDER_DUPLICATED);
+                    + ", seems default feeder is duplicated.\nExpected format: [FEEDER1:NUMBER_OF_ROWS1:LABEL1:TestParameter.LABEL_TYPE1]...",
+                    ERROR_FEEDER_DUPLICATED);
         }
         return feederDescriptors;
     }
 
-    private void loadFeeders(String[] feederDescriptors) throws DataFeederException {
+    private void loadFeeders(final String[] feederDescriptors) throws DataFeederException {
         for (String fd : feederDescriptors) {
             LabelBasedFeederDetails feederDetails = new LabelBasedFeederDetails(testClassName.replaceAll("\\.", "/"));
             String[] tokens = fd.split(":");
-            if (tokens.length > FEEDER_FILE && tokens[FEEDER_FILE] != null && !"".equals(tokens[FEEDER_FILE]) && !"DEFAULT".equals(tokens[FEEDER_FILE])) {
+            if (tokens.length > FEEDER_FILE && tokens[FEEDER_FILE] != null && !"".equals(tokens[FEEDER_FILE])
+                    && !"DEFAULT".equals(tokens[FEEDER_FILE])) {
                 feederDetails.setFeederFile(tokens[FEEDER_FILE]);
             }
             if (tokens.length > FEEDER_ROW_NUMBER && tokens[FEEDER_ROW_NUMBER] != null) { // rowNumber
@@ -223,7 +231,7 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
     }
 
     @Override
-    public int calculateRuns(String className, int inputRows) {
+    public int calculateRuns(final String className, final int inputRows) {
         int result = 0;
         for (LabelBasedFeederDetails feeder : feeders) {
             result = feeder.getFeederRelation().calculateRuns(result, feeder.getParameterList().size());
@@ -232,7 +240,7 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
     }
 
     @Override
-    public DataDrivenParameterArray calculateParameterArray(String className, DataDrivenParameterArray inputParameterArray) {
+    public DataDrivenParameterArray calculateParameterArray(final String className, final DataDrivenParameterArray inputParameterArray) {
         // Mix feeders into one parameter table
         DataDrivenParameterArray result = new DataDrivenParameterArray();
         List<String> columns = new ArrayList<>();
@@ -281,7 +289,7 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
         return result;
     }
 
-    private List<String> selectFromArrayByIndex(List<Integer> indexes, String[] array) {
+    private List<String> selectFromArrayByIndex(final List<Integer> indexes, final String[] array) {
         List<String> result = new ArrayList<>();
         for (Integer i : indexes) {
             if (array.length > i && i >= 0) {
@@ -291,7 +299,7 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
         return result;
     }
 
-    private String[] removeFromArrayByIndex(List<Integer> indexes, String[] array) {
+    private String[] removeFromArrayByIndex(final List<Integer> indexes, final String[] array) {
         String[] result = array;
         Collections.sort(indexes);
         int increment = 0;
@@ -361,7 +369,7 @@ public class LabelBasedDataFeeder implements GepardDataFeeder {
             } else if (this.getClass().getClassLoader().getResourceAsStream(filePath.concat(".csv")) != null) {
                 filePath = filePath.concat(".csv");
             } else {
-                String propertyBasedFeederFile = Environment.getProperty(feederDetails.getFeederFile());
+                String propertyBasedFeederFile = environment.getProperty(feederDetails.getFeederFile());
                 filePath = propertyBasedFeederFile;
                 if (propertyBasedFeederFile == null) {
                     //property is missing

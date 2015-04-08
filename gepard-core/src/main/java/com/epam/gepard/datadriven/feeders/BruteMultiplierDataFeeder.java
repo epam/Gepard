@@ -1,4 +1,5 @@
 package com.epam.gepard.datadriven.feeders;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -18,6 +19,7 @@ package com.epam.gepard.datadriven.feeders;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import com.epam.gepard.common.Environment;
 import com.epam.gepard.datadriven.DataDrivenParameterArray;
 
 /**
@@ -31,7 +33,7 @@ public class BruteMultiplierDataFeeder implements GepardDataFeeder {
     private int multiplier;
 
     @Override
-    public int init(String testClassName, String parameter) {
+    public int init(final String testClassName, final String parameter, final Environment environment) {
         int returnValue = 0;
         try {
             multiplier = Integer.valueOf(parameter);
@@ -46,7 +48,7 @@ public class BruteMultiplierDataFeeder implements GepardDataFeeder {
     }
 
     @Override
-    public int calculateRuns(String className, int inputRows) {
+    public int calculateRuns(final String className, final int inputRows) {
         return inputRows * multiplier; // this is a simple multiplier class
     }
 
@@ -54,7 +56,7 @@ public class BruteMultiplierDataFeeder implements GepardDataFeeder {
      * This Data Feeder just multiplies the data as many times as requested in the parameter.
      */
     @Override
-    public DataDrivenParameterArray calculateParameterArray(String className, DataDrivenParameterArray inputParameterArray) {
+    public DataDrivenParameterArray calculateParameterArray(final String className, final DataDrivenParameterArray inputParameterArray) {
         //need to have input array
         DataDrivenParameterArray transferArray = inputParameterArray; //need to change it, as we cannot touch the input array
         if (transferArray == null) { // we do not have, so then we have to simulate the data driven approach

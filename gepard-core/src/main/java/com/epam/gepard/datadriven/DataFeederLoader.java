@@ -41,6 +41,7 @@ public class DataFeederLoader {
     private String nextFeederDescriptor; //default
     private DataFeederLoader nextDataFeederLoader; //default
     private DataDrivenParameterArray parameterArray; //only the main loader class has this value
+    private Environment environment;
 
     /**
      * Data Feeder Loader class.
@@ -55,8 +56,10 @@ public class DataFeederLoader {
      *
      * @param className is the name of the class.
      * @param feederDescriptor is the feeder descriptor string.
+     * @param environment holds the properties for the application.
      */
-    public DataFeederLoader(final String className, final String feederDescriptor) {
+    public DataFeederLoader(final String className, final String feederDescriptor, final Environment environment) {
+        this.environment = environment;
         if (feederDescriptor.length() == 0) {
             return; //nothing to do
         }
@@ -79,12 +82,12 @@ public class DataFeederLoader {
         //try to load the loader class with the given parameter
         feeder = loadDataLoaderClass(className, feederClassName); //if load fails, Gepard exits
         // CALL THE FEEDER INIT METHOD
-        int initValue = feeder.init(className, feederClassParameter);
+        int initValue = feeder.init(className, feederClassParameter, environment);
         checkFeederClassInitialization(className, initValue);
         //we are ready, now load the next feeder in the feeder chain, if we have the next feeder descriptor available
         if (nextFeederDescriptor != null) {
             //load the next part of the chain
-            nextDataFeederLoader = new DataFeederLoader(className, nextFeederDescriptor);
+            nextDataFeederLoader = new DataFeederLoader(className, nextFeederDescriptor, environment);
         }
     }
 
@@ -100,13 +103,13 @@ public class DataFeederLoader {
         int nextFeederDescriptorIndex = feederdescriptor.indexOf("@");
         if ((nextParameterIndex == 0) && (nextFeederDescriptorIndex > 0)) {
             // :param@feederdescriptor
-            feederClassName = Environment.getProperty(Environment.GEPARD_DATA_DRIVEN_FEEDER_CLASS);
+            feederClassName = environment.getProperty(Environment.GEPARD_DATA_DRIVEN_FEEDER_CLASS);
             feederClassParameter = feederdescriptor.substring(nextParameterIndex + 1, nextFeederDescriptorIndex);
             nextFeederDescriptor = feederdescriptor.substring(nextFeederDescriptorIndex + 1);
         } else {
             if (nextParameterIndex == 0) {
                 // :param
-                feederClassName = Environment.getProperty(Environment.GEPARD_DATA_DRIVEN_FEEDER_CLASS);
+                feederClassName = environment.getProperty(Environment.GEPARD_DATA_DRIVEN_FEEDER_CLASS);
                 feederClassParameter = feederdescriptor.substring(nextParameterIndex + 1);
                 nextFeederDescriptor = null;
             } else {

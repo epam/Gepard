@@ -39,9 +39,11 @@ public class SimpleMultiplierDataFeeder implements GepardDataFeeder {
 
     private int multiplier;
     private SimpleMultiplierDataFeederFileLoader arrayLoader;
+    private Environment environment;
 
     @Override
-    public int init(final String testClassName, final String parameter) {
+    public int init(final String testClassName, final String parameter, final Environment environment) {
+        this.environment = environment;
         int returnValue = 0;
         try {
             multiplier = Integer.valueOf(parameter);
@@ -93,7 +95,7 @@ public class SimpleMultiplierDataFeeder implements GepardDataFeeder {
     private DataDrivenParameterArray loadTestParameters(final String className, final FileProvider fileProvider,
             final SimpleMultiplierDataFeederFileLoader arrayLoader) throws IOException, DataFeederException {
         DataDrivenParameterArray myArray = null;
-        String configFilenameBase = Environment.getProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE).concat("/").concat(className.replace(".", "/"));
+        String configFilenameBase = environment.getProperty(Environment.GEPARD_DATA_DRIVEN_PATH_BASE).concat("/").concat(className.replace(".", "/"));
         ConfigFileInfo fileInfo = new ConfigFileInfo(configFilenameBase);
         //now load the file and fill my data array
         if (fileProvider.isFileAvailable(fileInfo.getConfigFilename())) { //must exist
@@ -177,7 +179,7 @@ public class SimpleMultiplierDataFeeder implements GepardDataFeeder {
                 isCSV = true;
             }
             //select the separator char
-            splitter = Environment.getProperty(Environment.GEPARD_DATA_DRIVEN_COLUMN_SPLITTER);
+            splitter = environment.getProperty(Environment.GEPARD_DATA_DRIVEN_COLUMN_SPLITTER);
             if (isCSV) {
                 splitter = ",";
             }

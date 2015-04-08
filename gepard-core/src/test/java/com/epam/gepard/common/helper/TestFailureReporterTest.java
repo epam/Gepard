@@ -35,11 +35,14 @@ import com.epam.gepard.exception.ComplexGepardException;
  */
 public class TestFailureReporterTest {
 
+    private Environment environment;
+
     private TestFailureReporter underTest;
 
     @Before
     public void setup() {
-        underTest = new TestFailureReporter();
+        environment = new Environment();
+        underTest = new TestFailureReporter(environment);
     }
 
     @Test
@@ -47,8 +50,8 @@ public class TestFailureReporterTest {
         //GIVEN
         String folder = "build";
         String filePath = "GeneratedFailure.txt";
-        Environment.resetProperty(Environment.GEPARD_TESTLIST_FAILURE_PATH, folder);
-        Environment.resetProperty(Environment.GEPARD_TESTLIST_FAILURE_FILE, filePath);
+        environment.setProperty(Environment.GEPARD_TESTLIST_FAILURE_PATH, folder);
+        environment.setProperty(Environment.GEPARD_TESTLIST_FAILURE_FILE, filePath);
         //WHEN
         underTest.generateTestlistFailure();
         //THEN
@@ -65,8 +68,8 @@ public class TestFailureReporterTest {
         //GIVEN
         String folder = "build";
         String filePath = "";
-        Environment.resetProperty(Environment.GEPARD_TESTLIST_FAILURE_PATH, folder);
-        Environment.resetProperty(Environment.GEPARD_TESTLIST_FAILURE_FILE, filePath);
+        environment.setProperty(Environment.GEPARD_TESTLIST_FAILURE_PATH, folder);
+        environment.setProperty(Environment.GEPARD_TESTLIST_FAILURE_FILE, filePath);
         //WHEN
         underTest.generateTestlistFailure();
         //THEN expected EXCEPTION
