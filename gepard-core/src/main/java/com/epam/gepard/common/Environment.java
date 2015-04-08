@@ -44,7 +44,7 @@ import com.epam.gepard.inspector.TestScript;
  * Also supports setting a property, but it is only stored in the memory (ie. the property file
  * will not reflect the changes. Useful for properties which are only needed in the lifetime of this class).
  *
- * @author dora.gal, Tamas Godan
+ * @author dora.gal, Tamas Godan, Adam_Csaba_Kiraly
  */
 public final class Environment {
 

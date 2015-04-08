@@ -68,7 +68,7 @@ import com.epam.gepard.util.ExitCode;
  * <p>Copyright: Copyright (c) EPAM Systems 2002-2015</p>
  * <p>Company: EPAM Systems </p>
  *
- * @author Zsolt Kiss Gere, Laszlo Toth, Tamas Godan, Tamas Kohegyi, Tibor Kovacs
+ * @author Zsolt Kiss Gere, Laszlo Toth, Tamas Godan, Tamas Kohegyi, Tibor Kovacs, Adam_Csaba_Kiraly
  */
 public class AllTestRunner extends TestRunner {
 
@@ -193,7 +193,7 @@ public class AllTestRunner extends TestRunner {
         AllTestRunner.gepardTimeout.start(); //start remote control
     }
 
-    private static void initProperties(final Environment environment, final String propFileList) {
+    private void initProperties(final Environment environment, final String propFileList) {
         if (!environment.setUp(propFileList)) {
             exitFromGepard(ExitCode.EXIT_CODE_WRONG_PROPERTY_FILE);
         }
