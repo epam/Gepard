@@ -115,7 +115,8 @@ public final class XmlRunReporter extends RunListener {
             // Write the XML log into the log-dir or if it not specified use the current directory
             File dir = logPath != null ? logPath : new File(System.getProperty("user.dir"));
             String prefix = handleIgnore ? "ITEST-" : "TEST-";
-            FileUtil.writeToFile(doc, new File(dir, prefix + calcName(tsName).replace(' ', '_') + "_" + SUITE_INDEX.getAndIncrement() + ".xml"));
+            FileUtil fileUtil = new FileUtil();
+            fileUtil.writeToFile(doc, new File(dir, prefix + calcName(tsName).replace(' ', '_') + "_" + SUITE_INDEX.getAndIncrement() + ".xml"));
             flushed = true;
         }
     }

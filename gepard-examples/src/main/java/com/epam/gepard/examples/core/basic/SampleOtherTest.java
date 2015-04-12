@@ -74,7 +74,7 @@ public class SampleOtherTest extends OtherTestCase {
     }
 
     public void testTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In testprj.properties, the timeout was set to 10 secs for this class.");
+        logStep("Test the build in timeout. In testlist.txt, the timeout was set to 1 secs for this class.");
         Thread.sleep(30000); //30 sec
         fail("THIS IS BAD NO TIMEOUT OCCURRED!");
     }

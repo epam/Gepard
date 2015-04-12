@@ -51,3 +51,6 @@ com.epam.gepard.examples.android.SampleAndroidTest
 
 #Sample SoapUI test
 #com.epam.gepard.examples.soapui.SoapUITestBase
+
+#Sample Selenium Tests
+com.epam.gepard.examples.selenium.BasicSeleniumTest

@@ -27,6 +27,7 @@ dependencies {
     compile project(':gepard-gherkin-jbehave')
     compile project(':gepard-gherkin-cucumber')
     compile project(':gepard-android')
+    compile project(':gepard-selenium')
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
     compile ('com.smartbear.soapui:soapui:5.1.2') {
@@ -38,7 +39,7 @@ dependencies {
 
 //noinspection GroovyUnusedAssignment
 mainClassName = "com.epam.gepard.AllTestRunner"
-def appArgs = ["$buildDir/resources/main/default.properties,$buildDir/resources/main/gepard.properties"]
+def appArgs = ["$buildDir/resources/main/default.properties,$buildDir/resources/main/selenium.properties,$buildDir/resources/main/environment.properties,$buildDir/resources/main/gepard.properties"]
 
 //noinspection GroovyAssignabilityCheck
 run {

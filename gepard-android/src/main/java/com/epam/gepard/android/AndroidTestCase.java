@@ -62,39 +62,6 @@ public abstract class AndroidTestCase extends CommonTestCase {
     }
 
     /**
-     * Write an event message to the log.
-     *
-     * @param text Event message
-     */
-    public void logEvent(String text) {
-        if (!text.startsWith("<font")) {
-            systemOutPrintLn(text);
-        }
-        if (getMainTestLogger() != null) {
-            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
-        }
-    }
-
-    /**
-     * Write an event message to the log.
-     *
-     * @param text        Event message
-     * @param description Event description/info
-     */
-    private void logResult(String text, String description) {
-        int step = getStep() + 1;
-        if (getMainTestLogger() != null) {
-            String addStr = " <small>[<a href=\"javascript:showhide('div_" + step + "');\">details</a>]</small>";
-            getMainTestLogger().insertText(
-                    "<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">"
-                            + text + addStr + "<div id=\"div_" + step + "\" style=\"display:none\"><br>\n"
-                            + description + "</div></td></tr>\n");
-        }
-
-        increaseStep();
-    }
-
-    /**
      * We override the run method in order to support HTML logs.
      *
      * @param result Test result

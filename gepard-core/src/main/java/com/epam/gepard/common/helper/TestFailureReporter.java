@@ -87,7 +87,8 @@ public class TestFailureReporter {
         String fileName = environment.getProperty(Environment.GEPARD_TESTLIST_FAILURE_FILE);
         try {
             File f = new File(path + "/" + fileName);
-            FileUtil.writeToFile(content, f);
+            FileUtil fileUtil = new FileUtil();
+            fileUtil.writeToFile(content, f);
         } catch (Exception e) {
             throw new ComplexGepardException("Error happened during the creation of list of failed test cases.", e, false, 0);
         }

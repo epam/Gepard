@@ -21,6 +21,8 @@ package com.epam.gepard.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is used to hold general purpose help routines.
@@ -107,6 +109,27 @@ public class Util {
      */
     public String alertText(final String text) {
         return String.format("<font color=\"#AA0000\"><b>%s</b></font>", text);
+    }
+
+    /**
+     * Parse the matching data (1st group in regexp) from the text.
+     *
+     * @param text containing the data
+     * @param regexp to lookup
+     * @return with the matching data
+     */
+    public String parseData(String text, String regexp) {
+        String retval = null;
+
+        if (text != null) {
+            Pattern pattern = Pattern.compile(regexp);
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                retval = matcher.group(1);
+            }
+        }
+
+        return retval;
     }
 
 }

@@ -60,15 +60,17 @@ public class LogFolderCreator {
     }
 
     private void deleteFolder(final String filePath) {
-        File logdir = new File(filePath);
-        FileUtil.deleteDir(logdir); //it may happen that delete don't work
+        File logDir = new File(filePath);
+        FileUtil fileUtil = new FileUtil();
+        fileUtil.deleteDir(logDir); //it may happen that delete don't work
     }
 
     private void createFolder(final String filePath, final String errorMessage) {
-        File logdir = new File(filePath);
-        logdir.mkdirs();
-        if (!logdir.exists()) {
-            CONSOLE_LOG.info(errorMessage + logdir);
+        File logDir = new File(filePath);
+        //noinspection ResultOfMethodCallIgnored
+        logDir.mkdirs();
+        if (!logDir.exists()) {
+            CONSOLE_LOG.info(errorMessage + logDir);
             throw new ShutDownException(ExitCode.EXIT_CODE_OUTPUT_FOLDER_HANDLING_ERROR);
         }
     }

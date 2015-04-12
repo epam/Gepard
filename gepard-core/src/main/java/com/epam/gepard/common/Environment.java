@@ -84,6 +84,7 @@ public final class Environment {
     private static final String DELIMITER = ",";
     private static TestFactory factory;
     private static TestScript script;
+    private static String testEnvironmentID;
     private final Properties properties = new AntProperties();
 
     /**
@@ -102,8 +103,8 @@ public final class Environment {
         } else { //properties need to be loaded - it can be a comma separated list of property files
             String[] strParts = propFiles.split(DELIMITER);
             String propFile;
-            for (int i = 0; i < strParts.length; i++) {
-                propFile = strParts[i];
+            for (String strPart : strParts) {
+                propFile = strPart;
                 try {
                     InputStream inp = new FileInputStream(propFile);
                     properties.load(inp);
@@ -114,6 +115,7 @@ public final class Environment {
                 }
             }
         }
+        testEnvironmentID = getProperty(Environment.TEST_ENVIRONMENT_ID);
         return isLoadedProperly;
     }
 
@@ -173,18 +175,6 @@ public final class Environment {
         properties.setProperty(name, value);
     }
 
-    /**
-     * Resets the value of a property temporarily.
-     * @param name  Name of the property
-     * @param value Value of the property
-     */
-    public void resetProperty(final String name, final String value) {
-        if (properties.getProperty(name) != null) {
-            properties.remove(name);
-        }
-        properties.setProperty(name, value);
-    }
-
     public static void setFactory(final TestFactory factory) {
         Environment.factory = factory;
     }
@@ -226,4 +216,40 @@ public final class Environment {
         return factory.createTestCaseSet(name, testScript);
     }
 
+    /**
+     * Gets the specified Test Environment. Used for loading Test Environmnet specific data access.
+     * @return with the ID of the Test Environment, TEID.
+     */
+    public String getTestEnvironmentID() {
+        return testEnvironmentID;
+    }
+
+    /**
+     * Get Test Environment specific property.
+     * Test Environment specific properties starts with "env.<TSID>....",
+     * and if such value don't found, try to lead the default value from "env.default..." property key.
+     *
+     * @param propertyKey is the property key
+     * @return the property value
+     */
+    public String getTestEnvironmentProperty(String propertyKey) {
+        String localPropertyKey = propertyKey.replaceAll("^", "env." + testEnvironmentID + ".");
+
+        String result = getProperty(localPropertyKey);
+        if (result == null) {
+            result = getProperty("env.default." + propertyKey);
+        }
+
+        return result;
+    }
+
+    /**
+     * Set environment property value.
+     * @param property String
+     * @param value String
+     */
+    public void setTestEnvironmentProperty(String property, String value) {
+        String localPropertyKey = property.replaceAll("^", "env." + testEnvironmentID + ".");
+        setProperty(localPropertyKey, value);
+    }
 }

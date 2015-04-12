@@ -146,35 +146,6 @@ public abstract class JBehaveTestCase extends CommonTestCase {
     }
 
     /**
-     * Write an event message to the log.
-     *
-     * @param text Event message
-     */
-    public void logEvent(final String text) {
-        if (!text.startsWith("<font")) {
-            systemOutPrintLn(text);
-        }
-        if (getMainTestLogger() != null) {
-            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
-        }
-    }
-
-    /**
-     * Write an event message to the log.
-     *
-     * @param text        Event message
-     * @param description Event description/info
-     */
-    private void logResult(final String text, final String description) {
-        if (getMainTestLogger() != null) {
-            increaseStep();
-            String addStr = " <small>[<a href=\"javascript:showhide('div_" + getStep() + "');\">details</a>]</small>";
-            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "<div id=\"div_" + getStep()
-                    + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
-        }
-    }
-
-    /**
      * Write a comment message to the log, without the step number, but with a description.
      * Can be used to dump stack trace for example.
      *

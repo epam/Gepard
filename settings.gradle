@@ -15,5 +15,7 @@ include 'gepard-core'
 include 'gepard-gherkin-jbehave'
 include 'gepard-gherkin-cucumber'
 include 'gepard-android'
+include 'gepard-selenium'
 include 'gepard-examples'
+
 

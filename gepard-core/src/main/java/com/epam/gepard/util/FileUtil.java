@@ -58,7 +58,7 @@ public class FileUtil {
      * @param out to where the file will be copied.
      * @throws IOException in case of error.
      */
-    public static void copy(final InputStream in, final OutputStream out) throws IOException {
+    public void copy(final InputStream in, final OutputStream out) throws IOException {
         byte[] buf = new byte[BUF_SIZE];
         try {
             int read;
@@ -86,7 +86,7 @@ public class FileUtil {
      * @param out to where the file will be copied.
      * @throws IOException in case of failure.
      */
-    public static void copy(final InputStream in, final File out) throws IOException {
+    public void copy(final InputStream in, final File out) throws IOException {
         copy(in, new FileOutputStream(out));
     }
 
@@ -97,7 +97,7 @@ public class FileUtil {
      * @param out to where the file will be copied.
      * @throws IOException in case of failure.
      */
-    public static void copy(final File in, final File out) throws IOException {
+    public void copy(final File in, final File out) throws IOException {
         copy(new FileInputStream(in), new FileOutputStream(out));
     }
 
@@ -108,7 +108,7 @@ public class FileUtil {
      * @param file is the file to be filled.
      * @throws IOException in case of problem.
      */
-    public static void writeToFile(final String st, final File file) throws IOException {
+    public void writeToFile(final String st, final File file) throws IOException {
         //noinspection ResultOfMethodCallIgnored
         file.getParentFile().mkdirs();
         Writer w = new FileWriter(file);
@@ -122,7 +122,7 @@ public class FileUtil {
      * @param doc  is the document to write.
      * @param file is the file to be filled.
      */
-    public static void writeToFile(final Document doc, final File file) {
+    public void writeToFile(final Document doc, final File file) {
         try { // Prepare the DOM document for writing
             Source source = new DOMSource(doc);
             // Prepare the output file
@@ -146,7 +146,7 @@ public class FileUtil {
      * @param dir to be deleted.
      * @return true if all deletions were successful. If a deletion fails, the method stops attempting to delete and returns false.
      */
-    public static boolean deleteDir(final File dir) {
+    public boolean deleteDir(final File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             for (String aChildren : children) {
@@ -187,7 +187,7 @@ public class FileUtil {
      * @param pathName is the path to be fixed.
      * @return with the corrected path.
      */
-    public static String formatPathName(final String pathName) {
+    public String formatPathName(final String pathName) {
         String path = pathName.replace('\\', '/');
         int index = 0;
         int pos;

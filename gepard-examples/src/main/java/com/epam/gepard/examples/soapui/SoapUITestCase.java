@@ -286,37 +286,6 @@ public abstract class SoapUITestCase extends CommonTestCase {
     }
 
     /**
-     * Write an event message to the log.
-     *
-     * @param text Event message
-     */
-    public void logEvent(final String text) {
-        if (!text.startsWith("<font")) {
-            systemOutPrintLn(text);
-        }
-        if (getMainTestLogger() != null) {
-            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
-        }
-    }
-
-    /**
-     * Write an event message to the log.
-     *
-     * @param text        Event message
-     * @param description Event description/info
-     */
-    private void logResult(final String text, final String description) {
-        int step = getStep() + 1;
-        if (getMainTestLogger() != null) {
-            String addStr = " <small>[<a href=\"javascript:showhide('div_" + step + "');\">details</a>]</small>";
-            getMainTestLogger().insertText(
-                    String.format("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">%s%s<div id=\"div_%d\" style=\"display:none\"><br>%s</div></td></tr>",
-                            text, addStr, step, description));
-        }
-        increaseStep();
-    }
-
-    /**
      * We override the run method in order to support HTML logs.
      *
      * @param result Test result

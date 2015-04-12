@@ -20,9 +20,6 @@ package com.epam.gepard.generic;
 ===========================================================================*/
 
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -64,15 +61,10 @@ public abstract class CommonTestCase extends TestCase {
      */
     private final TestClassExecutionData classData;
     private LogFileWriter mainTestLogger;
-    /**
-     * Test class level map, to store anything you believe is important to be stored during the test.
-     * Uniqueness of the key is your responsibility. Having a key naming convention is useful.
-     */
-    private Map<String, Object> dataStorage = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
 
     private int step = 1;
     private int divStep = 1; //used at show/hide divs
-    private boolean notapplicable;
+    private boolean notApplicable;
     private final Util util = new Util();
     private final LogFileWriterFactory logFileWriterFactory = new LogFileWriterFactory();
 
@@ -232,7 +224,7 @@ public abstract class CommonTestCase extends TestCase {
      *
      * @return directory path
      */
-    String readDirectory() {
+    public String readDirectory() {
         String pname = this.getClass().getName();
         String[] st = pname.split("\\.");
         String name = "";
@@ -294,6 +286,64 @@ public abstract class CommonTestCase extends TestCase {
         mainTestLogger.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + htmlComment + addStr + "<div id=\"div_" + divStep
                 + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
         divStep++;
+    }
+
+    /**
+     * Write an error message to the log, to the html output (different text can be used), without the step number, but with a description.
+     *
+     * @param comment     Comment message, to put to console
+     * @param htmlComment same as the Comment message, but HTML formatted text
+     * @param description is a multi-row string description for the comment.
+     */
+    public void logError(final String comment, final String htmlComment, final String description) {
+        systemOutPrintLn(comment);
+
+        String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
+        String message = "<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\"><font color=\"#AA0000\">" + htmlComment + "</font>" + addStr + "<div id=\"div_" + divStep
+                + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>";
+        mainTestLogger.insertText(message);
+        divStep++;
+    }
+
+    /**
+     * Write an event message to the log.
+     *
+     * @param text Event message
+     */
+    public void logEvent(final String text) {
+        if (!text.startsWith("<font")) {
+            systemOutPrintLn(text);
+        }
+        if (getMainTestLogger() != null) {
+            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
+        }
+    }
+
+    /**
+     * Write an event message to the log.
+     *
+     * @param text        Event message
+     * @param description Event description/info
+     */
+    public void logResult(final String text, final String description) {
+        int step = getStep() + 1;
+        if (getMainTestLogger() != null) {
+            String addStr = " <small>[<a href=\"javascript:showhide('div_" + step + "');\">details</a>]</small>";
+            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "<div id=\"div_" + step
+                    + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        }
+
+        increaseStep();
+    }
+
+    /**
+     * Write a warning message to the log, without the step number.
+     *
+     * @param warning Comment message
+     */
+    public void logWarning(final String warning) {
+        systemOutPrintLn("WARNING:" + warning);
+        mainTestLogger.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0D0D0\">" + warning + "</td></tr>");
     }
 
     /**
@@ -389,9 +439,10 @@ public abstract class CommonTestCase extends TestCase {
      * This is the second method at test setUp, should be called at XXXTestCase, where the setUp method must be final.
      * Ensures the call of beforeTestCase method, and ensures its safe execution.
      * Note: During beforeTestCase, N/A requests and failures are ignored.
+     * In case you don1t need to execute beforeTestCase, no need to call it.
      */
     public final void setUp2() {
-        boolean preservedNA = notapplicable;
+        boolean preservedNA = notApplicable;
         try {
             beforeTestCase();
         } catch (NATestCaseException e) {
@@ -401,7 +452,7 @@ public abstract class CommonTestCase extends TestCase {
             TestCaseExecutionData.setBeforeTestCaseInfo(this, 1); //info about Failure
             logStackTrace("WARNING: FAILURE is ignored at beforeTestCase method. Original reason: " + e.getMessage(), e);
         }
-        notapplicable = preservedNA;
+        notApplicable = preservedNA;
     }
 
     /**
@@ -419,7 +470,7 @@ public abstract class CommonTestCase extends TestCase {
      * Note: During afterTestCase, N/A requests and failures are ignored.
      */
     public final void tearDown2() {
-        boolean preservedNA = notapplicable;
+        boolean preservedNA = notApplicable;
         try {
             afterTestCase();
         } catch (NATestCaseException e) {
@@ -427,7 +478,7 @@ public abstract class CommonTestCase extends TestCase {
         } catch (Throwable e) {
             logStackTrace("WARNING: FAILURE is ignored at afterTestCase method. Original reason: " + e.getMessage(), e);
         }
-        notapplicable = preservedNA;
+        notApplicable = preservedNA;
     }
 
     /**
@@ -468,7 +519,14 @@ public abstract class CommonTestCase extends TestCase {
      * @return with the value of the NA flag for this TC.
      */
     public boolean isNA() {
-        return notapplicable;
+        return notApplicable;
+    }
+
+    /**
+     * Sets the notApplicable property to true.
+     */
+    public void setNA(final boolean notApplicable) {
+        this.notApplicable = notApplicable;
     }
 
     public NATestCaseException getNaReason() {
@@ -491,7 +549,7 @@ public abstract class CommonTestCase extends TestCase {
      * @param reason The reason why this TC is N/A
      */
     public void naTestCase(final String reason) {
-        notapplicable = true;
+        setNA(true);
         String comment = "This test case is N/A";
         if (reason != null) {
             comment = reason;
