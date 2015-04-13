@@ -28,11 +28,11 @@ import com.epam.gepard.util.Util;
  * - logComment, logStep as logger methods
  * - naTestCase - to set a test case to N/A (not applicable)
  * - how to set a test case as "dummy" - as it is under construction
- * - how to set AUT - Application Under Test Version value
+ * - how to set SUT - System Under Test Version value
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-1", name = "Basic Results, Sample")
+@TestClass(id = "DEMO", name = "Basic Results, Sample")
 public class SampleOtherTest extends OtherTestCase {
 
     public void testTestWithTwoStepsPassed() {
@@ -54,7 +54,7 @@ public class SampleOtherTest extends OtherTestCase {
     public void testSetApplicationUnderTestVersion() {
         logComment("This is a sample on how to set the AUT (Application Under Test) value, that is visible in the test report.");
         Util util = new Util();
-        AllTestRunner.setApplicationUnderTestVersion(util.getGepardVersion());
+        AllTestRunner.setSystemUnderTestVersion(util.getGepardVersion());
     }
 
 }

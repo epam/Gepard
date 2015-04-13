@@ -11,6 +11,7 @@ Easily expandable (like for Selenium, Android native application test)
 * Further modules:
     * **gepard-gherkin-jbehave**: Example extension for using JBehave
     * **gepard-gherkin-cucumber**: Example extension for using Cucumber
+    * **gepard-selenium**: Example extension for using Selenium
     * **gepard-examples**: Lot's of examples
     * **gepard-project-template**: start your test project here
 
@@ -25,7 +26,7 @@ Easily expandable (like for Selenium, Android native application test)
 #Quick intro for developers/contributors
 
 ####Requirements
-* Java JDK 7
+* Java JDK 7 + lombok.jar (v 1.16.2)
 
 ####Advised working environment
 * Eclipse / IntelliJ
