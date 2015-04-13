@@ -523,7 +523,9 @@ public abstract class CommonTestCase extends TestCase {
     }
 
     /**
-     * Sets the notApplicable property to true.
+     * Sets the notApplicable property.
+     *
+     * @param notApplicable is the value to set.
      */
     public void setNA(final boolean notApplicable) {
         this.notApplicable = notApplicable;
