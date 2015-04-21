@@ -381,6 +381,14 @@ public abstract class CommonTestCase extends TestCase {
     }
 
     /**
+     * Get value of the Environment variable.
+     * @return the object that handles environment variables.
+     */
+    public Environment getEnvironment() {
+        return classData.getEnvironment();
+    }
+
+    /**
      * Gets the full stack trace of a Throwable and returns it in HTML format.
      *
      * @param t is the throwable exception itself.
