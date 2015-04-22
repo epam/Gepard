@@ -37,10 +37,6 @@ public enum BrowserEnum {
      */
     Safari,
     /**
-     * Browser: Opera.
-     */
-    Opera,
-    /**
      * Browser: Google Chrome.
      */
     GoogleChrome,

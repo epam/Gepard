@@ -1,6 +1,5 @@
 dependencies {
     compile project(':gepard-core')
-    compile ('org.projectlombok:lombok:1.16.2')
     compile ('org.seleniumhq.selenium:selenium-java:2.45.0')
     compile ('org.seleniumhq.selenium.client-drivers:selenium-java-client-driver:1.0.2')
     testCompile group: 'junit', name: 'junit', version: '4.11'

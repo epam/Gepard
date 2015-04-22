@@ -23,7 +23,6 @@ import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.NATestCaseException;
 import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.generic.CommonTestCase;
-import com.epam.gepard.logger.LogFileWriter;
 import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
 import com.epam.gepard.selenium.browsers.BrowserEnum;
 import com.epam.gepard.selenium.browsers.SeleniumUtil;
@@ -34,8 +33,6 @@ import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestResult;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.OutputType;
@@ -75,37 +72,32 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     public static final String SELENIUM_BROWSER_OPERA = "gepard.selenium.browserString.Opera";
     private static int dumpFileCount;
 
-    @Getter
     private SeleniumUtil seleniumUtil = new SeleniumUtil();
-
-    @Getter
-    private LogFileWriter logger;
 
     /**
      * Selenium main object.
      */
-    @Getter
     private Selenium selenium;
+
     private Util util = new Util();
 
     /**
      * WebDriver main object.
      */
-    @Getter
     private WebDriver webDriver;
+
 
     /**
      * Environment extender.
      */
-    @Getter
     private EnvironmentHelper environmentHelper;
 
-    @Getter
-    //Setter is special
+
     private String browserString;
-    @Getter
-    @Setter
+
+
     private String baseURL;
+
 
     private NATestCaseException setupException;
 
@@ -117,8 +109,6 @@ public abstract class SeleniumTestCase extends CommonTestCase {
      * Be aware that captureNetworkTraffic method might cause exceptions in selenium (especially on Linux OS),
      * because its selenium implementation is not bug-free.
      */
-    @Getter
-    @Setter
     private boolean needCaptureNetworkTraffic;
 
     /**
@@ -127,16 +117,12 @@ public abstract class SeleniumTestCase extends CommonTestCase {
      * <p/>
      * Set this to <b>true</b> in case you would like to use the addCustomRequestHeader method of selenium.
      */
-    @Getter
-    @Setter
     private boolean addCustomRequestHeaders;
 
     /**
      * Contains the command line flags that will be passed to the browser
      * Default value is <b>--disable-web-security</b> for *googlechrome, null for others.
      */
-    @Getter
-    @Setter
     private String commandLineFlags;
 
     /**
@@ -160,6 +146,58 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     protected final void tearDown() throws Exception {
         super.tearDown2();
         super.tearDown();
+    }
+
+    public SeleniumUtil getSeleniumUtil() {
+        return seleniumUtil;
+    }
+
+    public Selenium getSelenium() {
+        return selenium;
+    }
+
+    public WebDriver getWebDriver() {
+        return webDriver;
+    }
+
+    public EnvironmentHelper getEnvironmentHelper() {
+        return environmentHelper;
+    }
+
+    public String getBrowserString() {
+        return browserString;
+    }
+
+    public String getBaseURL() {
+        return baseURL;
+    }
+
+    public void setBaseURL(String baseURL) {
+        this.baseURL = baseURL;
+    }
+
+    public boolean getNeedCaptureNetworkTraffic() {
+        return needCaptureNetworkTraffic;
+    }
+
+    public void setNeedCaptureNetworkTraffic(final boolean needCaptureNetworkTraffic) {
+        this.needCaptureNetworkTraffic = needCaptureNetworkTraffic;
+    }
+
+    public void setAddCustomRequestHeaders(boolean addCustomRequestHeaders) {
+        this.addCustomRequestHeaders = addCustomRequestHeaders;
+    }
+
+    public boolean getAddCustomRequestHeaders() {
+        return addCustomRequestHeaders;
+    }
+
+    public void setCommandLineFlags(String commandLineFlags) {
+        this.commandLineFlags = commandLineFlags;
+    }
+
+    public String getCommandLineFlags() {
+        return commandLineFlags;
     }
 
     private void throwNAExceptionInSetup(final String reason) {
@@ -235,10 +273,6 @@ public abstract class SeleniumTestCase extends CommonTestCase {
             if (browserString.compareTo(environmentHelper.getProperty(SELENIUM_BROWSER_SAFARI)) == 0) {
                 capabilities = DesiredCapabilities.safari();
                 capabilities.setBrowserName("safari");
-            }
-            if (browserString.compareTo(environmentHelper.getProperty(SELENIUM_BROWSER_OPERA)) == 0) {
-                capabilities = DesiredCapabilities.opera();
-                capabilities.setBrowserName("opera");
             }
             if (capabilities == null) {
                 throwNAExceptionInSetup("Specified browser:'" + browserString + "' is not supported.");

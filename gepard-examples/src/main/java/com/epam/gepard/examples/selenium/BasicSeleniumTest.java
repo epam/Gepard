@@ -21,6 +21,7 @@ package com.epam.gepard.examples.selenium;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.selenium.SeleniumTestCase;
 import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
+import org.openqa.selenium.WebDriver;
 
 /**
  * This is an example test case for Selenium extension of Gepard.
@@ -32,7 +33,13 @@ import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
 public class BasicSeleniumTest extends SeleniumTestCase {
 
     public void testGoogleMainPage() {
+        String seleniumHost = getEnvironmentHelper().getProperty(SeleniumTestCase.SELENIUM_HOST);
+        String baseUrl = getBaseURL();
+        logComment("Using Selenium Host:" + seleniumHost);
+        logComment("Using Default Base Url:" + baseUrl);
         getSeleniumUtil().gotoUrl(this, "http://google.hu");
+        WebDriver wd = getWebDriver();
+        logComment("We are at: " + wd.getTitle());
     }
 
 }

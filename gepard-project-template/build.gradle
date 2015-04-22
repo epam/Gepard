@@ -7,7 +7,6 @@ sourceCompatibility = 1.7
 
 repositories {
     jcenter()
-    //maven { url "https://dl.bintray.com/epam/gepard" }
 }
 
 dependencies {
@@ -16,7 +15,7 @@ dependencies {
 }
 
 mainClassName = "com.epam.gepard.AllTestRunner"
-def appArgs = ["$buildDir/resources/main/default.properties,\"$buildDir/resources/main/environment.properties,$buildDir/resources/main/gepard.properties"]
+def appArgs = ["$buildDir/resources/main/default.properties,$buildDir/resources/main/selenium.properties,$buildDir/resources/main/environment.properties,$buildDir/resources/main/gepard.properties"]
 
 run {
     doFirst {

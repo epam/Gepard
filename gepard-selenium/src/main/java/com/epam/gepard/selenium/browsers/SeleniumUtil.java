@@ -62,16 +62,6 @@ public class SeleniumUtil {
     }
 
     /**
-     * Identify whether the current browser is an Opera instance.
-     *
-     * @param tc The test case class.
-     * @return true, if the current browser is an Opera browser.
-     */
-    public boolean isOpera(SeleniumTestCase tc) {
-        return tc.getBrowserString().endsWith("*opera");
-    }
-
-    /**
      * Identify whether the current browser is a Google Chrome instance.
      *
      * @param tc The test case class.
@@ -98,9 +88,6 @@ public class SeleniumUtil {
         if (isInternetExplorer(tc)) {
             type = BrowserEnum.InternetExplorer;
         }
-        if (isOpera(tc)) {
-            type = BrowserEnum.Opera;
-        }
         if (isGoogleChrome(tc)) {
             type = BrowserEnum.GoogleChrome;
         }
@@ -126,9 +113,6 @@ public class SeleniumUtil {
             break;
         case Safari:
             retVal = new SafariBrowserHandler(tc);
-            break;
-        case Opera:
-            retVal = new OperaBrowserHandler(tc);
             break;
         case GoogleChrome:
             retVal = new ChromeBrowserHandler(tc);
@@ -236,10 +220,10 @@ public class SeleniumUtil {
      * Wait is limited with a given timeout.
      *
      * @param selenium  is the test server.
-     * @param millisecs is the timeout in usec.
+     * @param milliseconds is the timeout in usec.
      */
-    public static void waitPageLoadExtended(final Selenium selenium, final String millisecs) {
-        selenium.waitForPageToLoad(millisecs);
+    public static void waitPageLoadExtended(final Selenium selenium, final String milliseconds) {
+        selenium.waitForPageToLoad(milliseconds);
     }
 
 }
