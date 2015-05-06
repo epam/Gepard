@@ -1,4 +1,5 @@
 package com.epam.gepard.selenium.browsers;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -23,7 +24,6 @@ import com.thoughtworks.selenium.Selenium;
 
 /**
  * Utility functions for Selenium.
- *
  * @author Tamas_Kohegyi
  */
 
@@ -32,63 +32,72 @@ public class SeleniumUtil {
     /**
      * Identify whether the current browser is a firefox instance.
      *
-     * @param tc The test case class.
+     * @param browserString is the string used to identify the browser
      * @return true, if the current browser is a firefox browser.
      */
-    public boolean isFireFox(SeleniumTestCase tc) {
-        String browser = tc.getBrowserString();
-        return browser.endsWith("*chrome") || browser.endsWith("*firefox") || browser.endsWith("*firefoxproxy");
+    public boolean isFireFox(final String browserString) {
+        return browserString.endsWith("*chrome") || browserString.endsWith("*firefox") || browserString.endsWith("*firefoxproxy");
     }
 
     /**
      * Identify whether the current browser is a safari instance.
      *
-     * @param tc The test case class.
+     * @param browserString is the string used to identify the browser
      * @return true, if the current browser is a safari browser.
      */
-    public boolean isSafari(SeleniumTestCase tc) {
-        return tc.getBrowserString().endsWith("*safari");
+    public boolean isSafari(final String browserString) {
+        return browserString.endsWith("*safari");
     }
 
     /**
      * Identify whether the current browser is an Internet Explorer instance.
      *
-     * @param tc The test case class.
+     * @param browserString is the string used to identify the browser
      * @return true, if the current browser is an Internet Explorer browser.
      */
-    public boolean isInternetExplorer(SeleniumTestCase tc) {
-        String browser = tc.getBrowserString();
-        return browser.endsWith("*iexplore") || browser.endsWith("*iehta") || browser.endsWith("*iexploreproxy");
+    public boolean isInternetExplorer(final String browserString) {
+        return browserString.endsWith("*iexplore") || browserString.endsWith("*iehta") || browserString.endsWith("*iexploreproxy");
     }
 
     /**
      * Identify whether the current browser is a Google Chrome instance.
      *
-     * @param tc The test case class.
+     * @param browserString is the string used to identify the browser
      * @return true, if the current browser is a Google Chrome browser.
      */
-    public boolean isGoogleChrome(SeleniumTestCase tc) {
-        return tc.getBrowserString().endsWith("*googlechrome");
+    public boolean isGoogleChrome(final String browserString) {
+        return browserString.endsWith("*googlechrome");
     }
 
     /**
      * Detect the actual browser type.
      *
-     * @param tc The test case class.
+     * @param tc is the caller test case
      * @return with the (enumerated) browser type.
      */
-    public BrowserEnum getBrowserType(SeleniumTestCase tc) {
+    public BrowserEnum getBrowserType(final SeleniumTestCase tc) {
+        String browserString = tc.getBrowserString();
+        return getBrowserType(browserString);
+    }
+
+    /**
+     * Detect the actual browser type.
+     *
+     * @param browserString is the used browser string in the test class
+     * @return with the (enumerated) browser type.
+     */
+    public BrowserEnum getBrowserType(final String browserString) {
         BrowserEnum type = BrowserEnum.Unknown;
-        if (isFireFox(tc)) {
+        if (isFireFox(browserString)) {
             type = BrowserEnum.FireFox;
         }
-        if (isSafari(tc)) {
+        if (isSafari(browserString)) {
             type = BrowserEnum.Safari;
         }
-        if (isInternetExplorer(tc)) {
+        if (isInternetExplorer(browserString)) {
             type = BrowserEnum.InternetExplorer;
         }
-        if (isGoogleChrome(tc)) {
+        if (isGoogleChrome(browserString)) {
             type = BrowserEnum.GoogleChrome;
         }
         return type;

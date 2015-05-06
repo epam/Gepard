@@ -1,4 +1,4 @@
-package com.epam.gepard.selenium;
+package com.epam.gepard.examples.gherkin.cucumber.selenium;
 
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
@@ -29,10 +29,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -45,10 +43,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.NATestCaseException;
-import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.generic.CommonTestCase;
+import com.epam.gepard.gherkin.cucumber.CucumberTestCase;
 import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
 import com.epam.gepard.selenium.browsers.BrowserEnum;
 import com.epam.gepard.selenium.browsers.SeleniumUtil;
@@ -60,9 +56,10 @@ import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 
 /**
  * This class represents a TestCase, which supports Selenium WebDriver.
+ *
  * @author Tamas_Kohegyi
  */
-public abstract class SeleniumTestCase extends CommonTestCase {
+public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
     public static final String DEFAULT_TIMEOUT = "30000";
     public static final String SELENIUM_PORT = "gepard.selenium.port";
     public static final String SELENIUM_HOST = "gepard.selenium.host";
@@ -126,24 +123,12 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     /**
      * Default constructor, loads the basic starting points, the browser string, and the initial/base url.
      */
-    public SeleniumTestCase() {
-        super("name");
+    public CucumberWrappedSeleniumTestCase() {
+        super();
         environmentHelper = new EnvironmentHelper(getClassData().getEnvironment());
         setBaseURL(environmentHelper.getTestEnvironmentURL());
         setBrowserString(environmentHelper.getTestEnvironmentBrowser());
         setNeedCaptureNetworkTraffic(true);
-    }
-
-    @Override
-    public final void setUp() throws Exception {
-        super.setUp();
-        super.setUp2();
-    }
-
-    @Override
-    protected final void tearDown() throws Exception {
-        super.tearDown2();
-        super.tearDown();
     }
 
     public SeleniumUtil getSeleniumUtil() {
@@ -217,10 +202,10 @@ public abstract class SeleniumTestCase extends CommonTestCase {
                     setBrowserString(this.getClass().getAnnotation(GepardSeleniumTestClass.class).browser());
                 }
             } else {
-                throwNAExceptionInSetup("When using Gepard SeleniumTestCase, you must annotate your class as 'GepardSeleniumTestClass'.");
+                throwNAExceptionInSetup("When using Gepard CucumberWrappedSeleniumTestCase, you must annotate your class as 'GepardSeleniumTestClass'.");
             }
         } else {
-            throwNAExceptionInSetup("When using Gepard SeleniumTestCase, you must annotate your class as 'TestClass'.");
+            throwNAExceptionInSetup("When using Gepard CucumberWrappedSeleniumTestCase, you must annotate your class as 'TestClass'.");
         }
         setNeedCaptureNetworkTraffic(true);
         initiateSelenium();
@@ -292,7 +277,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
         selenium = new WebDriverBackedSelenium(webDriver, baseURL);
         selenium.setTimeout(DEFAULT_TIMEOUT); //set the default timeout
         // hide all open windows on Mac, it is necessary to hide 'always on top' windows, otherwise useless screenshots will be created from desktop
-        if (seleniumUtil.getBrowserType(this) == BrowserEnum.Safari) {
+        if (seleniumUtil.getBrowserType(this.getBrowserString()) == BrowserEnum.Safari) {
             selenium.keyPressNative(String.valueOf(KeyEvent.VK_F11));
         }
     }
@@ -417,7 +402,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
      *
      * @param fileName   Target file path
      * @param escapeHTML HTML output will be escaped if true
-     * @throws FileNotFoundException when file is not available.
+     * @throws java.io.FileNotFoundException when file is not available.
      */
     public void dumpSource(final String fileName, final boolean escapeHTML) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(new FileOutputStream(fileName));
@@ -441,7 +426,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
      *
      * @param escapeHTML HTML output will be escaped if true
      * @return Path of the created file
-     * @throws FileNotFoundException when problem occurred.
+     * @throws java.io.FileNotFoundException when problem occurred.
      */
     public String dumpSource(boolean escapeHTML) throws FileNotFoundException {
         String newFilePath;
@@ -462,48 +447,10 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     }
 
     /**
-     * We override the run method in order to support HTML logs.
-     *
-     * @param result Test result
-     */
-    protected void runSuper(TestResult result) {
-        super.run(result);
-    }
-
-    /**
-     * We override the run method in order to support HTML logs.
-     *
-     * @param result Test result
-     */
-    @Override
-    public void run(TestResult result) {
-        TestClassExecutionData o = getClassData();
-
-        setTcase(Environment.createTestCase(getName(), o.getTestCaseSet()));
-
-        setUpLogger();
-        Properties props = new Properties();
-        props.setProperty("ID", getTestID());
-        props.setProperty("Name", getTestName());
-        props.setProperty("TestCase", getName());
-        props.setProperty("ScriptNameRow", getClassData().getID());
-        getMainTestLogger().insertBlock("Header", props);
-        try {
-            runSuper(result);
-        } finally {
-            getMainTestLogger().insertBlock("Footer", null);
-            getMainTestLogger().close();
-            setMainTestLogger(null);
-            getTcase().updateStatus();
-            setTcase(null);
-        }
-    }
-
-    /**
      * We re-declared the runTest method in order to throw only AssertionFailedErrors and
      * to create the Failure logs.
      *
-     * @throws AssertionFailedError or ThreadDeath
+     * @throws junit.framework.AssertionFailedError or ThreadDeath
      */
     @Override
     protected void runTest() {
@@ -513,21 +460,10 @@ public abstract class SeleniumTestCase extends CommonTestCase {
                 naTestCase(setupException.getMessage());
             }
             super.runTest();
-            logEvent("<font color=\"#00AA00\"><b>Test passed.</b></font>");
-            systemOutPrintLn("Test passed.");
-        } catch (AssertionFailedError e) { //we rethrow the AssertionFailedError
-            String stackTrace = getFullStackTrace(e);
-            systemOutPrintLn("ERROR: " + e.getMessage());
-            logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + e.getMessage(), "<code><small><br><pre>" + stackTrace
-                    + "</pre></small></code>");
-            throw e;
         } catch (NATestCaseException e) { //we rethrow the Exception as AssertionFailedError
             logEvent("<font color=\"#0000AA\"><b>N/A</b></font><br>\nMessage: " + e.getMessage());
             systemOutPrintLn("Test is N/A: " + e.getMessage());
         } catch (Throwable e) { //we rethrow the Exception as AssertionFailedError
-            systemOutPrintLn("ERROR: " + e.getMessage());
-            logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + e.getMessage(), "<code><small><br><pre>"
-                    + getFullStackTrace(e) + "</pre></small></code>");
             throw new AssertionFailedError(e.getMessage());
         }
     }

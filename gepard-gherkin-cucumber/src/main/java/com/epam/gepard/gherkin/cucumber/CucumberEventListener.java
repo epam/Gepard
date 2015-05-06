@@ -1,4 +1,5 @@
 package com.epam.gepard.gherkin.cucumber;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -18,14 +19,14 @@ package com.epam.gepard.gherkin.cucumber;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.util.Util;
-import cucumber.api.PendingException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import cucumber.api.PendingException;
 
 /**
  * Listener class optimized for use with Cucumber.
@@ -95,7 +96,6 @@ public class CucumberEventListener extends RunListener {
      */
     public void testFailure(Failure failure) {
         Description d = failure.getDescription();
-        Util u = new Util();
         if (d.isTest()) {
             try {
                 Throwable t = failure.getException();
@@ -103,24 +103,24 @@ public class CucumberEventListener extends RunListener {
                     throw t;
                 } else {
                     String consoleMessage = "FAILURE: " + d.toString();
-                    String htmlMessage = u.alertText("FAILURE: ") + u.escapeHTML(d.toString());
+                    //String htmlMessage = u.alertText("FAILURE: ") + u.escapeHTML(d.toString());
                     testCase.setFailed(true, consoleMessage);
-                    testCase.logComment(htmlMessage);
+                    testCase.logComment(consoleMessage);
                 }
             } catch (PendingException e) {
-                //testCase.naTestCase("missing glue code.");
+                //testCase.naTestCase("missing glue code."); this does not work, if we do this, the scenario passes
                 String cause = e.toString();
                 String consoleMessage = "N/A: " + cause;
-                String htmlMessage = u.alertText("N/A: ") + u.escapeHTML(cause);
-                testCase.setFailed(true, consoleMessage);
-                testCase.logComment(htmlMessage);
+                //String htmlMessage = u.alertText("N/A: ") + u.escapeHTML(cause);
+                testCase.setFailed(true, cause);
+                testCase.logComment(consoleMessage);
             } catch (Throwable t) {
                 //something still wrong
                 String cause = t.toString();
                 String consoleMessage = "FAILURE: " + cause;
-                String htmlMessage = u.alertText("FAILURE: ") + u.escapeHTML(cause);
+                //String htmlMessage = u.alertText("FAILURE: ") + u.escapeHTML(cause);
                 testCase.setFailed(true, consoleMessage);
-                testCase.logComment(htmlMessage);
+                testCase.logComment(consoleMessage);
             }
         }
     }
@@ -135,18 +135,24 @@ public class CucumberEventListener extends RunListener {
     }
 
     /**
-     * Called when a test will not be run, generally because a test method is annotated.
+     * Called when a test will not be run, generally because a test method is annotated, or a path is not identified.
      * with {@link org.junit.Ignore}.
      *
      * @param description describes the test that will not be run
      */
     public void testIgnored(Description description) {
         if (description.isSuite()) {
-            LOGGER.error("UNDISCOVERED PATH: testIgnored/SCENARIO:  " + description.toString());
+            String message = "UNDISCOVERED SCENARIO PATH: " + description.toString();
+            LOGGER.error(message);
+            testCase.logComment(message);
         } else if (description.isTest()) {
-            LOGGER.error("UNDISCOVERED PATH: testIgnored/TEST:  " + description.toString());
+            String message = "UNDISCOVERED TEST PATH: " + description.toString();
+            LOGGER.error(message);
+            testCase.logComment(message);
         } else {
-            LOGGER.error("UNDISCOVERED PATH: testIgnored/???:  " + description.toString());
+            String message = "UNDISCOVERED ??? PATH: " + description.toString();
+            LOGGER.error(message);
+            testCase.logComment(message);
         }
     }
 }

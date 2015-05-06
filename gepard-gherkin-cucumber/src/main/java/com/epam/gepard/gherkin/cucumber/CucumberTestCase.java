@@ -1,4 +1,5 @@
 package com.epam.gepard.gherkin.cucumber;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -21,7 +22,6 @@ package com.epam.gepard.gherkin.cucumber;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.epam.gepard.gherkin.cucumber.helper.CucumberError;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestResult;
 
@@ -31,8 +31,9 @@ import org.junit.runners.model.InitializationError;
 import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.NATestCaseException;
 import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.generic.CommonTestCase;
+import com.epam.gepard.generic.GenericListTestSuite;
+import com.epam.gepard.gherkin.cucumber.helper.CucumberError;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -51,7 +52,6 @@ public abstract class CucumberTestCase extends CommonTestCase {
     private boolean isFailed;
     private String consoleErrorMessage;
     private int step = 1; // used to count scenarios executed within this Test Class execution
-
 
     /**
      * Constructs a new instance of {@link CucumberTestCase}.
@@ -75,6 +75,59 @@ public abstract class CucumberTestCase extends CommonTestCase {
     protected final void tearDown() throws Exception {
         super.tearDown2();
         super.tearDown();
+    }
+
+    /**
+     * Write "Scenario finished" message at the end of the scenario.
+     *
+     */
+    public void logScenarioEnded() {
+        String testPassed = "Scenario finished.";
+        getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#a0d0a0\">" + testPassed + "</td></tr>");
+        systemOutPrintLn(testPassed);
+    }
+
+    /**
+     * Write "Scenario" and "Example" information.
+     *
+     * @param scenario is the running scenario name, based on the annotation.
+     * @param example is the content of the example row.
+     */
+    public void logScenarioStarted(final String scenario, final String example) {
+        String innerScenario = scenario.replace('\uFF5F', '(').replace('\uFF60', ')'); //Unicode to Console (partial transfer)
+        String consoleInfo = "Scenario: \"" + innerScenario + "\"";
+        if (example != null) {
+            consoleInfo += " with Example row: " + example;
+        }
+        systemOutPrintLn(step + ". " + consoleInfo);
+        getMainTestLogger().insertText(
+                "<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#a0d0a0\"> " + consoleInfo + "</td></tr>\n");
+        step++;
+    }
+
+    /**
+     * The entry point to the Cucumber test. Sets up the test case and runs it.
+     */
+    public void testRunCucumber() {
+        try {
+            Cucumber cucumber = new Cucumber(this.getClass());
+            RunNotifier notifier = new RunNotifier();
+            notifier.addFirstListener(new CucumberEventListener(this));
+            GenericListTestSuite.getGlobalDataStorage().put(this.getClass().toString(), this);
+            cucumber.run(notifier);
+        } catch (InitializationError | IOException e) {
+            naTestCase("Cucumber Run Initialization Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Set isFailed indicator.
+     * @param isFailed true if failed.
+     * @param consoleErrorMessage is the error message to be logged.
+     */
+    public void setFailed(final boolean isFailed, final String consoleErrorMessage) {
+        this.isFailed = isFailed;
+        this.consoleErrorMessage = consoleErrorMessage;
     }
 
     @Override
@@ -130,77 +183,31 @@ public abstract class CucumberTestCase extends CommonTestCase {
             }
         } catch (CucumberError e) { //we rethrow the CucumberError as AssertionFailedError
             systemOutPrintLn("ERROR: " + e.getMessage());
-            logResult("<font color=\"#AA0000\"><b>At least one of the Scenarios failed.</b></font><br>\nMessage: " + e.getMessage(), "<code><small><br><pre>"
-                    + getFullStackTrace(e) + "</pre></small></code>");
+            logResult("<font color=\"#AA0000\"><b>At least one of the Scenarios failed.</b></font><br>\nMessage: " + e.getMessage(),
+                    "<code><small><br><pre>" + getFullStackTrace(e) + "</pre></small></code>");
             throw new AssertionFailedError(e.getMessage());
         } catch (AssertionFailedError e) { //we rethrow the AssertionFailedError
             String stackTrace = getFullStackTrace(e);
-            systemOutPrintLn("ERROR: " + e.getMessage());
-            logResult("<font color=\"#AA0000\"><b>At least one of the Scenarios failed.</b></font><br>\nMessage: " + e.getMessage(), "<code><small><br><pre>" + stackTrace
-                    + "</pre></small></code>");
+            if (stackTrace.contains("cucumber.api.PendingException: TODO: implement me")) {
+                setNA(true);
+                logEvent("<font color=\"#0000AA\"><b>Test is N/A</b></font><br>\nMessage: " + e.getMessage());
+                systemOutPrintLn("Test is N/A: " + e.getMessage());
+            } else {
+                systemOutPrintLn("ERROR: " + e.getMessage());
+                logResult("<font color=\"#AA0000\"><b>At least one of the Scenarios failed.</b></font><br>\nMessage: " + e.getMessage(),
+                        "<code><small><br><pre>" + stackTrace + "</pre></small></code>");
+            }
             throw e;
         } catch (NATestCaseException e) { //we rethrow the Exception as AssertionFailedError
             logEvent("<font color=\"#0000AA\"><b>N/A</b></font><br>\nMessage: " + e.getMessage());
             systemOutPrintLn("Test is N/A: " + e.getMessage());
         } catch (Throwable e) { //we rethrow the Exception as AssertionFailedError
             systemOutPrintLn("ERROR: " + e.getMessage());
-            logResult("<font color=\"#AA0000\"><b>At least one of the Scenarios failed.</b></font><br>\nMessage: " + e.getMessage(), "<code><small><br><pre>"
-                    + getFullStackTrace(e) + "</pre></small></code>");
+            logResult("<font color=\"#AA0000\"><b>At least one of the Scenarios failed.</b></font><br>\nMessage: " + e.getMessage(),
+                    "<code><small><br><pre>" + getFullStackTrace(e) + "</pre></small></code>");
             throw new AssertionFailedError(e.getMessage());
         }
 
     }
 
-    /**
-     * Write "Scenario finished" message at the end of the scenario.
-     *
-     */
-    public void logScenarioEnded() {
-        String testPassed = "Scenario finished.";
-        getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#a0d0a0\">" + testPassed + "</td></tr>");
-        systemOutPrintLn(testPassed);
-    }
-
-    /**
-     * Write "Scenario" and "Example" information.
-     *
-     * @param scenario is the running scenario name, based on the annotation.
-     * @param example is the content of the example row.
-     */
-    public void logScenarioStarted(final String scenario, final String example) {
-        String innerScenario = scenario.replace('\uFF5F', '(').replace('\uFF60', ')'); //Unicode to Console (partial transfer)
-        String consoleInfo = "Scenario: \"" + innerScenario + "\"";
-        if (example != null) {
-            consoleInfo += " with Example row: " + example;
-        }
-        systemOutPrintLn(step + ". " + consoleInfo);
-        getMainTestLogger().insertText("<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#a0d0a0\"> " + consoleInfo
-                + "</td></tr>\n");
-        step++;
-    }
-
-    /**
-     * The entry point to the Cucumber test. Sets up the test case and runs it.
-     */
-    public void testRunCucumber() {
-        try {
-            Cucumber cucumber = new Cucumber(this.getClass());
-            RunNotifier notifier = new RunNotifier();
-            notifier.addFirstListener(new CucumberEventListener(this));
-            GenericListTestSuite.getGlobalDataStorage().put(this.getClass().toString(), this);
-            cucumber.run(notifier);
-        } catch (InitializationError | IOException e) {
-            naTestCase("Cucumber Run Initialization Error: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Set isFailed indicator.
-     * @param isFailed true if failed.
-     * @param consoleErrorMessage is the error message to be logged.
-     */
-    public void setFailed(final boolean isFailed, final String consoleErrorMessage) {
-        this.isFailed = isFailed;
-        this.consoleErrorMessage = consoleErrorMessage;
-    }
 }
