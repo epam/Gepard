@@ -8,6 +8,7 @@
 /gepard-examples/build/
 /gepard-examples/gepard-run.log
 /gepard-android/build/
+/gepard-selenium/build/
 /*.iml
 /*/*.iml
 /gepard.ipr
