@@ -28,7 +28,7 @@ dependencies {
     compile project(':gepard-gherkin-cucumber')
     compile project(':gepard-android')
     compile project(':gepard-selenium')
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 
     compile ('com.smartbear.soapui:soapui:5.1.2') {
         exclude (module:'jtidy')

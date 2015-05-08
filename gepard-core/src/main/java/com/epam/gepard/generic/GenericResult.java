@@ -39,7 +39,7 @@ public class GenericResult {
     private int notcompleted;
 
     /**
-     * Constuctor.
+     * Constructor.
      *
      * @param id   Test ID
      * @param name Test name

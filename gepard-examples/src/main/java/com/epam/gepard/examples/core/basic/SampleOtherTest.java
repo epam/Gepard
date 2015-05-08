@@ -22,6 +22,7 @@ import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.generic.OtherTestCase;
 import com.epam.gepard.util.Util;
+import org.junit.Test;
 
 /**
  * This sample test class shows basic functions. Like using:
@@ -40,7 +41,8 @@ public class SampleOtherTest extends OtherTestCase {
         logComment("This is empty so must pass...");
     }
 
-    public void testTestWithTwoStepsPassed() {
+    @Test
+    public void annotatedTestWithTwoStepsPassed() {
         logStep("Step 1");
         logStep("Step 2");
         logComment("And so on...");

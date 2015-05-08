@@ -19,7 +19,7 @@
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
-    compile "junit:junit:4.8.1"
+    compile "junit:junit:4.12"
     compile 'gsbase:gsbase:2.0'
     compile 'jakarta-regexp:jakarta-regexp:1.4'
     compile 'org.slf4j:slf4j-api:1.7.7'

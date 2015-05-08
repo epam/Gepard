@@ -29,7 +29,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
-import junit.framework.TestSuite;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.common.Environment;
@@ -103,7 +102,7 @@ public class GenericTestSuite extends TestSuite {
         unPackClassNameandDir(theClass);
 
         //check test Class constructor, we need constructor without any parameters
-        Constructor<? extends TestCase> constructor;
+        Constructor<?> constructor;
         try {
             constructor = getTestConstructor(theClass);
             if (constructor.getParameterTypes().length != 0) {

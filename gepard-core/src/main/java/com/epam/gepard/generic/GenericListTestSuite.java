@@ -35,7 +35,6 @@ import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
@@ -310,7 +309,7 @@ public class GenericListTestSuite extends TestSuite {
         Class<?> superClass = clazz;
         while (Test.class.isAssignableFrom(superClass)) {
             for (Method method : superClass.getDeclaredMethods()) {
-                if (method.getName().startsWith("test")) {
+                if ((method.getName().startsWith("test")) || (method.isAnnotationPresent(org.junit.Test.class)) ) {
                     String methodId = TestCaseExecutionData.constructID(clazz.getName(), method.getName(), Integer.toString(rowNo));
                     getTestCaseMap().put(methodId, new TestCaseExecutionData(methodId));
                     testMethod++; //count the test methods, i.e. the physical TCs
