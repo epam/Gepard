@@ -33,9 +33,7 @@ public class MissingGlueCodeFeature extends CucumberTestCaseConnector {
      * Sample Cucumber glue code.
      */
     @Given("adawdawdawdawdawda")
-    //CHECKSTYLE.OFF
-    public void I_have_cukes_in_my_belly() {
-        //CHECKSTYLE.ON
+    public void iHaveCukesInMyBelly() {
         logComment("(Given) adawdawdawdawdawda");
     }
 
@@ -43,9 +41,7 @@ public class MissingGlueCodeFeature extends CucumberTestCaseConnector {
      * Sample Cucumber glue code.
      */
     @Given("dawdawdawdawda")
-    //CHECKSTYLE.OFF
     public void dawdawdawdaw() {
-        //CHECKSTYLE.ON
         logComment("(Given) dawdawdawdawda");
     }
 }

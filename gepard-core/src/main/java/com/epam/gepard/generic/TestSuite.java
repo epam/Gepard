@@ -44,6 +44,9 @@ import java.util.Vector;
  *
  * @see junit.framework.Test
  */
+//CHECKSTYLE.OFF
+    // this class is inherited from junit.framework.TestSuite, just the isTestMethod is altered, in order to accept @Test annotations.
+    // otherwise the same as the original file, and we do not take care of checkstyle problems in this file
 public class TestSuite implements Test {
 
     /**
@@ -60,12 +63,12 @@ public class TestSuite implements Test {
         Object test;
         try {
             if (constructor.getParameterTypes().length == 0) {
-                test = constructor.newInstance(new Object[0]);
+                test = constructor.newInstance();  // this was used as parameter: new Object[0]
                 if (test instanceof TestCase) {
                     ((TestCase) test).setName(name);
                 }
             } else {
-                test = constructor.newInstance(new Object[]{name});
+                test = constructor.newInstance();  // this was used as parameter: new Object[]{name}
             }
         } catch (InstantiationException e) {
             return (warning("Cannot instantiate test case: " + name + " (" + exceptionToString(e) + ")"));
@@ -114,7 +117,7 @@ public class TestSuite implements Test {
 
     private String fName;
 
-    private Vector<Test> fTests = new Vector<Test>(10); // Cannot convert this to List because it is used directly by some test runners
+    private Vector<Test> fTests = new Vector<>(10); // Cannot convert this to List because it is used directly by some test runners
 
     /**
      * Constructs an empty TestSuite.
@@ -147,7 +150,7 @@ public class TestSuite implements Test {
         }
 
         Class<?> superClass = theClass;
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         while (Test.class.isAssignableFrom(superClass)) {
             for (Method each : MethodSorter.getDeclaredMethods(superClass)) {
                 addTestMethod(each, names, theClass);
@@ -214,10 +217,8 @@ public class TestSuite implements Test {
 
     /**
      * Adds the tests from the given class to the suite
+     * method - addTestSuite - removed, no need for it in Gepard
      */
-    public void addTestSuite(Class<? extends TestCase> testClass) {
-        addTest(new TestSuite(testClass));
-    }
 
     /**
      * Counts the number of test cases that will be run by this test.
@@ -266,17 +267,13 @@ public class TestSuite implements Test {
 
     /**
      * Returns the test at the given index
+     * method - testAt - removed, no need for it in Gepard
      */
-    public Test testAt(int index) {
-        return fTests.get(index);
-    }
 
     /**
      * Returns the number of tests in this suite
+     * method - testCount - removed, no need for it in Gepard
      */
-    public int testCount() {
-        return fTests.size();
-    }
 
     /**
      * Returns the tests as an enumeration
@@ -321,3 +318,5 @@ public class TestSuite implements Test {
                 m.getReturnType().equals(Void.TYPE);
     }
 }
+
+//CHECKSTYLE.ON

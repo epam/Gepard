@@ -36,9 +36,7 @@ public class BrokenFeature extends CucumberTestCaseConnector {
      * Sample Cucumber glue code, this part pass.
      */
     @Given("Something else")
-    //CHECKSTYLE.OFF
-    public void I_have_cukes_in_my_belly() {
-        //CHECKSTYLE.ON
+    public void iHaveCukesInMyBelly() {
         logComment("(Given) Something else");
     }
 
@@ -46,9 +44,7 @@ public class BrokenFeature extends CucumberTestCaseConnector {
      * Sample Cucumber glue code, this part should fail with assertion error.
      */
     @Then("Assertion failure")
-    //CHECKSTYLE.OFF
-    public void I_want_to_fail() {
-        //CHECKSTYLE.ON
+    public void iWantToFail() {
         logComment("(Then) I want to fail");
         Assert.assertFalse(true);
     }

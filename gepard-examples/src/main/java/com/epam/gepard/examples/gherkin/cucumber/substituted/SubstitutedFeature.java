@@ -31,11 +31,10 @@ public class SubstitutedFeature extends CucumberTestCaseConnector {
 
     /**
      * Sample Cucumber glue code.
+     * @param nameSource is the name parameter
      */
     @Given("^I have a user account with my name \"([^\"]*)\"")
-    //CHECKSTYLE.OFF
-    public void I_have_a_user_account_with_my(String nameSource) {
-        //CHECKSTYLE.ON
+    public void iHaveAUserAccountWithMy(String nameSource) {
         logComment("(Given) I have a user account with param = " + nameSource);
     }
 
@@ -43,29 +42,25 @@ public class SubstitutedFeature extends CucumberTestCaseConnector {
      * Sample Cucumber glue code.
      */
     @Given("valami")
-    //CHECKSTYLE.OFF
-    public void I_have_a_user_account_with_my() {
-        //CHECKSTYLE.ON
+    public void iHaveAUserAccountWithMy() {
         logComment("(Given) valami");
     }
 
     /**
      * Sample Cucumber glue code.
+     * @param nameSource is the name parameter
      */
     @When("^an Admin grants me ([^\"]*) rights$")
-    //CHECKSTYLE.OFF
-    public void When_an_Admin_grants_me(String nameSource) {
-        //CHECKSTYLE.ON
+    public void whenAnAdminGrantsMe(String nameSource) {
         logComment("(When) Admin grants param = " + nameSource);
     }
 
     /**
      * Sample Cucumber glue code.
+     * @param markdown is the body parameter
      */
     @Then("^I should receive an email with the body:$")
-    //CHECKSTYLE.OFF
-    public void I_should_receive_an_email(String markdown) {
-        //CHECKSTYLE.ON
+    public void iShouldReceiveAnEmail(String markdown) {
         logComment("(Then) I should receive mail: " + markdown);
     }
 }

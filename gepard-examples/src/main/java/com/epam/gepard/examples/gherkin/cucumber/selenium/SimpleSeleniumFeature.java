@@ -40,27 +40,29 @@ public class SimpleSeleniumFeature extends CucumberAndSeleniumTestCaseConnector 
      * Sample Cucumber glue code, this part pass.
      */
     @Given("^I have access to Selenium$")
-    //CHECKSTYLE.OFF
-    public void i_have_access_to_Selenium() throws Throwable {
-        //CHECKSTYLE.ON
+    public void iHaveAccessToSelenium() {
         wd = getTestCase().getWebDriver();
         Assert.assertNotNull(wd);
     }
 
+    /**
+     * Glue code for: I visit page: xxx.
+     * @param url is the xxx
+     */
     @When("^I visit page: '(.+)'$")
-    //CHECKSTYLE.OFF
-    public void i_visit_page_url(String url) throws Throwable {
-        //CHECKSTYLE.ON
+    public void iVisitPageUrl(String url) {
         logComment("Open URL: " + url);
         wd.get(url);
         getTestCase().getSeleniumUtil().waitPageLoad(getTestCase().getSelenium());
         getTestCase().logEvent("Page loaded", true);
     }
 
+    /**
+     * Glue code for: I should find in title: xxx.
+     * @param titlePart is the xxx
+     */
     @Then("^I should find in title: '(.+)'$")
-    //CHECKSTYLE.OFF
-    public void i_should_find_in_title_part(String titlePart) throws Throwable {
-        //CHECKSTYLE.ON
+    public void iShouldFindInTitlePart(String titlePart) {
         String title = wd.getTitle();
         Assert.assertTrue("Page title differs from what expected: " + titlePart + ", meanwhile found:" + title, title.contains(titlePart));
     }

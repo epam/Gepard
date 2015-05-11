@@ -30,11 +30,10 @@ public class SimpleGherkinFeature extends CucumberTestCaseConnector {
 
     /**
      * Sample Cucumber glue code, this part pass.
+     * @param cukes is the number of cukes
      */
     @Given("I have (\\d+) cukes in my belly")
-    //CHECKSTYLE.OFF
-    public void I_have_cukes_in_my_belly(int cukes) {
-        //CHECKSTYLE.ON
+    public void iHaveCukesInMyBelly(int cukes) {
         logComment("(Given) given I have " + cukes + " cukes in my belly");
     }
 

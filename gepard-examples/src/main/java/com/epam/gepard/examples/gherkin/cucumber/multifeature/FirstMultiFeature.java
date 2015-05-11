@@ -30,11 +30,10 @@ public class FirstMultiFeature extends CucumberTestCaseConnector {
 
     /**
      * Sample Cucumber glue code.
+     * @param cukes is the number of cukes
      */
     @Given("aaaaaaaaaa")
-    //CHECKSTYLE.OFF
-    public void I_have_cukes_in_my_belly() {
-        //CHECKSTYLE.ON
+    public void iHaveCukesInMyBelly(int cukes) {
         logComment("(Given) I_have_cukes_in_my_belly");
     }
 

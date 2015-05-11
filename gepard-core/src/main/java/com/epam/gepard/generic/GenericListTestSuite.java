@@ -309,7 +309,7 @@ public class GenericListTestSuite extends TestSuite {
         Class<?> superClass = clazz;
         while (Test.class.isAssignableFrom(superClass)) {
             for (Method method : superClass.getDeclaredMethods()) {
-                if ((method.getName().startsWith("test")) || (method.isAnnotationPresent(org.junit.Test.class)) ) {
+                if ((method.getName().startsWith("test")) || (method.isAnnotationPresent(org.junit.Test.class))) {
                     String methodId = TestCaseExecutionData.constructID(clazz.getName(), method.getName(), Integer.toString(rowNo));
                     getTestCaseMap().put(methodId, new TestCaseExecutionData(methodId));
                     testMethod++; //count the test methods, i.e. the physical TCs
