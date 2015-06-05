@@ -22,6 +22,7 @@ com.epam.gepard.examples.core.basic.SampleParallelTestC,9,,AAA*
 #     * - :param  //with default feeder class
 com.epam.gepard.examples.core.basic.SampleOtherTest,,1
 com.epam.gepard.examples.core.basic.SampleAfterBeforeTest,9
+com.epam.gepard.examples.core.basic.SampleAfterClassBeforeClassTest,9
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSV,SimpleMultiplierDataFeeder:11
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTest,SimpleMultiplierDataFeeder:11@SingleRowSelectorDataFeeder:2,10
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVTestParameterTest,11

@@ -19,17 +19,6 @@ package com.epam.gepard.generic;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.util.Enumeration;
-import java.util.Properties;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestFailure;
-import junit.framework.TestResult;
-
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.TestCaseExecutionData;
@@ -37,6 +26,12 @@ import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.logger.LogFileWriter;
 import com.epam.gepard.util.ExitCode;
 import com.epam.gepard.util.Util;
+import junit.framework.*;
+
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * This class is the holder class for a Test Case Set (GenericTestCase).
@@ -89,9 +84,9 @@ public class GenericTestSuite extends TestSuite {
     /**
      * Constructor.
      *
-     * @param theClass Test class
-     * @param testID   test ID
-     * @param testName test name
+     * @param theClass    Test class
+     * @param testID      test ID
+     * @param testName    test name
      * @param environment holds the properties of the application
      */
     public GenericTestSuite(final Class<? extends TestCase> theClass, final String testID, final String testName, final Environment environment) {
@@ -145,6 +140,7 @@ public class GenericTestSuite extends TestSuite {
 
     /**
      * Gets the number of dummy test cases in this test case set.
+     *
      * @return with the number.
      */
     public int getDummyCount() {
@@ -153,6 +149,7 @@ public class GenericTestSuite extends TestSuite {
 
     /**
      * Gets the number of N/A test cases in this test case set.
+     *
      * @return with the number.
      */
     public int getNaCount() {
@@ -190,6 +187,7 @@ public class GenericTestSuite extends TestSuite {
     /**
      * Re-formats a path so that it contains only forward slashes,
      * and also removes double slashes.
+     *
      * @param pathName is the input path to be formatted correctly.
      * @return with the formatted path.
      */
@@ -260,6 +258,9 @@ public class GenericTestSuite extends TestSuite {
         props.setProperty("Name", gr.getName());
         htmlLog.insertBlock("Header", props);
 
+        //beforeTestCaseSet / before TestClass, handling @BeforeClass
+        beforeTestCaseSet();
+
         htmlLog.insertBlock("TableHead", props);
 
         //Running the test case set
@@ -272,9 +273,37 @@ public class GenericTestSuite extends TestSuite {
         }
         htmlLog.insertBlock("TableEnd", props);
 
+        //afterTestCaseSet / after TestClass, handling @AfterClass
+        afterTestCaseSet();
+
         htmlLog.insertBlock("Footer", null);
         o.getTestCaseSet().updateStatus();
         o.setTestURL(getTestURL());
+    }
+
+    private void beforeTestCaseSet() {
+        CommonTestCase genBefore = (CommonTestCase) getFakeInstance();
+        try {
+            genBefore.beforeTestCaseSet();
+        } catch (Throwable t) {
+            String message = Util.getStackTrace(t);
+            Properties prs = new Properties();
+            prs.setProperty("ErrorMsg", message);
+            htmlLog.insertBlock("beforeTestCaseSetError", prs);
+        }
+    }
+
+    private void afterTestCaseSet() {
+        CommonTestCase genAfter = (CommonTestCase) getFakeInstance();
+        try {
+            genAfter.afterTestCaseSet();
+        } catch (Throwable t) {
+            String message = Util.getStackTrace(t);
+            Properties prs = new Properties();
+            prs.setProperty("ErrorMsg", message);
+            htmlLog.insertBlock("afterTestCaseSetError", prs);
+
+        }
     }
 
     /**
@@ -316,7 +345,7 @@ public class GenericTestSuite extends TestSuite {
                 errorMsg = t.getMessage();
                 result.addFailure(test, (AssertionFailedError) t); //we want to collect failures in result
             } else {
-                warnUserIncaseOfMoreErrors(test, result, tr, u);
+                warnUserInCaseOfMoreErrors(test, result, tr, u);
             }
             PropertiesData data = createFailurePropertiesData(isDummy, false, errorMsg);
             props = createProperties(test, u, data, dataDrivenName);
@@ -326,7 +355,7 @@ public class GenericTestSuite extends TestSuite {
         result.endTest(test);
     }
 
-    private void warnUserIncaseOfMoreErrors(final Test test, final TestResult result, final TestResult tr, final Util u) {
+    private void warnUserInCaseOfMoreErrors(final Test test, final TestResult result, final TestResult tr, final Util u) {
         if (tr.errors().hasMoreElements()) {
             //somebody made bad thing in the test script. ehhh.
             //we should stop running the test right now.
@@ -493,6 +522,7 @@ public class GenericTestSuite extends TestSuite {
     /**
      * Returns the first test in a suite. If the suite is empty, it returns 'fake' test
      * with a warning message.
+     *
      * @return with a fake TC.
      */
     protected Test getFakeInstance() {
@@ -509,6 +539,7 @@ public class GenericTestSuite extends TestSuite {
 
     /**
      * Returns a fake test, which does nothing but fails with the message in the parameter.
+     *
      * @return with fake TC, that fails.
      */
     public static Test warningNoTestMethodFound() {

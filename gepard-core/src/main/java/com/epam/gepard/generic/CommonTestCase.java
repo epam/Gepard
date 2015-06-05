@@ -19,7 +19,30 @@ package com.epam.gepard.generic;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import com.epam.gepard.annotations.TestParameter;
+import com.epam.gepard.common.Environment;
+import com.epam.gepard.common.NATestCaseException;
+import com.epam.gepard.common.TestCaseExecutionData;
+import com.epam.gepard.common.TestClassExecutionData;
+import com.epam.gepard.exception.SimpleGepardException;
+import com.epam.gepard.logger.LogFileWriter;
+import com.epam.gepard.logger.helper.LogFileWriterFactory;
+import com.epam.gepard.util.FileUtil;
+import com.epam.gepard.util.ReflectionUtilsExtension;
+import com.epam.gepard.util.Util;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -27,23 +50,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-
-import org.springframework.util.ReflectionUtils;
-
-import com.epam.gepard.annotations.TestParameter;
-import com.epam.gepard.common.Environment;
-import com.epam.gepard.common.NATestCaseException;
-import com.epam.gepard.common.TestCaseExecutionData;
-import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.logger.LogFileWriter;
-import com.epam.gepard.logger.helper.LogFileWriterFactory;
-import com.epam.gepard.util.FileUtil;
-import com.epam.gepard.util.ReflectionUtilsExtension;
-import com.epam.gepard.util.Util;
 
 /**
  * Common Test case is the parent of any kind of Gepard test case.
@@ -54,6 +60,7 @@ public abstract class CommonTestCase extends TestCase {
 
     private static int actualDataRow; //this is used during the load of the tests, do NOT use it during execution
     private static String actualTestClassName; //this is used during the load of the tests, do NOT use it during execution
+    private final Logger log = LoggerFactory.getLogger(CommonTestCase.class);
     private com.epam.gepard.inspector.TestCase tcase;
     /**
      * This is the main data storage of this test class. The storage can be reached via this id.
@@ -93,15 +100,15 @@ public abstract class CommonTestCase extends TestCase {
      * General suite method of the test class. Called by Gepard before any test execution.
      * Do not touch it, most of the cases this method should be unchanged.
      *
-     * @param testClass is the test class.
-     * @param scriptID is the ID of the script - may come from annotation.
-     * @param scriptName is the name of the script - may come from annotation.
+     * @param testClass      is the test class.
+     * @param scriptID       is the ID of the script - may come from annotation.
+     * @param scriptName     is the name of the script - may come from annotation.
      * @param parameterNames is the names of the parameters - may come from annotation too.
-     * @param environment holds the application properties
+     * @param environment    holds the application properties
      * @return with the JUnit TestSuite object.
      */
     public static Test suiteHelper(final Class testClass, final String scriptID, final String scriptName, final String[] parameterNames,
-            final Environment environment) {
+                                   final Environment environment) {
         //first either reset the counter or increase it, based on the given test class name
         String testClassName = testClass.getName();
         if ((CommonTestCase.actualTestClassName == null) || (!CommonTestCase.actualTestClassName.contentEquals(testClassName))) {
@@ -132,7 +139,7 @@ public abstract class CommonTestCase extends TestCase {
         String name;
         name = getName() + classData.getDrivenDataRowNo();
         mainTestLogger = logFileWriterFactory.createCustomWriter(getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/"
-                + "temp_generictestcase.html", getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory() + "/" + name + ".html",
+                        + "temp_generictestcase.html", getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory() + "/" + name + ".html",
                 classData.getEnvironment());
     }
 
@@ -382,6 +389,7 @@ public abstract class CommonTestCase extends TestCase {
 
     /**
      * Get value of the Environment variable.
+     *
      * @return the object that handles environment variables.
      */
     public Environment getEnvironment() {
@@ -499,6 +507,52 @@ public abstract class CommonTestCase extends TestCase {
     }
 
     /**
+     * Initialization code executed on a dummy instance when the test case set starts.
+     * Handles annotated @BeforeClass public [static] void method()
+     */
+    public final void beforeTestCaseSet() throws InvocationTargetException, IllegalAccessException {
+        Class<?> actual = this.getClass();
+        do { // Processing test annotations
+            for (Method method : actual.getDeclaredMethods()) {
+                // calling @BeforeClass methods
+                if (method.isAnnotationPresent(BeforeClass.class)) {
+                    // if signature is ok, call it
+                    if ((method.getReturnType().equals(Void.TYPE)) && (method.getGenericParameterTypes().length == 0)
+                            && (Modifier.isPublic(method.getModifiers()))) {
+                        method.invoke(this);
+                    } else {
+                        throw new SimpleGepardException("@BeforeClass method found with incorrect signature.");
+                    }
+                }
+            }
+            actual = actual.getSuperclass();
+        } while (!actual.equals(Object.class));
+    }
+
+    /**
+     * Cleanup code executed on a dummy instance when the test case set ends.
+     * Handles annotated @AfterClass public [static] void method()
+     */
+    public final void afterTestCaseSet() throws InvocationTargetException, IllegalAccessException {
+        Class<?> actual = this.getClass();
+        do { // Processing test annotations
+            for (Method method : actual.getDeclaredMethods()) {
+                // calling @AfterClass methods
+                if (method.isAnnotationPresent(AfterClass.class)) {
+                    // if signature is ok, call it
+                    if ((method.getReturnType().equals(Void.TYPE)) && (method.getGenericParameterTypes().length == 0)
+                            && (Modifier.isPublic(method.getModifiers()))) {
+                        method.invoke(this);
+                    } else {
+                        throw new SimpleGepardException("@AfterClass method found with incorrect signature.");
+                    }
+                }
+            }
+            actual = actual.getSuperclass();
+        } while (!actual.equals(Object.class));
+    }
+
+    /**
      * Initialization code executed on a dummy instance when the test case method starts.
      * Use this as PRECONDITION.
      */
@@ -516,6 +570,7 @@ public abstract class CommonTestCase extends TestCase {
      * Returns true if this is a dummy test case. Dummy test cases are unfinished testcases.
      * either because they're not fully written on because the functionality they supposed to
      * test is not ready.
+     *
      * @return with the value of the dummy flag for this TC.
      */
     public boolean isDummy() {
@@ -524,6 +579,7 @@ public abstract class CommonTestCase extends TestCase {
 
     /**
      * Returns true if this is a N/A test case. N/A test cases are real tests with Not Applicable result.
+     *
      * @return with the value of the NA flag for this TC.
      */
     public boolean isNA() {
@@ -621,6 +677,7 @@ public abstract class CommonTestCase extends TestCase {
 
     /**
      * Gets the actual test step value.
+     *
      * @return with the actual test step value.
      */
     public int getStep() {
@@ -636,6 +693,7 @@ public abstract class CommonTestCase extends TestCase {
 
     /**
      * Gets the step value used in HTML divs - used to hold explanations for a comments/events.
+     *
      * @return with the actual value.
      */
     public int getDivStep() {
@@ -651,6 +709,7 @@ public abstract class CommonTestCase extends TestCase {
 
     /**
      * Returns with the actual data row used from the full data array, by the specific TC.
+     *
      * @return with the number.
      */
     public static int getActualDataRow() {
@@ -659,6 +718,7 @@ public abstract class CommonTestCase extends TestCase {
 
     /**
      * Sets the actual data row within the data array for this TC.
+     *
      * @param actualDataRow is the specific row.
      */
     public static void setActualDataRow(final int actualDataRow) {
