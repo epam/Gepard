@@ -26,7 +26,11 @@ import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.logger.LogFileWriter;
 import com.epam.gepard.util.ExitCode;
 import com.epam.gepard.util.Util;
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestFailure;
+import junit.framework.TestResult;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

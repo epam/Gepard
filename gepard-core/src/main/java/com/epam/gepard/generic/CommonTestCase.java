@@ -35,8 +35,6 @@ import junit.framework.TestCase;
 import junit.framework.TestResult;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -60,7 +58,6 @@ public abstract class CommonTestCase extends TestCase {
 
     private static int actualDataRow; //this is used during the load of the tests, do NOT use it during execution
     private static String actualTestClassName; //this is used during the load of the tests, do NOT use it during execution
-    private final Logger log = LoggerFactory.getLogger(CommonTestCase.class);
     private com.epam.gepard.inspector.TestCase tcase;
     /**
      * This is the main data storage of this test class. The storage can be reached via this id.
@@ -509,6 +506,8 @@ public abstract class CommonTestCase extends TestCase {
     /**
      * Initialization code executed on a dummy instance when the test case set starts.
      * Handles annotated @BeforeClass public [static] void method()
+     * @throws java.lang.reflect.InvocationTargetException in case of problem with the @BeforeClass method call
+     * @throws java.lang.IllegalAccessException in case of problem with the @BeforeClass method call
      */
     public final void beforeTestCaseSet() throws InvocationTargetException, IllegalAccessException {
         Class<?> actual = this.getClass();
@@ -532,6 +531,8 @@ public abstract class CommonTestCase extends TestCase {
     /**
      * Cleanup code executed on a dummy instance when the test case set ends.
      * Handles annotated @AfterClass public [static] void method()
+     * @throws java.lang.reflect.InvocationTargetException in case of problem with the @BeforeClass method call
+     * @throws java.lang.IllegalAccessException in case of problem with the @BeforeClass method call
      */
     public final void afterTestCaseSet() throws InvocationTargetException, IllegalAccessException {
         Class<?> actual = this.getClass();
