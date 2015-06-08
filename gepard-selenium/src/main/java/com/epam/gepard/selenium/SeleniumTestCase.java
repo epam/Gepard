@@ -233,7 +233,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     @Override
     public void afterTestCase() {
         if (webDriver != null) {
-            webDriver.close();
+            webDriver.quit(); //close all opened browser window
             webDriver = null;
             selenium = null;
         }
@@ -263,6 +263,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
             if (browserString.compareTo(environmentHelper.getProperty(SELENIUM_BROWSER_FIREFOX)) == 0) {
                 capabilities = DesiredCapabilities.firefox();
                 capabilities.setBrowserName("firefox");
+                capabilities.setVersion("ANY");
             }
             if (browserString.compareTo(environmentHelper.getProperty(SELENIUM_BROWSER_INTERNET_EXPLORER)) == 0) {
                 capabilities = DesiredCapabilities.internetExplorer();

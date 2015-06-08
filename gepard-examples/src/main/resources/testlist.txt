@@ -34,16 +34,16 @@ com.epam.gepard.examples.core.datadriven.DataFeederIsMissingTest
 
 #Sample BDD test - Using JBehave
 com.epam.gepard.examples.gherkin.jbehave.JBehaveTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveFailTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleFailTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveFailTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleFailTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
 
 #Sample BDD test - Using Cucumber
 com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest
-#com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest
-#com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
-#com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest
+com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest
+com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
+com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest
 
 #Sample Android - test
 #com.epam.gepard.examples.android.SampleAndroidTest
@@ -54,5 +54,6 @@ com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest
 #Sample SoapUI test
 #com.epam.gepard.examples.soapui.SoapUITestBase
 
-#Sample Selenium Tests
+#Sample Selenium Tests, disable, but enable it if you have running Selenium server at default port
 #com.epam.gepard.examples.selenium.BasicSeleniumTest
+#com.epam.gepard.examples.selenium.conditionwatchers.Http404ConditionDemo

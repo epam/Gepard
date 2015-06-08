@@ -21,7 +21,7 @@ package com.epam.gepard.logger;
 
 import java.io.File;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Test;

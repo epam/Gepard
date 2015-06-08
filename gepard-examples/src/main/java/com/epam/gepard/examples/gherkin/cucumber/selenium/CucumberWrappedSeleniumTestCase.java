@@ -34,6 +34,8 @@ import junit.framework.AssertionFailedError;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.junit.After;
+import org.junit.Before;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -189,10 +191,10 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
     }
 
     /**
-     * Initialization of the test class, we use this beforeTestCase method to setup selenium.
+     * Initialization of the test class, we use this method to setup selenium.
      */
-    @Override
-    public void beforeTestCase() {
+    @Before
+    public void before() {
         if (this.getClass().isAnnotationPresent(TestClass.class)) {
             if (this.getClass().isAnnotationPresent(GepardSeleniumTestClass.class)) {
                 if (!GepardSeleniumTestClass.UNDEFINED.equals(this.getClass().getAnnotation(GepardSeleniumTestClass.class).baseUrl())) {
@@ -215,10 +217,10 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
      * Initialization code executed on a dummy instance when the test case method ends.
      * Use this as POSTCONDITION.
      */
-    @Override
-    public void afterTestCase() {
+    @After
+    public void after() {
         if (webDriver != null) {
-            webDriver.close();
+            webDriver.quit();
             webDriver = null;
             selenium = null;
         }
@@ -248,6 +250,7 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
             if (browserString.compareTo(environmentHelper.getProperty(SELENIUM_BROWSER_FIREFOX)) == 0) {
                 capabilities = DesiredCapabilities.firefox();
                 capabilities.setBrowserName("firefox");
+                capabilities.setVersion("ANY");
             }
             if (browserString.compareTo(environmentHelper.getProperty(SELENIUM_BROWSER_INTERNET_EXPLORER)) == 0) {
                 capabilities = DesiredCapabilities.internetExplorer();

@@ -44,7 +44,7 @@ public class SampleAllNotApplicableTest extends OtherTestCase {
     public void testFailedTest() {
         logComment("Test: failed test case");
         naTestCase("But it is a forced NA");
-        fail("Forced TC failure.");
+        org.junit.Assert.fail("Forced TC failure.");
     }
 
     public void testSimpleNotApplicableTest() {
@@ -62,7 +62,7 @@ public class SampleAllNotApplicableTest extends OtherTestCase {
         logStep("Test: Dummy Test Case, failed result");
         dummyTestCase();
         naTestCase("But it is a forced NA");
-        fail("Ups.");
+        org.junit.Assert.fail("Ups.");
     }
 
     public void testTestCaseIsUnderConstructionAndNotApplicable() {

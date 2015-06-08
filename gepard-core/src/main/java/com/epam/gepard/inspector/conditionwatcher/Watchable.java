@@ -1,4 +1,4 @@
-package com.epam.gepard.examples.core.basic;
+package com.epam.gepard.inspector.conditionwatcher;
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -18,30 +18,24 @@ package com.epam.gepard.examples.core.basic;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
-
 /**
- * Just to show how Gepard runs tests in parallel.
- *
- * @author tkohegyi
+ * This interface provides info/warning/error events that can be watched for.
+ * @param <T> is the object that is watchable.
  */
-@TestClass(id = "DEMO-1", name = "Basic Parallel Test - B")
-public class SampleParallelTestB extends OtherTestCase {
+public interface Watchable<T> {
 
     /**
-     * This test actually should always pass.
+     * This method is called to check whether the condition is true during waiting.
+     *
+     * @param t is the watched object
+     * @return boolean true if the condition is true
      */
-    public void testMustPass() {
-        logComment("This is empty so must pass...");
-    }
+    boolean checkCondition(T t);
 
     /**
-     * This test actually should always fail.
+     * Returns the message for logging purposes.
+     *
+     * @return The message.
      */
-    public void testFailedTest() {
-        logComment("Test: failed test case");
-        org.junit.Assert.fail("Forced TC failure.");
-    }
-
+    String getMessage();
 }

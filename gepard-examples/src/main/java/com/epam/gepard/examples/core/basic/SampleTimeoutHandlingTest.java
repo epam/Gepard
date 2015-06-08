@@ -32,13 +32,13 @@ import java.util.Date;
 public class SampleTimeoutHandlingTest extends OtherTestCase {
 
     public void testSimpleTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In testprj.properties, the timeout was set to 2 secs for this class.");
+        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
         Thread.sleep(30000); //30 sec
-        fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
+        org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 
     public void testDoNotLetTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In testprj.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
+        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
         logComment("So this test must pass");
         for (int i = 0; i < 5; i++) {
             logStep("We may sleep, TC still not fail, count: " + i);
@@ -48,7 +48,7 @@ public class SampleTimeoutHandlingTest extends OtherTestCase {
     }
 
     public void testLetTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In testprj.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
+        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
         logComment("So this test must pass");
         for (int i = 0; i < 5; i++) {
             logStep("We may sleep, TC still not fail, count: " + i);
@@ -57,12 +57,12 @@ public class SampleTimeoutHandlingTest extends OtherTestCase {
         logComment("We WON!");
         logStep("But now, we continue and let this TC fail with timeout.");
         Thread.sleep(10000); //10 sec
-        fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
+        org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 
     public void testTimeoutWithoutInterruptPossibilityTest() {
-        logStep("Test the build in timeout. In testprj.properties, the timeout was set to 2 secs for this class.");
-        logComment("But now we do not let this test interrupted");
+        logStep("Test the built in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
+        logComment("But now we do not let this test interrupted. Normal timeout is expected.");
         Date start = new Date();
         Date end = new Date(start.getTime() + 10000);
         while (true) { //10 sec activity without interrupt possibility
@@ -71,7 +71,7 @@ public class SampleTimeoutHandlingTest extends OtherTestCase {
                 break;
             }
         }
-        fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
+        org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 
 }

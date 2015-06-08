@@ -20,15 +20,17 @@ package com.epam.gepard.examples.core.basic;
 
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.generic.OtherTestCase;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * This TC is to test behavior of Gepard.
- * In case parameter 0 is true, that cause forced failure at beforetestcase
- * In case parameter 1 is true, that cause forced N/A at beforetestcase
- * In case parameter 3 is true, that cause forced failure at aftertestcase
- * In case parameter 4 is true, that cause forced N/A at aftertestcase
+ * In case parameter 0 is true, that cause forced failure at @Before
+ * In case parameter 1 is true, that cause forced N/A at @Before
+ * In case parameter 3 is true, that cause forced failure at @After
+ * In case parameter 4 is true, that cause forced N/A at @after
  * <p/>
- * The trick is that failure or setting N/A during beforetestcase or aftertestcase should not influence the result of the test case.
+ * The trick is that failure or setting N/A during @Before or @After should not influence the result of the test case.
  *
  * @author tkohegyi
  */
@@ -36,12 +38,12 @@ import com.epam.gepard.generic.OtherTestCase;
 @TestClass(id = "DEMO-1", name = "Basic After/Before Test Sample")
 public class SampleAfterBeforeTest extends OtherTestCase {
 
-    @Override
-    public void beforeTestCase() {
+    @Before
+    public void before() {
         Boolean b;
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[0]);
         if (b) {
-            fail("forced fail at beforeTestCase");
+            org.junit.Assert.fail("forced fail at beforeTestCase");
         }
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[1]);
         if (b) {
@@ -49,12 +51,12 @@ public class SampleAfterBeforeTest extends OtherTestCase {
         }
     }
 
-    @Override
-    public void afterTestCase() {
+    @After
+    public void after() {
         Boolean b;
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[2]);
         if (b) {
-            fail("forced fail at afterTestCase");
+            org.junit.Assert.fail("forced fail at afterTestCase");
         }
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[3]);
         if (b) {

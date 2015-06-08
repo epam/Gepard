@@ -33,7 +33,9 @@ import com.epam.gepard.util.Util;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.util.ReflectionUtils;
 
@@ -444,7 +446,7 @@ public abstract class CommonTestCase extends TestCase {
                     "Data Driven Test, with " + classData.getDrivenData().getParameters().length + " parameters. Data row:"
                             + classData.getDrivenDataRowNo(), s);
         }
-        processAnnotations();
+        processTestParameterAnnotation();
         TestCaseExecutionData.setupOK(this);
     }
 
@@ -458,6 +460,7 @@ public abstract class CommonTestCase extends TestCase {
         boolean preservedNA = notApplicable;
         try {
             beforeTestCase();
+            processBeforeAnnotation();
         } catch (NATestCaseException e) {
             TestCaseExecutionData.setBeforeTestCaseInfo(this, 2); //info about N/A
             logStackTrace("WARNING: N/A Request is ignored at beforeTestCase method. Original reason: " + e.getMessage(), e);
@@ -485,6 +488,7 @@ public abstract class CommonTestCase extends TestCase {
     public final void tearDown2() {
         boolean preservedNA = notApplicable;
         try {
+            processAfterAnnotation();
             afterTestCase();
         } catch (NATestCaseException e) {
             logStackTrace("WARNING: N/A Request is ignored at afterTestCase method. Original reason: " + e.getMessage(), e);
@@ -509,7 +513,7 @@ public abstract class CommonTestCase extends TestCase {
      * @throws java.lang.reflect.InvocationTargetException in case of problem with the @BeforeClass method call
      * @throws java.lang.IllegalAccessException in case of problem with the @BeforeClass method call
      */
-    public final void beforeTestCaseSet() throws InvocationTargetException, IllegalAccessException {
+    public final void beforeTestCaseSet() throws Throwable {
         Class<?> actual = this.getClass();
         do { // Processing test annotations
             for (Method method : actual.getDeclaredMethods()) {
@@ -518,7 +522,11 @@ public abstract class CommonTestCase extends TestCase {
                     // if signature is ok, call it
                     if ((method.getReturnType().equals(Void.TYPE)) && (method.getGenericParameterTypes().length == 0)
                             && (Modifier.isPublic(method.getModifiers()))) {
-                        method.invoke(this);
+                        try {
+                            method.invoke(this);}
+                        catch (InvocationTargetException e) {
+                            throw e.getCause();
+                        }
                     } else {
                         throw new SimpleGepardException("@BeforeClass method found with incorrect signature.");
                     }
@@ -534,7 +542,7 @@ public abstract class CommonTestCase extends TestCase {
      * @throws java.lang.reflect.InvocationTargetException in case of problem with the @BeforeClass method call
      * @throws java.lang.IllegalAccessException in case of problem with the @BeforeClass method call
      */
-    public final void afterTestCaseSet() throws InvocationTargetException, IllegalAccessException {
+    public final void afterTestCaseSet() throws Throwable {
         Class<?> actual = this.getClass();
         do { // Processing test annotations
             for (Method method : actual.getDeclaredMethods()) {
@@ -543,7 +551,11 @@ public abstract class CommonTestCase extends TestCase {
                     // if signature is ok, call it
                     if ((method.getReturnType().equals(Void.TYPE)) && (method.getGenericParameterTypes().length == 0)
                             && (Modifier.isPublic(method.getModifiers()))) {
-                        method.invoke(this);
+                        try {
+                            method.invoke(this);}
+                        catch (InvocationTargetException e) {
+                            throw e.getCause();
+                        }
                     } else {
                         throw new SimpleGepardException("@AfterClass method found with incorrect signature.");
                     }
@@ -556,14 +568,18 @@ public abstract class CommonTestCase extends TestCase {
     /**
      * Initialization code executed on a dummy instance when the test case method starts.
      * Use this as PRECONDITION.
+     * @deprecated - use @org.junit.Before annotation
      */
+    @Deprecated
     public void beforeTestCase() {
     }
 
     /**
      * Initialization code executed on a dummy instance when the test case method ends.
      * Use this as POSTCONDITION.
+     * @deprecated - use @org.junit.After annotation
      */
+    @Deprecated
     public void afterTestCase() {
     }
 
@@ -626,14 +642,14 @@ public abstract class CommonTestCase extends TestCase {
     }
 
     /**
-     * Inits the variables that has {@link com.epam.gepard.annotations.TestParameter} annotation from the test parameters.
+     * Initialize the variables that has {@link com.epam.gepard.annotations.TestParameter} annotation from the test parameters.
      *
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
-    private void processAnnotations() throws Exception {
+    private void processTestParameterAnnotation() throws Exception {
         Class<?> actual = this.getClass();
-        do { // Processing test annotations
+        do { // Processing @TestParameter annotations
             for (Field field : actual.getDeclaredFields()) {
                 // Setting test parameters
                 if (field.isAnnotationPresent(TestParameter.class)) {
@@ -644,6 +660,50 @@ public abstract class CommonTestCase extends TestCase {
                         setTestParameter(field, classData.getDrivenData().getTestParameter(key));
                     } else {
                         logComment("WARNING: No data feeder but there are test parameters! Check the testlist file - 'classname,X' need to be used to have parameters.");
+                    }
+                }
+            }
+            actual = actual.getSuperclass();
+        } while (!actual.equals(Object.class));
+    }
+
+    private void processBeforeAnnotation() {
+        Class<?> actual = this.getClass();
+        do { // Processing @Before annotations
+            for (Method method : actual.getMethods()) {
+                // Setting test parameters
+                if (method.isAnnotationPresent(Before.class)) {
+                    //call it if ok, or log problem
+                    if ((method.getGenericReturnType() == void.class) && (method.getGenericParameterTypes().length == 0)) {
+                        try {
+                            method.invoke(this);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            naTestCase("TEST CODE ERROR: " + e.getLocalizedMessage());
+                        }
+                    } else {
+                        logComment("WARNING: cannot invoke method: " + method.getName() + " annotated with @Before, as its signature is not acceptable.");
+                    }
+                }
+            }
+            actual = actual.getSuperclass();
+        } while (!actual.equals(Object.class));
+    }
+
+    private void processAfterAnnotation() {
+        Class<?> actual = this.getClass();
+        do { // Processing @After annotations
+            for (Method method : actual.getMethods()) {
+                // Setting test parameters
+                if (method.isAnnotationPresent(After.class)) {
+                    //call it if ok, or log problem
+                    if ((method.getGenericReturnType() == void.class) && (method.getGenericParameterTypes().length == 0)) {
+                        try {
+                            method.invoke(this);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            naTestCase("TEST CODE ERROR: " + e.getLocalizedMessage());
+                        }
+                    } else {
+                        logComment("WARNING: cannot invoke method: " + method.getName() + " annotated with @After, as its signature is not acceptable.");
                     }
                 }
             }

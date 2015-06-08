@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Wrapper for {@link org.apache.commons.io.IOUtils}.
+ * Wrapper for org.apache.commons.io.IOUtils.
  * @author Adam_Csaba_Kiraly
  */
 public class IOUtils {

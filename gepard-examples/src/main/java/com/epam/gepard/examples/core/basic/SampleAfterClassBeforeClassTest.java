@@ -43,7 +43,7 @@ public class SampleAfterClassBeforeClassTest extends OtherTestCase {
         Boolean b;
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[0]);
         if (b) {
-            fail("forced fail at beforeClass");
+            org.junit.Assert.fail("forced fail at beforeClass");
         }
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[1]);
         if (b) {
@@ -56,7 +56,7 @@ public class SampleAfterClassBeforeClassTest extends OtherTestCase {
         Boolean b;
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[2]);
         if (b) {
-            fail("forced fail at afterCass");
+            org.junit.Assert.fail("forced fail at afterCass");
         }
         b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[3]);
         if (b) {

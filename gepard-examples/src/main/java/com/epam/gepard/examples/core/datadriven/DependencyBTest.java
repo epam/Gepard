@@ -36,7 +36,7 @@ public class DependencyBTest extends OtherTestCase {
 
     public void testNeedToFail() {
         logComment("Test: failed test case");
-        fail("Forced TC failure.");
+        org.junit.Assert.fail("Forced TC failure.");
     }
 
     public void testNeedToNA() {

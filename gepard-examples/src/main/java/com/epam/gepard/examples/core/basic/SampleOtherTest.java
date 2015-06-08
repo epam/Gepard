@@ -50,7 +50,7 @@ public class SampleOtherTest extends OtherTestCase {
 
     public void testFailedTest() {
         logComment("Test: failed test case");
-        fail("Forced TC failure.");
+        org.junit.Assert.fail("Forced TC failure.");
     }
 
     public void testNotApplicableTest() {
@@ -66,7 +66,7 @@ public class SampleOtherTest extends OtherTestCase {
     public void testTestCaseIsUnderConstructionFailed() {
         logStep("Test: Dummy Test Case, failed result");
         dummyTestCase();
-        fail("Ups.");
+        org.junit.Assert.fail("Ups.");
     }
 
     public void testTestCaseIsUnderConstructionNotApplicable() {
@@ -78,7 +78,7 @@ public class SampleOtherTest extends OtherTestCase {
     public void testTimeoutTest() throws InterruptedException {
         logStep("Test the build in timeout. In testlist.txt, the timeout was set to 1 secs for this class.");
         Thread.sleep(30000); //30 sec
-        fail("THIS IS BAD NO TIMEOUT OCCURRED!");
+        org.junit.Assert.fail("THIS IS BAD NO TIMEOUT OCCURRED!");
     }
 
     public void testSetSystemUnderTestVersion() {

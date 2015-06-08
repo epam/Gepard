@@ -1,4 +1,4 @@
-package com.epam.gepard.examples.core.basic;
+package com.epam.gepard.inspector.conditionwatcher;
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -18,30 +18,11 @@ package com.epam.gepard.examples.core.basic;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
-
 /**
- * Just to show how Gepard runs tests in parallel.
+ * This enum defines the available Watchable types.
  *
- * @author tkohegyi
+ * @author Robert_Ambrus
  */
-@TestClass(id = "DEMO-1", name = "Basic Parallel Test - B")
-public class SampleParallelTestB extends OtherTestCase {
-
-    /**
-     * This test actually should always pass.
-     */
-    public void testMustPass() {
-        logComment("This is empty so must pass...");
-    }
-
-    /**
-     * This test actually should always fail.
-     */
-    public void testFailedTest() {
-        logComment("Test: failed test case");
-        org.junit.Assert.fail("Forced TC failure.");
-    }
-
+public enum ConditionSeverity {
+    INFO, WARNING, ERROR
 }

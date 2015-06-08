@@ -41,7 +41,7 @@ public class SampleParallelTestA extends OtherTestCase {
      */
     public void testFailedTest() {
         logComment("Test: failed test case");
-        fail("Forced TC failure.");
+        org.junit.Assert.fail("Forced TC failure.");
     }
 
 }
