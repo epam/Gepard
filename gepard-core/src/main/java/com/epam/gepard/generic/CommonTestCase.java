@@ -510,10 +510,12 @@ public abstract class CommonTestCase extends TestCase {
     /**
      * Initialization code executed on a dummy instance when the test case set starts.
      * Handles annotated @BeforeClass public [static] void method()
-     * @throws java.lang.reflect.InvocationTargetException in case of problem with the @BeforeClass method call
-     * @throws java.lang.IllegalAccessException in case of problem with the @BeforeClass method call
+     *
+     * @throws java.lang.Throwable in case of problem with the @BeforeClass method call
      */
+    //CHECKSTYLE.OFF
     public final void beforeTestCaseSet() throws Throwable {
+        //CHECKSTYLE.ON
         Class<?> actual = this.getClass();
         do { // Processing test annotations
             for (Method method : actual.getDeclaredMethods()) {
@@ -523,8 +525,8 @@ public abstract class CommonTestCase extends TestCase {
                     if ((method.getReturnType().equals(Void.TYPE)) && (method.getGenericParameterTypes().length == 0)
                             && (Modifier.isPublic(method.getModifiers()))) {
                         try {
-                            method.invoke(this);}
-                        catch (InvocationTargetException e) {
+                            method.invoke(this);
+                        } catch (InvocationTargetException e) {
                             throw e.getCause();
                         }
                     } else {
@@ -539,10 +541,12 @@ public abstract class CommonTestCase extends TestCase {
     /**
      * Cleanup code executed on a dummy instance when the test case set ends.
      * Handles annotated @AfterClass public [static] void method()
-     * @throws java.lang.reflect.InvocationTargetException in case of problem with the @BeforeClass method call
-     * @throws java.lang.IllegalAccessException in case of problem with the @BeforeClass method call
+     *
+     * @throws java.lang.Throwable in case of problem with the @AfterClass method call
      */
+    //CHECKSTYLE.OFF
     public final void afterTestCaseSet() throws Throwable {
+        //CHECKSTYLE.ON
         Class<?> actual = this.getClass();
         do { // Processing test annotations
             for (Method method : actual.getDeclaredMethods()) {
@@ -552,8 +556,8 @@ public abstract class CommonTestCase extends TestCase {
                     if ((method.getReturnType().equals(Void.TYPE)) && (method.getGenericParameterTypes().length == 0)
                             && (Modifier.isPublic(method.getModifiers()))) {
                         try {
-                            method.invoke(this);}
-                        catch (InvocationTargetException e) {
+                            method.invoke(this);
+                        } catch (InvocationTargetException e) {
                             throw e.getCause();
                         }
                     } else {
@@ -568,6 +572,7 @@ public abstract class CommonTestCase extends TestCase {
     /**
      * Initialization code executed on a dummy instance when the test case method starts.
      * Use this as PRECONDITION.
+     *
      * @deprecated - use @org.junit.Before annotation
      */
     @Deprecated
@@ -577,6 +582,7 @@ public abstract class CommonTestCase extends TestCase {
     /**
      * Initialization code executed on a dummy instance when the test case method ends.
      * Use this as POSTCONDITION.
+     *
      * @deprecated - use @org.junit.After annotation
      */
     @Deprecated
@@ -674,7 +680,8 @@ public abstract class CommonTestCase extends TestCase {
                 // Setting test parameters
                 if (method.isAnnotationPresent(Before.class)) {
                     //call it if ok, or log problem
-                    if ((method.getGenericReturnType() == void.class) && (method.getGenericParameterTypes().length == 0)) {
+                    if ((method.getGenericReturnType() == void.class) && (method.getGenericParameterTypes().length == 0)
+                            && (Modifier.isPublic(method.getModifiers()))) {
                         try {
                             method.invoke(this);
                         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -696,7 +703,8 @@ public abstract class CommonTestCase extends TestCase {
                 // Setting test parameters
                 if (method.isAnnotationPresent(After.class)) {
                     //call it if ok, or log problem
-                    if ((method.getGenericReturnType() == void.class) && (method.getGenericParameterTypes().length == 0)) {
+                    if ((method.getGenericReturnType() == void.class) && (method.getGenericParameterTypes().length == 0)
+                            && (Modifier.isPublic(method.getModifiers()))) {
                         try {
                             method.invoke(this);
                         } catch (IllegalAccessException | InvocationTargetException e) {
