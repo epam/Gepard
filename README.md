@@ -4,9 +4,9 @@ Gepard is a JUnit based test automation framework for Test Automation Engineers 
  
 What Gepard stands for:
 
-- *Core module* of a Java/JUnit based test automation framework ( **gepard-core** ). Provides common approach for test automation engineers to use same framework from low level (class level) unit tests through service level tests up to and including UI/Functional tests.
+- **Core module** of a Java/JUnit based test automation framework ( **gepard-core** ). Provides common approach for test automation engineers to use same framework from low level (class level) unit tests through service level tests up to and including UI/Functional tests.
 It provides common and reliable multi-threaded, multi-dimensional data driven test execution and reporting mechanism to build automated tests on it. Test Automation Experts can focus on test implementation, meanwhile all other work (data driven execution, proper scheduling and reporting) is done by this core module of the framework. 
-Easily expandable (like for Selenium, Android native application test)
+Easily expandable (like for Selenium, Android native application test).
 
 * Further modules:
     * **gepard-gherkin-jbehave**: Example extension for using JBehave
@@ -22,11 +22,12 @@ Easily expandable (like for Selenium, Android native application test)
 
 ####Running
 `gradlew run`
+This will execute lots of example tests from gepard-examples module.
 
 #Quick intro for developers/contributors
 
 ####Requirements
-* Java JDK 7 + lombok.jar (v 1.16.2)
+* Java JDK 7 (or JDK 8)
 
 ####Advised working environment
 * Eclipse / IntelliJ
@@ -37,13 +38,11 @@ The project can be built by executing the following command from project root fo
 
 `gradlew clean build`
 
-Note for Windows users: Use gradlew.bat instead of gradle.
-
 ##Detailed information
 * Check the Wiki and Issues on GitHub
 * Check further documentation at http://epam.github.io/Gepard/
 
-# License
+# License - GPL-v3.0
 Copyright 2013-2015 EPAM Systems
 
 Gepard is free software: you can redistribute it and/or modify
@@ -57,12 +56,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
+along with Gepard. If not, see <http://www.gnu.org/licenses/>.
 
 ##Contribution
 
 There are three ways you can help us:
 
-* **Raise an issue.** You found something that does not work as expected? Let us know about it.
-* **Suggest a feature.** It's even better if you come up with a new feature and write us about it.
+* **Raise an [issue](https://github.com/epam/Gepard/issues).** You found something that does not work as expected? Let us know about it.
+* **Suggest a [feature](https://groups.google.com/forum/#!forum/gepard-users).** It's even better if you come up with a new feature and write us about it.
 * **Write some code.** We would love to see pull requests to this tool, just make sure you have the latest sources.
