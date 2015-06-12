@@ -25,7 +25,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
+import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.generic.GenericResult;
+import com.epam.gepard.logger.HtmlRunReporter;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,8 +233,17 @@ public class TestClassExecutionThread extends Thread {
         o.tick(); //this thread is healthy
         classData = o;
         try {
+            HtmlRunReporter reporter = new HtmlRunReporter(new File(o.getTestURL()), o);
+            core.addListener(reporter);
+
             o.setDeathTimeout(o.getTimeout()); //set the TC timeout
-            core.run(o.getTC());
+//Junit3            core.run(o.getTC());
+            Result result = core.run(o.getTestClass());
+
+            for (Failure failure : result.getFailures()) {
+                LOGGER.debug(failure.toString());
+            }
+            core.removeListener(reporter);
         } catch (Throwable e) {
             //this is gas
             LOGGER.debug("Thread: got EX during JUnitCore execution.", e);

@@ -151,7 +151,8 @@ public class TestSuite implements Test {
 
         Class<?> superClass = theClass;
         List<String> names = new ArrayList<>();
-        while (Test.class.isAssignableFrom(superClass)) {
+        // JUnit 3 version: while (Test.class.isAssignableFrom(superClass)) {
+        while (superClass != null && !("java.lang.Object".equals(superClass.getCanonicalName()))) {
             for (Method each : MethodSorter.getDeclaredMethods(superClass)) {
                 addTestMethod(each, names, theClass);
             }

@@ -114,7 +114,8 @@ public class GenericListTestSuite extends TestSuite {
             String[] testDescriptor = line.split(",");
             Class<?> clazz = Class.forName(testDescriptor[TESTLIST_CLASS_NAME_FIELD]);
             //add as many classes to the stack as data driven approach requires
-            if (TestCase.class.isAssignableFrom(clazz) && filter.accept(clazz)) {
+            // Junit 3 filer would be: if (TestCase.class.isAssignableFrom(clazz) && filter.accept(clazz))
+            if (filter.accept(clazz)) {
                 int count = 1;
                 DataFeederLoader dataFeeder = null;
                 if ((testDescriptor.length > TESTLIST_FEEDER_DESCRIPTOR_FIELD) && (!testDescriptor[TESTLIST_FEEDER_DESCRIPTOR_FIELD].isEmpty())) {
@@ -185,13 +186,13 @@ public class GenericListTestSuite extends TestSuite {
                         + "\nPlease implement at least one test method!\nNow exiting...");
                 AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_WITHOUT_TEST_METHOD);
             }
-            Test t = getTestForClass(cls);
-            addTest(t);
+//            Test t = getTestForClass(cls);
+//            addTest(t);
 
             //set test for parallel execution
             String id = cls.getName() + "/" + rowNo;
             TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(id); //get the class exec object
-            classData.setTC(t);
+//classData.setTC(t);
             //set blocker parameters
             String blockerString = null;
             boolean blockerSelfEnabled = false;
@@ -211,6 +212,7 @@ public class GenericListTestSuite extends TestSuite {
             classData.setBlockerString(blockerString);
             classData.setSelfEnabledBlocker(blockerSelfEnabled);
             classData.setOriginalLine(originalLine);
+            classData.setTestURL("dummy.html");
             checkDataDrivenParameters(classData, dataFeeder);
             counter--;
             rowNo++;
@@ -307,7 +309,9 @@ public class GenericListTestSuite extends TestSuite {
         //register test methods, and ancestor test methods, too
         int testMethod = 0;
         Class<?> superClass = clazz;
-        while (Test.class.isAssignableFrom(superClass)) {
+        // JUnit 3 version: while (Test.class.isAssignableFrom(superClass)) {
+        classData.setTestClass(clazz);  //for Junit 4
+        while (superClass != null && !("java.lang.Object".equals(superClass.getCanonicalName()))) {
             for (Method method : superClass.getDeclaredMethods()) {
                 if ((method.getName().startsWith("test")) || (method.isAnnotationPresent(org.junit.Test.class))) {
                     String methodId = TestCaseExecutionData.constructID(clazz.getName(), method.getName(), Integer.toString(rowNo));

@@ -94,6 +94,8 @@ public final class TestClassExecutionData {
 
     private StringBuilder systemOut;
     private Test tc;
+    //JUnit 4
+    private Class<?> testClass;
 
     private String originalLine;
     private Environment environment;
@@ -110,6 +112,9 @@ public final class TestClassExecutionData {
         systemOut = new StringBuilder();
         this.id = id;
     }
+
+    public Class getTestClass() { return testClass; }
+    public void setTestClass(final Class<?> testClass) { this.testClass = testClass; }
 
     public String getID() {
         return id;
