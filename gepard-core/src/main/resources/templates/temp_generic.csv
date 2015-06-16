@@ -2,7 +2,7 @@
 Gepard Test Results - overall results,,,,,
 '%Date%,,,,,
 ,,,,,
-TS ID,TS Name,Written TCs in TS,Passed TCs,Failed TCs,NA TCs
+TS ID,TS Name,Written TCs in TS,Passed TCs,Failed TCs,testNA TCs
 <!--End of Header-->,,,,,
 <!--Start of TestRow-->,,,,,
 '%Number%,%Name%,%Implemented%,%Passed%,%Failed%,%NotApplicable%
@@ -13,7 +13,7 @@ TS ID,TS Name,Written TCs in TS,Passed TCs,Failed TCs,NA TCs
 Runned:,%Runned%,,,,
 Passed:,%Passed%,,,,
 Failed:,%Failed%,,,,
-NA:,%TCnotapplicable%,,,,
+testNA:,%TCnotapplicable%,,,,
 Total time:,%SecondsTime% seconds,,,,
 Finished:,'%DateTime%,,,,
 <!--End of Footer-->,,,,,

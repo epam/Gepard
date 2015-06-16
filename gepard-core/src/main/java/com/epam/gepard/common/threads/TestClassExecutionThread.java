@@ -233,11 +233,12 @@ public class TestClassExecutionThread extends Thread {
         o.tick(); //this thread is healthy
         classData = o;
         try {
-            HtmlRunReporter reporter = new HtmlRunReporter(o);
+//            HtmlRunReporter reporter = new HtmlRunReporter(o);
+            HtmlRunReporter reporter = o.getHtmlRunReporter();
+
             core.addListener(reporter);
 
             o.setDeathTimeout(o.getTimeout()); //set the TC timeout
-//Junit3            core.run(o.getTC());
             Result result = core.run(o.getTestClass());
 
             for (Failure failure : result.getFailures()) {

@@ -19,9 +19,11 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This TC is to test behavior of Gepard.
@@ -35,48 +37,51 @@ import org.junit.Before;
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-1", name = "Basic After/Before Test Sample")
-public class SampleAfterBeforeTest extends OtherTestCase {
+@TestClass(id = "DEMO-3", name = "Basic After/Before Test Sample")
+public class SampleAfterBeforeTest implements GepardTestClass {
 
     @Before
     public void before() {
         Boolean b;
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[0]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[0]);
         if (b) {
-            org.junit.Assert.fail("forced fail at beforeTestCase");
+            Assert.fail("forced fail at beforeTestCase");
         }
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[1]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[1]);
         if (b) {
-            naTestCase("forced N/A at beforeTestCase");
+            naTestCase(this, "forced N/A at beforeTestCase");
         }
     }
 
     @After
     public void after() {
         Boolean b;
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[2]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[2]);
         if (b) {
-            org.junit.Assert.fail("forced fail at afterTestCase");
+            Assert.fail("forced fail at afterTestCase");
         }
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[3]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
         if (b) {
-            naTestCase("forced N/A at afterTestCase");
+            naTestCase(this, "forced N/A at afterTestCase");
         }
     }
 
+    @Test
     public void testTestMustPass() {
-        logComment("Par0:" + getClassData().getDrivenData().getParameters()[0]
-                + ", Par1:" + getClassData().getDrivenData().getParameters()[1]
-                + ", Par2:" + getClassData().getDrivenData().getParameters()[2]
-                + ", Par3:" + getClassData().getDrivenData().getParameters()[3]);
+        logComment(this, "Par0:" + getTestClassExecutionData(this).getDrivenData().getParameters()[0]
+                + ", Par1:" + getTestClassExecutionData(this).getDrivenData().getParameters()[1]
+                + ", Par2:" + getTestClassExecutionData(this).getDrivenData().getParameters()[2]
+                + ", Par3:" + getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
     }
 
+    @Test
     public void testTestMustNA() {
-        naTestCase("Set to N/A");
+        naTestCase(this, "Set to N/A");
     }
 
+    @Test
     public void testTestMustFail() {
-        fail("Set to FAILED");
+        Assert.fail("Set to FAILED");
     }
 
 }

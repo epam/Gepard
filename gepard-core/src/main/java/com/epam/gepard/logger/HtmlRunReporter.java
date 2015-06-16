@@ -23,8 +23,8 @@ import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.annotations.TestParameter;
 import com.epam.gepard.common.Environment;
+import com.epam.gepard.common.NATestCaseException;
 import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.generic.GenericResult;
 import com.epam.gepard.logger.helper.LogFileWriterFactory;
 import com.epam.gepard.util.FileUtil;
 import com.epam.gepard.util.ReflectionUtilsExtension;
@@ -53,10 +53,13 @@ public final class HtmlRunReporter extends RunListener {
     private final LogFileWriterFactory logFileWriterFactory = new LogFileWriterFactory();
     int step; //test step, restarts from 1 in every executed test method
     int divStep = 1;
-    GenericResult gr;
     Properties props = new Properties();
-    boolean testFailed = false;
+    private Boolean testFailed = false;
+    private Boolean testNA = false;
+    private Boolean testDummy = false;
     private FileUtil fileUtil = new FileUtil();
+    private String testNAMessage = "";
+    private Failure testFailure = null;
 
 
     /**
@@ -75,24 +78,22 @@ public final class HtmlRunReporter extends RunListener {
         if (clazz.isAnnotationPresent(TestClass.class)) {
             classData.setTestStriptId(clazz.getAnnotation(TestClass.class).id());
             classData.setTestStriptName(clazz.getAnnotation(TestClass.class).name());
+            classData.setHtmlRunReporter(this);
         }
-        gr = new GenericResult(classData.getTestStriptId(), classData.getTestStriptName());
-        classData.setTestCaseSet(Environment.createTestCaseSet(gr.getName(), Environment.getScript()));
+        classData.setTestCaseSet(Environment.createTestCaseSet(classData.getTestStriptName(), Environment.getScript()));
     }
 
     /**
      * Called when a Test Case Set = Test Class is started by the executor
-     * @param description
+     * @param description specified the just started test class
      * @throws Exception
      */
     @Override
     public void testRunStarted(final Description description) throws Exception {
-        String dataDrivenName = getDataDrivenFullClassName();
-        AllTestRunner.CONSOLE_LOG.info("testRunStarted" + dataDrivenName);
         testClassHtmlLog = new LogFileWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generictestsuite.html",
                 environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir + "/" + getDataDrivenSimpleClassName() + ".html", environment);
-        props.setProperty("ID", gr.getID());
-        props.setProperty("Name", gr.getName());
+        props.setProperty("ID", classData.getTestStriptId());
+        props.setProperty("Name", classData.getTestStriptName());
         testClassHtmlLog.insertBlock("Header", props);
         testClassHtmlLog.insertBlock("TableHead", props);
         initDataDrivenLogAndAnnotations();
@@ -100,7 +101,6 @@ public final class HtmlRunReporter extends RunListener {
 
     @Override
     public void testStarted(final Description description) throws Exception {
-        AllTestRunner.CONSOLE_LOG.info("testStarted");
         fileUtil.createDirectory(environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory());
         String methodName = description.getMethodName();
         testMethodHtmlLog = logFileWriterFactory.createCustomWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/"
@@ -110,6 +110,8 @@ public final class HtmlRunReporter extends RunListener {
         step = 1;
         classData.addSysOut("\nRunning test: " + classData.getClassName() + "." + methodName + "\nName: " + classData.getTestStriptName());
         testFailed = false;
+        testNA = false;
+        testDummy = false;
         Properties props = new Properties();
         props.setProperty("ID", classData.getTestStriptId());
         props.setProperty("Name", classData.getTestStriptName());
@@ -120,8 +122,15 @@ public final class HtmlRunReporter extends RunListener {
 
     @Override
     public void testFailure(final Failure failure) throws Exception {
-        AllTestRunner.CONSOLE_LOG.info("failure: " + failure.getDescription().getTestClass().getCanonicalName());
-        testFailed = true;
+        if (!testNA) {
+            if (failure.getException() instanceof NATestCaseException) {
+                testNA = true;
+                testNAMessage = failure.getMessage();
+            } else {
+                testFailed = true;
+                testFailure = failure;
+            }
+        }
     }
 
     @Override
@@ -131,26 +140,31 @@ public final class HtmlRunReporter extends RunListener {
 
     @Override
     public void testFinished(final Description description) throws Exception {
-        AllTestRunner.CONSOLE_LOG.info("testFinished");
         //After running the test case
         Util u = new Util();
-        boolean isDummy = false; //checkIfDummyTestCase(test);
-        boolean isNA = false; //checkIfNaTestCase(test, result);
+        boolean isDummy = testDummy;
+        if (isDummy) {
+            classData.increaseCountDummy();
+        }
+        boolean isNA = testNA;
         String dataDrivenName = getDataDrivenSimpleClassName() + "/" + description.getMethodName() + classData.getDrivenDataRowNo();
         Properties props;
-        if (isNA) { //NA test case
+        if (isNA) { //testNA test case
             PropertiesData data = createPropertiesData(isDummy, true);
             props = createProperties(classData, description.getMethodName(), u, data, dataDrivenName);
-            logEvent("<font color=\"#0000AA\"><b>N/A</b></font>");
-            systemOutPrintLn("Test is N/A.");
+            logEvent("<font color=\"#0000AA\"><b>N/A</b></font><br>\nMessage: " + testNAMessage);
+            systemOutPrintLn("Test is N/A: " + testNAMessage);
+            classData.increaseCountNA();
         } else if (testFailed) {  // failed test case
             //The test failed (note that tr contains only ONE failure or error).
             classData.increaseCountFailed();
             String errorMsg = "---No error message---";
             PropertiesData data = createFailurePropertiesData(isDummy, false, errorMsg);
             props = createProperties(classData, description.getMethodName(), u, data, dataDrivenName);
-            logEvent("<font color=\"#AA0000\"><b>Test failed.</b></font>");
-            systemOutPrintLn("Test failed.");
+            String stackTrace = testFailure.getTrace();
+            systemOutPrintLn("Test failed: " + testFailure.getMessage());
+            logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + testFailure.getMessage(), "<code><small><br><pre>" + stackTrace
+                    + "</pre></small></code>");
         } else { // passed test case
             PropertiesData data = createPropertiesData(isDummy, false);
             props = createProperties(classData, description.getMethodName(), u, data, dataDrivenName);
@@ -166,12 +180,11 @@ public final class HtmlRunReporter extends RunListener {
 
     /**
      * Called when a Test Case Sat = TestClass execution is finished by the executor.
-     * @param result
+     * @param result gives info on the test class execution
      * @throws Exception
      */
     @Override
     public void testRunFinished(final Result result) throws Exception {
-        AllTestRunner.CONSOLE_LOG.info("testRunFinished RESULT ARRIVED");
         if (result.getRunCount() == 0) {
             testClassHtmlLog.insertBlock("NoTestCases", null);
         }
@@ -197,40 +210,6 @@ public final class HtmlRunReporter extends RunListener {
                     + " parameters. Data row:" + classData.getDrivenDataRowNo(), s);
         }
         processTestParameterAnnotation();
-    }
-
-    /**
-     * Write a comment message to the log, without the step number, but with a description.
-     * Can be used to dump stack trace for example.
-     *
-     * @param comment     Comment message
-     * @param description is a multi-row string description for the comment.
-     */
-    void logComment(final String comment, final String description) {
-        systemOutPrintLn(comment);
-
-        String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
-
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + addStr + "<div id=\"div_" + divStep
-                + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
-        divStep++;
-    }
-
-    /**
-     * Write a comment message to the log, to the html output (different text can be used), without the step number, but with a description.
-     *
-     * @param comment     Comment message, to put to console
-     * @param htmlComment same as the Comment message, but HTML formatted text
-     * @param description is a multi-row string description for the comment.
-     */
-    public void logComment(final String comment, final String htmlComment, final String description) {
-        systemOutPrintLn(comment);
-
-        String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
-
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + htmlComment + addStr + "<div id=\"div_" + divStep
-                + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
-        divStep++;
     }
 
     /**
@@ -279,28 +258,6 @@ public final class HtmlRunReporter extends RunListener {
         } catch (Exception e) {
             logComment("No test parameter for field: " + field.getName());
         }
-    }
-
-    /**
-     * Write a comment message to the log, without the step number.
-     *
-     * @param comment Comment message
-     */
-    public void logComment(final String comment) {
-        systemOutPrintLn(comment);
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + "</td></tr>");
-    }
-
-    /**
-     * Write an event message to the log.
-     *
-     * @param text Event message
-     */
-    public void logEvent(final String text) {
-        if (!text.startsWith("<font")) {
-            systemOutPrintLn(text);
-        }
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
     }
 
     /**
@@ -419,6 +376,21 @@ public final class HtmlRunReporter extends RunListener {
         return extColor;
     }
 
+    public void naTestCase(String reason) {
+        testNA = true;
+        String comment = "This test case is N/A";
+        if (reason != null) {
+            comment = reason;
+        }
+        testNAMessage = comment;
+        throw new NATestCaseException(comment);
+    }
+
+    public void dummyTestCase() {
+        testDummy = true;
+        logComment("This is a dummy test case");
+    }
+
     private class PropertiesData {
         private final String extText;
         private final String extColor;
@@ -527,5 +499,88 @@ public final class HtmlRunReporter extends RunListener {
         }
         return inPathName;
     }
+
+    /**
+     * Write a test step message to the log, and increase the step number.
+     *
+     * @param comment Comment message
+     */
+    public void logStep(final String comment) {
+        String consoleComment = comment.replace('\uFF5F', '(').replace('\uFF60', ')'); //Unicode to Console (partial transfer)
+        systemOutPrintLn(step + ". " + consoleComment);
+        testMethodHtmlLog.insertText("<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#E0E0F0\">" + comment
+                + "</td></tr>\n");
+        step++;
+    }
+
+    /**
+     * Write a comment message to the log, without the step number, but with a description.
+     * Can be used to dump stack trace for example.
+     *
+     * @param comment     Comment message
+     * @param description is a multi-row string description for the comment.
+     */
+    void logComment(final String comment, final String description) {
+        systemOutPrintLn(comment);
+
+        String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
+
+        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + addStr + "<div id=\"div_" + divStep
+                + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        divStep++;
+    }
+
+    /**
+     * Write a comment message to the log, to the html output (different text can be used), without the step number, but with a description.
+     *
+     * @param comment     Comment message, to put to console
+     * @param htmlComment same as the Comment message, but HTML formatted text
+     * @param description is a multi-row string description for the comment.
+     */
+    public void logComment(final String comment, final String htmlComment, final String description) {
+        systemOutPrintLn(comment);
+
+        String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
+
+        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + htmlComment + addStr + "<div id=\"div_" + divStep
+                + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        divStep++;
+    }
+
+    /**
+     * Write a comment message to the log, without the step number.
+     *
+     * @param comment Comment message
+     */
+    public void logComment(final String comment) {
+        systemOutPrintLn(comment);
+        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + "</td></tr>");
+    }
+
+    /**
+     * Write an event message to the log.
+     *
+     * @param text Event message
+     */
+    public void logEvent(final String text) {
+        if (!text.startsWith("<font")) {
+            systemOutPrintLn(text);
+        }
+        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
+    }
+
+    /**
+     * Write an event message to the log.
+     *
+     * @param text        Event message
+     * @param description Event description/info
+     */
+    public void logResult(final String text, final String description) {
+        step++;
+            String addStr = " <small>[<a href=\"javascript:showhide('div_" + step + "');\">details</a>]</small>";
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "<div id=\"div_" + step
+                    + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+    }
+
 
 }

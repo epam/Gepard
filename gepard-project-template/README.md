@@ -26,7 +26,7 @@ Easily expandable (like for Selenium, Android native application test)
 #Quick intro for developers/contributors
 
 ####Requirements
-* Java JDK 7
+* Java JDK 8
 
 ####Advised working environment
 * Eclipse / IntelliJ

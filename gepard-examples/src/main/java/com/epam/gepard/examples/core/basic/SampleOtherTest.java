@@ -35,7 +35,7 @@ import org.junit.Test;
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-1", name = "Basic Results, Sample")
+@TestClass(id = "DEMO-2", name = "Basic Results, Sample")
 public class SampleOtherTest implements GepardTestClass {
 
     @Test

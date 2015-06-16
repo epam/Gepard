@@ -25,19 +25,26 @@ public interface GepardTestClass {
     }
 
     default void logComment(final Object clazz, final String comment) {
-        getTestClassExecutionData(clazz).addSysOut("just a test comment: " + comment);
+        getTestClassExecutionData(clazz).getHtmlRunReporter().logComment(comment);
+
     }
 
     default void logStep(final Object clazz, final String comment) {
-        getTestClassExecutionData(clazz).addSysOut("just a test step: " + comment);
+        getTestClassExecutionData(clazz).getHtmlRunReporter().logStep(comment);
+
     }
 
-    default void naTestCase(final Object clazz, final String comment) {
-        getTestClassExecutionData(clazz).addSysOut("just an NA: " + comment);
+    /**
+     * Sets the testcase. N/A test cases are tests with Not Applicable results.
+     *
+     * @param reason The reason why this TC is N/A
+     */
+    default void naTestCase(final Object clazz, final String reason) {
+        getTestClassExecutionData(clazz).getHtmlRunReporter().naTestCase(reason);
     }
 
     default void dummyTestCase(final Object clazz) {
-        getTestClassExecutionData(clazz).addSysOut("just a dummy.");
+        getTestClassExecutionData(clazz).getHtmlRunReporter().dummyTestCase();
     }
 
 }

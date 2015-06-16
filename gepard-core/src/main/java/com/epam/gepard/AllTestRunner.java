@@ -175,7 +175,7 @@ public class AllTestRunner extends TestRunner {
                     ExitCode.EXIT_CODE_BAD_SETUP);
         }
         try {
-            runAll(testListFile, consoleWriter);
+            runAll(testListFile);
         } catch (ShutDownException e) {
             exitFromGepard(e.getExitCode());
         } catch (ComplexGepardException e) {
@@ -236,7 +236,7 @@ public class AllTestRunner extends TestRunner {
      * @param testListFile is the config file of tests.
      * @throws Exception in case of tc failure
      */
-    void runAll(final String testListFile, final ConsoleWriter consoleWriter) throws Exception {
+    void runAll(final String testListFile) throws Exception {
         logFolderCreator.prepareOutputFolders();
         setupTestFactory();
         //---------------
@@ -312,7 +312,7 @@ public class AllTestRunner extends TestRunner {
         String filterClass = environment.getProperty(Environment.GEPARD_FILTER_CLASS);
         String filterExpr = environment.getProperty(Environment.GEPARD_FILTER_EXPRESSION);
         ExpressionTestFilter filter = tryToCreateTestFilter(filterClass, filterExpr);
-        GenericListTestSuite gSuite = null;
+        GenericListTestSuite gSuite;
         if (testListFile != null) {
             gSuite = new GenericListTestSuite(testListFile, filter, environment);
         } else {

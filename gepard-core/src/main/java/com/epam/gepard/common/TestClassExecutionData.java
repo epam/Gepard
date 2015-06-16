@@ -21,6 +21,7 @@ package com.epam.gepard.common;
 
 import java.util.concurrent.Future;
 
+import com.epam.gepard.logger.HtmlRunReporter;
 import junit.framework.Test;
 
 import org.slf4j.Logger;
@@ -99,6 +100,7 @@ public final class TestClassExecutionData {
 
     private String originalLine;
     private Environment environment;
+    private HtmlRunReporter htmlRunReporter;
 
     /**
      * Test execution data for a Test Class (inherited TestCase class).
@@ -431,4 +433,11 @@ public final class TestClassExecutionData {
     public Environment getEnvironment() {
         return environment;
     }
+
+    public void setHtmlRunReporter(HtmlRunReporter htmlRunReporter) {
+        this.htmlRunReporter = htmlRunReporter;
+    }
+
+    public HtmlRunReporter getHtmlRunReporter() { return htmlRunReporter; }
+
 }

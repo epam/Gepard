@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.epam.gepard.annotations.AnnotationUpdater;
+import com.epam.gepard.logger.HtmlRunReporter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
@@ -304,14 +305,14 @@ public class GenericListTestSuite extends TestSuite {
         classData.setClassName(clazz.getName());
         classData.setDataFeederLoader(dataFeeder);
         classData.setDataRow(rowNo); //note: to load the parameters we just waiting for the paramnames
+        classData.setTestClass(clazz);  //for Junit 4
         testClassMap.put(id, classData);
         updateTestClassAnnotation(clazz, id); //ensure linking back from Test Class to global Test Class Map
+        new HtmlRunReporter(classData); //this prepares everything that need to be prepared for Html Logging the execution of the test class
 
         //register test methods, and ancestor test methods, too
         int testMethod = 0;
         Class<?> superClass = clazz;
-        // JUnit 3 version: while (Test.class.isAssignableFrom(superClass)) {
-        classData.setTestClass(clazz);  //for Junit 4
         while (superClass != null && !("java.lang.Object".equals(superClass.getCanonicalName()))) {
             for (Method method : superClass.getDeclaredMethods()) {
                 if ((method.getName().startsWith("test")) || (method.isAnnotationPresent(org.junit.Test.class))) {
