@@ -277,7 +277,7 @@ public class AllTestRunner extends TestRunner {
         logFinalizer.finalizeLogs(props, htmlLog, csvLog, quickLog, executorThreadManager.getThreadCount());
         CONSOLE_LOG.info("\n");
         //final check
-        consoleWriter.printStatusAfterTestRunCheck();
+        //consoleWriter.printStatusAfterTestRunCheck();
 
         failureReporter.generateTestlistFailure(); // generate the testlist-failure.txt file to help re-execution
         CONSOLE_LOG.info("Gepard Test Done.");

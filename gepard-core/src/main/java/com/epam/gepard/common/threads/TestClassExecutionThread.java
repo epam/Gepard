@@ -233,7 +233,7 @@ public class TestClassExecutionThread extends Thread {
         o.tick(); //this thread is healthy
         classData = o;
         try {
-            HtmlRunReporter reporter = new HtmlRunReporter(new File(o.getTestURL()), o);
+            HtmlRunReporter reporter = new HtmlRunReporter(o);
             core.addListener(reporter);
 
             o.setDeathTimeout(o.getTimeout()); //set the TC timeout

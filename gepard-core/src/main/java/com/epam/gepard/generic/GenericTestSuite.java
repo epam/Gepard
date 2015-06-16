@@ -282,7 +282,6 @@ public class GenericTestSuite extends TestSuite {
 
         htmlLog.insertBlock("Footer", null);
         o.getTestCaseSet().updateStatus();
-        o.setTestURL(getTestURL());
     }
 
     private void beforeTestCaseSet() {

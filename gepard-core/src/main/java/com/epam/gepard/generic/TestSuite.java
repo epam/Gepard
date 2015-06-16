@@ -77,7 +77,7 @@ public class TestSuite implements Test {
         } catch (IllegalAccessException e) {
             return (warning("Cannot access test case: " + name + " (" + exceptionToString(e) + ")"));
         }
-        return (Test) test;
+        return null;
     }
 
     /**

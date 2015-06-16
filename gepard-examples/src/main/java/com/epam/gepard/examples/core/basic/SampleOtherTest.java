@@ -20,8 +20,9 @@ package com.epam.gepard.examples.core.basic;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import com.epam.gepard.util.Util;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -35,54 +36,62 @@ import org.junit.Test;
  * @author tkohegyi
  */
 @TestClass(id = "DEMO-1", name = "Basic Results, Sample")
-public class SampleOtherTest extends OtherTestCase {
+public class SampleOtherTest implements GepardTestClass {
 
+    @Test
     public void testTestMustPass() {
-        logComment("This is empty so must pass...");
+        logComment(this, "This is empty so must pass...");
     }
 
     @Test
     public void annotatedTestWithTwoStepsPassed() {
-        logStep("Step 1");
-        logStep("Step 2");
-        logComment("And so on...");
+        logStep(this, "Step 1");
+        logStep(this, "Step 2");
+        logComment(this, "And so on...");
     }
 
+    @Test
     public void testFailedTest() {
-        logComment("Test: failed test case");
-        org.junit.Assert.fail("Forced TC failure.");
+        logComment(this, "Test: failed test case");
+        Assert.fail("Forced TC failure.");
     }
 
+    @Test
     public void testNotApplicableTest() {
-        logStep("Test: N/A test case");
-        naTestCase("test N/A purpose");
+        logStep(this, "Test: N/A test case");
+        naTestCase(this, "test N/A purpose");
     }
 
+    @Test
     public void testTestCaseIsUnderConstructionPassed() {
-        logStep("Test: Dummy Test Case, passed result");
-        dummyTestCase();
+        logStep(this, "Test: Dummy Test Case, passed result");
+        dummyTestCase(this);
     }
 
+    @Test
     public void testTestCaseIsUnderConstructionFailed() {
-        logStep("Test: Dummy Test Case, failed result");
-        dummyTestCase();
-        org.junit.Assert.fail("Ups.");
+        logStep(this, "Test: Dummy Test Case, failed result");
+        dummyTestCase(this);
+        Assert.fail("Ups.");
     }
 
+    @Test
     public void testTestCaseIsUnderConstructionNotApplicable() {
-        logStep("Test: Dummy Test Case, N/A");
-        dummyTestCase();
-        naTestCase("To test dummy and N/A pair");
+        logStep(this, "Test: Dummy Test Case, N/A");
+        dummyTestCase(this);
+        naTestCase(this, "To test dummy and N/A pair");
     }
 
+    @Test
     public void testTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In testlist.txt, the timeout was set to 1 secs for this class.");
+        logStep(this, "Test the build in timeout. In testlist.txt, the timeout was set to 1 secs for this class.");
         Thread.sleep(30000); //30 sec
-        org.junit.Assert.fail("THIS IS BAD NO TIMEOUT OCCURRED!");
+        Assert.fail("THIS IS BAD NO TIMEOUT OCCURRED!");
     }
 
+    @Test
     public void testSetSystemUnderTestVersion() {
-        logComment("This is a sample on how to set the SUT (System Under Test) value, that is visible in the test report.");
+        logComment(this, "This is a sample on how to set the SUT (System Under Test) value, that is visible in the test report.");
         Util util = new Util();
         AllTestRunner.setSystemUnderTestVersion(util.getGepardVersion());
     }

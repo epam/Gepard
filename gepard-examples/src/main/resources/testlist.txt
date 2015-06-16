@@ -1,1 +1,4 @@
 com.epam.gepard.examples.core.basic.BasicTest
+com.epam.gepard.examples.core.basic.SampleOtherTest,,1
+com.epam.gepard.examples.core.basic.SampleAfterBeforeTest,9
+com.epam.gepard.examples.core.basic.SampleAfterClassBeforeClassTest,9

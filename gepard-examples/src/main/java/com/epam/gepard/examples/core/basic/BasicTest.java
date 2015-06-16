@@ -23,16 +23,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * This sample test class shows basic functions. Like using:
- * - logComment, logStep as logger methods
- * - naTestCase - to set a test case to N/A (not applicable)
- * - how to fail a test case by using fail method
- * - how to set a test case as "dummy" - as it is under construction
- * - how to set AUT - Application Under Test Version value
+ * This sample test class shows basic functions. Like using.
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-2", name = "JUnit4, Sample")
+@TestClass(id = "DEMO-1", name = "Sample, basic test")
 public class BasicTest {
 
     @Test

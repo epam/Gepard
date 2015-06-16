@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.epam.gepard.annotations.AnnotationUpdater;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
@@ -186,13 +187,12 @@ public class GenericListTestSuite extends TestSuite {
                         + "\nPlease implement at least one test method!\nNow exiting...");
                 AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_WITHOUT_TEST_METHOD);
             }
-//            Test t = getTestForClass(cls);
-//            addTest(t);
+            getTestForClass(cls);
+            //addTest(t);
 
             //set test for parallel execution
             String id = cls.getName() + "/" + rowNo;
             TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(id); //get the class exec object
-//classData.setTC(t);
             //set blocker parameters
             String blockerString = null;
             boolean blockerSelfEnabled = false;
@@ -212,7 +212,7 @@ public class GenericListTestSuite extends TestSuite {
             classData.setBlockerString(blockerString);
             classData.setSelfEnabledBlocker(blockerSelfEnabled);
             classData.setOriginalLine(originalLine);
-            classData.setTestURL("dummy.html");
+            //classData.setTestURL("dummy.html");
             checkDataDrivenParameters(classData, dataFeeder);
             counter--;
             rowNo++;
@@ -305,6 +305,7 @@ public class GenericListTestSuite extends TestSuite {
         classData.setDataFeederLoader(dataFeeder);
         classData.setDataRow(rowNo); //note: to load the parameters we just waiting for the paramnames
         testClassMap.put(id, classData);
+        updateTestClassAnnotation(clazz, id); //ensure linking back from Test Class to global Test Class Map
 
         //register test methods, and ancestor test methods, too
         int testMethod = 0;
@@ -323,6 +324,13 @@ public class GenericListTestSuite extends TestSuite {
         }
 
         return testMethod;
+    }
+
+    private void updateTestClassAnnotation(Class<?> clazz, String id) {
+        if (clazz.isAnnotationPresent(TestClass.class)) {
+            AnnotationUpdater annotationUpdater = new AnnotationUpdater();
+            annotationUpdater.changeAnnotationValue(clazz.getAnnotation(TestClass.class), "classDataId", id);
+        }
     }
 
     /**

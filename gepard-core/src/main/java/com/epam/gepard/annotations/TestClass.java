@@ -18,6 +18,8 @@ package com.epam.gepard.annotations;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import com.epam.gepard.common.TestClassExecutionData;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -41,5 +43,10 @@ public @interface TestClass {
      * The test script's id.
      */
     String id();
+
+    /**
+     * The test class execution data id, no need to set, as will be prepared by Gepard itself.
+     */
+    String classDataId() default "";
 
 }
