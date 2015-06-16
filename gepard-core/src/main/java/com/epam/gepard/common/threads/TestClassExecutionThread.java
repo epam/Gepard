@@ -28,6 +28,7 @@ import java.util.concurrent.Semaphore;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.generic.GenericResult;
 import com.epam.gepard.logger.HtmlRunReporter;
+import org.junit.runner.Computer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -239,7 +240,7 @@ public class TestClassExecutionThread extends Thread {
             core.addListener(reporter);
 
             o.setDeathTimeout(o.getTimeout()); //set the TC timeout
-            Result result = core.run(o.getTestClass());
+            Result result = core.run(Computer.serial(), o.getTestClass());
 
             for (Failure failure : result.getFailures()) {
                 LOGGER.debug(failure.toString());

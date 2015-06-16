@@ -42,6 +42,7 @@ public class SampleAfterBeforeTest implements GepardTestClass {
 
     @Before
     public void before() {
+        logComment(this, "We are in Before method.");
         Boolean b;
         b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[0]);
         if (b) {
@@ -55,6 +56,7 @@ public class SampleAfterBeforeTest implements GepardTestClass {
 
     @After
     public void after() {
+        logComment(this, "We are in After method.");
         Boolean b;
         b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[2]);
         if (b) {

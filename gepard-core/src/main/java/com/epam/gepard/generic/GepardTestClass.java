@@ -31,7 +31,10 @@ public interface GepardTestClass {
 
     default void logStep(final Object clazz, final String comment) {
         getTestClassExecutionData(clazz).getHtmlRunReporter().logStep(comment);
+    }
 
+    default void logEvent(final Object clazz, final String comment) {
+        getTestClassExecutionData(clazz).getHtmlRunReporter().logEvent(comment);
     }
 
     /**
