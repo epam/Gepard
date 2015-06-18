@@ -20,6 +20,7 @@ package com.epam.gepard.examples.core.basic;
 
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.common.TestClassExecutionData;
+import com.epam.gepard.common.threads.TestClassExecutionThread;
 import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.generic.GepardTestClass;
 import com.epam.gepard.logger.HtmlRunReporter;
@@ -40,13 +41,12 @@ import org.junit.Test;
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-5", name = "Basic AfterClass/BeforeClass Test Sample")
+@TestClass(id = "DEMO-8", name = "Basic AfterClass/BeforeClass Test Sample")
 public class SampleAfterClassBeforeClassTest implements GepardTestClass {
 
     @BeforeClass
     public static void beforeClass() {
-        String myId = Thread.currentThread().getName();
-        TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(myId);
+        TestClassExecutionData classData = TestClassExecutionThread.classDataInContext.get();
         HtmlRunReporter reporter = classData.getHtmlRunReporter();
         reporter.beforeClassComment("We started the BeforeClass method.");
         Boolean b;
@@ -63,8 +63,7 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
 
     @AfterClass
     public static void afterClass() {
-        String myId = Thread.currentThread().getName();
-        TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(myId);
+        TestClassExecutionData classData = TestClassExecutionThread.classDataInContext.get();
         HtmlRunReporter reporter = classData.getHtmlRunReporter();
         reporter.afterClassComment("We started the AfterClass method.");
         Boolean b;

@@ -29,7 +29,7 @@ import org.junit.rules.Timeout;
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-7", name = "Timeout Handling, Sample")
+@TestClass(id = "DEMO-4", name = "Timeout Handling, Sample")
 public class SampleTimeoutHandlingTest implements GepardTestClass {
 
     @Rule

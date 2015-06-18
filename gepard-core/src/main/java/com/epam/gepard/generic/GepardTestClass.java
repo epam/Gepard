@@ -2,6 +2,8 @@ package com.epam.gepard.generic;
 
 import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.common.threads.TestClassExecutionThread;
+import com.epam.gepard.datadriven.DataDrivenParameters;
+import com.epam.gepard.exception.SimpleGepardException;
 
 /**
  * @author Tamas_Kohegyi
@@ -40,6 +42,28 @@ public interface GepardTestClass {
 
     default void dummyTestCase() {
         getTestClassExecutionData().getHtmlRunReporter().dummyTestCase();
+    }
+
+    default String getDataDrivenTestParameter(final int byPosition) {
+        String value;
+        DataDrivenParameters parameters = getTestClassExecutionData().getDrivenData();
+        if (parameters != null) {
+            value = parameters.getTestParameter(parameters.getParameterName(byPosition));
+        } else {
+            throw new SimpleGepardException("Access to a data driven parameter in a not data driven test class.");
+        }
+        return value;
+    }
+
+    default String getDataDrivenTestParameter(final String byParameterName) {
+        String value;
+        DataDrivenParameters parameters = getTestClassExecutionData().getDrivenData();
+        if (parameters != null) {
+            value = parameters.getTestParameter(byParameterName);
+        } else {
+            throw new SimpleGepardException("Access to a data driven parameter in a not data driven test class.");
+        }
+        return value;
     }
 
 }

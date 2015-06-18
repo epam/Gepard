@@ -19,21 +19,25 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * This tests the different circumstances when a test is Not applicable.
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-1", name = "Basic Results, Sample, Every Test is NotApplicable")
-public class SampleAllNotApplicableTest extends OtherTestCase {
+@TestClass(id = "DEMO-3", name = "Basic Results, Sample, Every Test is NotApplicable")
+public class SampleAllNotApplicableTest implements GepardTestClass {
 
+    @Test
     public void testTestMustPass() {
         logComment("This is empty so must pass...");
         naTestCase("But it is a forced NA");
     }
 
+    @Test
     public void testTestPassedWithTwoSteps() {
         logStep("Step 1");
         logStep("Step 2");
@@ -41,30 +45,35 @@ public class SampleAllNotApplicableTest extends OtherTestCase {
         naTestCase("But it is a forced NA");
     }
 
+    @Test
     public void testFailedTest() {
         logComment("Test: failed test case");
         naTestCase("But it is a forced NA");
-        org.junit.Assert.fail("Forced TC failure.");
+        Assert.fail("Forced TC failure.");
     }
 
+    @Test
     public void testSimpleNotApplicableTest() {
         logStep("Test: N/A test case");
         naTestCase("test N/A purpose");
     }
 
+    @Test
     public void testTestCaseIsUnderConstruction() {
         logStep("Test: Dummy Test Case, passed result");
         dummyTestCase();
         naTestCase("But it is a forced NA");
     }
 
-    public void testTestCaseIsUnderConstructionAndNotappplicableAndFailed() {
+    @Test
+    public void testTestCaseIsUnderConstructionAndNotApplicableAndFailed() {
         logStep("Test: Dummy Test Case, failed result");
         dummyTestCase();
         naTestCase("But it is a forced NA");
         org.junit.Assert.fail("Ups.");
     }
 
+    @Test
     public void testTestCaseIsUnderConstructionAndNotApplicable() {
         logStep("Test: Dummy Test Case, N/A");
         dummyTestCase();

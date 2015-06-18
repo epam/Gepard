@@ -31,7 +31,7 @@ import org.junit.Test;
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-6", name = "Basic AfterClass/BeforeClass Test Sample - incorrect BeforeClass/AfterClass methods")
+@TestClass(id = "DEMO-9", name = "Basic AfterClass/BeforeClass Test Sample - incorrect BeforeClass/AfterClass methods")
 public class SampleBadAfterClassBeforeClassTest implements GepardTestClass {
 
     @BeforeClass

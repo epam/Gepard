@@ -91,6 +91,7 @@ public final class TestClassExecutionData {
     private StringBuilder systemOut;
     private Test tc;
     private Class<?> testClass;
+    private Object realClass;
 
     private String originalLine;
     private Environment environment;

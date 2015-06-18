@@ -37,7 +37,7 @@ import org.junit.Test;
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-4", name = "Basic After/Before Test Sample")
+@TestClass(id = "DEMO-7", name = "Basic After/Before Test Sample")
 public class SampleAfterBeforeTest implements GepardTestClass {
 
     @Before

@@ -21,21 +21,16 @@ package com.epam.gepard.logger;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.annotations.TestParameter;
 import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.NATestCaseException;
 import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.logger.helper.LogFileWriterFactory;
 import com.epam.gepard.util.FileUtil;
-import com.epam.gepard.util.ReflectionUtilsExtension;
 import com.epam.gepard.util.Util;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.springframework.util.ReflectionUtils;
-
-import java.lang.reflect.Field;
 import java.util.Properties;
 
 /**
@@ -111,7 +106,7 @@ public final class HtmlRunReporter extends RunListener {
         props.setProperty("TestCase", methodName);
         props.setProperty("ScriptNameRow", getDataDrivenFullClassName());
         testMethodHtmlLog.insertBlock("Header", props);
-        initDataDrivenLogAndAnnotations();
+        initDataDrivenLog();
     }
 
     @Override
@@ -230,7 +225,7 @@ public final class HtmlRunReporter extends RunListener {
         beforeClassComment(comment);
     }
 
-    private void initDataDrivenLogAndAnnotations() {
+    private void initDataDrivenLog() {
         Util util = new Util();
         if ((classData.getDrivenData() != null) && (classData.getDrivenData().getParameters() != null)) {
             //we have parameters to be logged, so build the text
@@ -244,55 +239,6 @@ public final class HtmlRunReporter extends RunListener {
             s = s + "</table>";
             logComment("Data Driven Test, with " + classData.getDrivenData().getParameters().length
                     + " parameters. Data row:" + classData.getDrivenDataRowNo(), s);
-        }
-        processTestParameterAnnotation();
-    }
-
-    /**
-     * Initialize the variables that has {@link com.epam.gepard.annotations.TestParameter} annotation from the test parameters.
-     */
-    private void processTestParameterAnnotation() {
-        Class<?> actual = this.getClass();
-        do { // Processing @TestParameter annotations
-            for (Field field : actual.getDeclaredFields()) {
-                // Setting test parameters
-                if (field.isAnnotationPresent(TestParameter.class)) {
-                    // Feeder or normal parameter
-                    if (classData.getDataFeederLoader() != null) {
-                        String key = ("".equals(field.getAnnotation(TestParameter.class).id())) ? field.getName() : field.getAnnotation(
-                                TestParameter.class).id();
-                        setTestParameter(field, classData.getDrivenData().getTestParameter(key));
-                    } else {
-                        logComment("WARNING: No data feeder but there are test parameters! Check the testlist file - 'classname,X' need to be used to have parameters.");
-                    }
-                }
-            }
-            actual = actual.getSuperclass();
-        } while (!actual.equals(Object.class));
-    }
-
-    /**
-     * Sets the test parameter.
-     *
-     * @param field the field to be set
-     * @param value with this value
-     */
-    private void setTestParameter(final Field field, final String value) {
-        Object fieldValue;
-        ReflectionUtils.makeAccessible(field);
-
-        try {
-            // Converting the value for the appropriate type
-            if ("".equals(field.getAnnotation(TestParameter.class).separator())) {
-                fieldValue = ReflectionUtilsExtension.valueOf(field.getType(), value);
-            } else {
-                fieldValue = ReflectionUtilsExtension.valueOf(field, value, field.getAnnotation(TestParameter.class).separator());
-            }
-
-            //Setting the field
-            ReflectionUtils.setField(field, this, fieldValue);
-        } catch (Exception e) {
-            logComment("No test parameter for field: " + field.getName());
         }
     }
 

@@ -20,7 +20,13 @@ package com.epam.gepard.examples.core.datadriven;
 
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.annotations.TestParameter;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.common.TestClassExecutionData;
+import com.epam.gepard.common.threads.TestClassExecutionThread;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Sample test on how to use CSV based data driven test.
@@ -28,19 +34,20 @@ import com.epam.gepard.generic.OtherTestCase;
  *
  * @author Tamas_Kohegyi
  */
-@TestClass(id = "DEMO-2", name = "Data Driven Test Sample - CSV - Recommended TDD approach")
-public class DataDrivenSampleTestCSVTestParameterTest extends OtherTestCase {
+@TestClass(id = "DEMO-12", name = "Data Driven Test Sample - CSV - Recommended TDD approach")
+public class DataDrivenSampleTestCSVTestParameterTest implements GepardTestClass {
 
     @TestParameter(id = "ID")
-    private String tcRun;
+    private String tcRun = getDataDrivenTestParameter(0);
     @TestParameter(id = "PART1")
-    private String tcText;
+    private String tcText = getDataDrivenTestParameter("PART1");
     @TestParameter(id = "PART2")
-    private String tcAssertText;
+    private String tcAssertText = getDataDrivenTestParameter("PART2");
 
     /**
      * Sample test method, do not use data at all, and always passes.
      */
+    @Test
     public void testDoNotUseData() {
         logComment("This TC does not use data at all.");
     }
@@ -48,6 +55,7 @@ public class DataDrivenSampleTestCSVTestParameterTest extends OtherTestCase {
     /**
      * Sample test method, lists all the available data, and passes only if the 3. parameter is 'WILLFAIL'.
      */
+    @Test
     public void testDoUseData() {
         logStep("Test if we can use the params:");
         logEvent("Param 1:" + tcRun + ", Param 2:" + tcText + ", Param 3:" + tcAssertText);

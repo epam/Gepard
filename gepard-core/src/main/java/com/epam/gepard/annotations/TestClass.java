@@ -44,9 +44,4 @@ public @interface TestClass {
      */
     String id();
 
-    /**
-     * The test class execution data id, no need to set, as will be prepared by Gepard itself.
-     */
-    String classDataId() default "";
-
 }

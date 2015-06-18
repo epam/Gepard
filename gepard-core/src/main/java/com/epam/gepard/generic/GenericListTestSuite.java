@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.epam.gepard.annotations.AnnotationUpdater;
 import com.epam.gepard.logger.HtmlRunReporter;
 import junit.framework.Test;
 
@@ -60,7 +59,7 @@ public class GenericListTestSuite extends TestSuite {
      * So you may use it.
      * Uniqueness of the key is your responsibility. Having a key naming convention is useful.
      */
-    private static Map<String, Object> globalDataStorage = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
+    private static Map<String, Object> globalDataStorage = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Gepard level global map, to store all the test classes those are executed.
@@ -76,10 +75,8 @@ public class GenericListTestSuite extends TestSuite {
 
     private static final int TESTLIST_CLASS_NAME_FIELD = 0;
     private static final int TESTLIST_FEEDER_DESCRIPTOR_FIELD = 1;
-    private static final int TESTLIST_TIMEOUT_FIELD = 2;
-    private static final int TESTLIST_BLOCKER_FIELD = 3;
+    private static final int TESTLIST_BLOCKER_FIELD = 2;
 
-    private static final String DEFAULT_TIMEOUT_IN_SECS = "120";
     private int usedTc; // = 0; //number of used Test Classes - will be used at report
     private int numberTc; // = 0; //number of TCs
 
@@ -108,9 +105,7 @@ public class GenericListTestSuite extends TestSuite {
             String line = originalLine.replace(File.separatorChar, '.');
             // if: classname   -> 1 run is expected
             // if: classname,3 -> 3 run is expected
-            // if: classname,,10 -> 1 run is expected, but class timeout is 10 secs
-            // if: classname,3,10 -> 3 run is expected, + class timeout is 10 secs
-            // if: classname,,,AAA -> AAA is used as a blocker id
+            // if: classname,,AAA -> AAA is used as a blocker id
             // if: classname,feederdescriptor,...-> loader class defines the number of execution and provides the tests
             String[] testDescriptor = line.split(",");
             Class<?> clazz = Class.forName(testDescriptor[TESTLIST_CLASS_NAME_FIELD]);
@@ -135,9 +130,8 @@ public class GenericListTestSuite extends TestSuite {
 
                 //and add it to the suite
                 TestClassData testClassData = new TestClassData(clazz, count, blocker);
-                int tcMethods = addTestClass(testClassData, dataFeeder, originalLine);
+                addTestClass(testClassData, dataFeeder, originalLine);
                 usedTc++; //count the used test classes
-                //numberTc += tcMethods; //count the real number of the used TCs (ignoring data driven duplications)
             }
         }
         listReader.close();
@@ -149,25 +143,14 @@ public class GenericListTestSuite extends TestSuite {
      * @param testClassData holds the data necessary for adding the test class
      * @param dataFeeder   is the Data Feeder class that should be used to load the data-driven values.
      * @param originalLine is the original testlist row.
-     * @return with the number of the registered test methods.
      */
-    public int addTestClass(final TestClassData testClassData, final DataFeederLoader dataFeeder, final String originalLine) {
+    public void addTestClass(final TestClassData testClassData, final DataFeederLoader dataFeeder, final String originalLine) {
         int rowNo = 0;
         int counter = testClassData.getCount();
-        int testMethods = 0;
         Class<?> cls = testClassData.getClassOfTestClass();
         String blocker = testClassData.getBlocker();
         while (counter > 0) {
-            testMethods = registerMethodsInGlobalMap(cls, rowNo, dataFeeder);
-/* we don't care if no test method will be executed. Thta will mean the test class is passed btw.
-            if (testMethods == 0) {
-                //this should not happen, as this means no test method to execute within the test class.
-                // exiting now with error.
-                AllTestRunner.CONSOLE_LOG.info("\nERROR: No test method at Class in testlist: " + cls.getName()
-                        + "\nPlease implement at least one test method!\nNow exiting...");
-                AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_WITHOUT_TEST_METHOD);
-            }
-        */
+            registerMethodsInGlobalMap(cls, rowNo, dataFeeder);
             getTestForClass(cls);
             //addTest(t);
 
@@ -193,12 +176,10 @@ public class GenericListTestSuite extends TestSuite {
             classData.setBlockerString(blockerString);
             classData.setSelfEnabledBlocker(blockerSelfEnabled);
             classData.setOriginalLine(originalLine);
-            //classData.setTestURL("dummy.html");
             checkDataDrivenParameters(classData, dataFeeder);
             counter--;
             rowNo++;
         }
-        return testMethods;
     }
 
     private void checkDataDrivenParameters(final TestClassExecutionData classData, final DataFeederLoader dataFeeder) {
@@ -285,7 +266,6 @@ public class GenericListTestSuite extends TestSuite {
         classData.setDataRow(rowNo); //note: to load the parameters we just waiting for the paramnames
         classData.setTestClass(clazz);  //for Junit 4
         testClassMap.put(id, classData);
-        updateTestClassAnnotation(clazz, id); //ensure linking back from Test Class to global Test Class Map
         new HtmlRunReporter(classData); //this prepares everything that need to be prepared for Html Logging the execution of the test class
 
         //register test methods, and ancestor test methods, too
@@ -303,13 +283,6 @@ public class GenericListTestSuite extends TestSuite {
         }
 
         return testMethod;
-    }
-
-    private void updateTestClassAnnotation(Class<?> clazz, String id) {
-        if (clazz.isAnnotationPresent(TestClass.class)) {
-            AnnotationUpdater annotationUpdater = new AnnotationUpdater();
-            annotationUpdater.changeAnnotationValue(clazz.getAnnotation(TestClass.class), "classDataId", id);
-        }
     }
 
     /**
