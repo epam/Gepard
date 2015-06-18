@@ -81,16 +81,16 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
 
     @Test
     public void testMustPass() {
-        logComment(this, "Par0:" + getTestClassExecutionData(this).getDrivenData().getParameters()[0]
-                + ", Par1:" + getTestClassExecutionData(this).getDrivenData().getParameters()[1]
-                + ", Par2:" + getTestClassExecutionData(this).getDrivenData().getParameters()[2]
-                + ", Par3:" + getTestClassExecutionData(this).getDrivenData().getParameters()[3]
-                + ", Par4:" + getTestClassExecutionData(this).getDrivenData().getParameters()[4]);
+        logComment("Par0:" + getTestClassExecutionData().getDrivenData().getParameters()[0]
+                + ", Par1:" + getTestClassExecutionData().getDrivenData().getParameters()[1]
+                + ", Par2:" + getTestClassExecutionData().getDrivenData().getParameters()[2]
+                + ", Par3:" + getTestClassExecutionData().getDrivenData().getParameters()[3]
+                + ", Par4:" + getTestClassExecutionData().getDrivenData().getParameters()[4]);
     }
 
     @Test
     public void testMustNA() {
-        naTestCase(this, "Set to N/A");
+        naTestCase("Set to N/A");
     }
 
     @Test

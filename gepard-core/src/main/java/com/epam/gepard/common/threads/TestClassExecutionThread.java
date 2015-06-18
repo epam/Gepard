@@ -50,6 +50,7 @@ public class TestClassExecutionThread extends Thread {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestClassExecutionThread.class);
 
     private static final Semaphore AVAILABLE = new Semaphore(1, false);
+    public static final InheritableThreadLocal<TestClassExecutionData> classDataInContext = new InheritableThreadLocal<TestClassExecutionData>();
 
     //TC executor
     private boolean enabled; // = false; //weather TC execution enabled for this thread or not
@@ -229,16 +230,13 @@ public class TestClassExecutionThread extends Thread {
     }
 
     private void execClass(final TestClassExecutionData o) {
-        o.tick(); //this thread is healthy
-        String oldThreadName = Thread.currentThread().getName();
-        Thread.currentThread().setName(o.getClassName() + "/" + o.getDrivenDataRowNo());
         classData = o;
+        classDataInContext.set(o);
         try {
             HtmlRunReporter reporter = o.getHtmlRunReporter();
             reporter.hiddenBeforeTestClassExecution();
             core.addListener(reporter);
 
-            o.setDeathTimeout(o.getTimeout()); //set the TC timeout
             Result result = core.run(Computer.serial(), o.getTestClass());
             for (Failure failure : result.getFailures()) {
                 LOGGER.debug(failure.toString());
@@ -250,7 +248,7 @@ public class TestClassExecutionThread extends Thread {
             //this is gas
             LOGGER.debug("Thread: got EX during JUnitCore execution.", e);
         }
-        Thread.currentThread().setName(oldThreadName);
+        classDataInContext.set(null);
         classData = null;
     }
 

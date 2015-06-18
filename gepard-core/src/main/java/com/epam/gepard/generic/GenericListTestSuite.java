@@ -126,9 +126,6 @@ public class GenericListTestSuite extends TestSuite {
                     dataFeeder.reserveParameterArray(parameterArray);
                 }
 
-                //detect timeout
-                Integer timeout = detectTestClassTimeout(clazz, testDescriptor);
-
                 //detect blocker class
                 String blocker = null;
                 if (testDescriptor.length > TESTLIST_BLOCKER_FIELD) {
@@ -137,30 +134,13 @@ public class GenericListTestSuite extends TestSuite {
                 }
 
                 //and add it to the suite
-                TestClassData testClassData = new TestClassData(clazz, count, timeout, blocker);
+                TestClassData testClassData = new TestClassData(clazz, count, blocker);
                 int tcMethods = addTestClass(testClassData, dataFeeder, originalLine);
                 usedTc++; //count the used test classes
                 //numberTc += tcMethods; //count the real number of the used TCs (ignoring data driven duplications)
             }
         }
         listReader.close();
-    }
-
-    private Integer detectTestClassTimeout(final Class<?> clazz, final String[] testDescriptor) {
-        String toString = environment.getProperty(Environment.GEPARD_TEST_TIMEOUT, DEFAULT_TIMEOUT_IN_SECS);
-        Integer timeout = Integer.valueOf(DEFAULT_TIMEOUT_IN_SECS);
-        if ((testDescriptor.length > TESTLIST_TIMEOUT_FIELD) && (!testDescriptor[TESTLIST_TIMEOUT_FIELD].isEmpty())) {
-            //has timeout value
-            toString = testDescriptor[2];
-        }
-        try {
-            timeout = Integer.valueOf(toString);
-        } catch (NumberFormatException e) {
-            AllTestRunner.CONSOLE_LOG.info("\nERROR: Bad Timeout value at Class in testlist: " + clazz.getName()
-                    + "\nPlease fix the timeout data to be used in list!\nNow exiting...");
-            AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_BAD_TIMEOUT);
-        }
-        return timeout;
     }
 
     /**
@@ -178,7 +158,7 @@ public class GenericListTestSuite extends TestSuite {
         Class<?> cls = testClassData.getClassOfTestClass();
         String blocker = testClassData.getBlocker();
         while (counter > 0) {
-            testMethods = registerMethodsInGlobalMap(cls, rowNo, testClassData.getTimeout(), dataFeeder);
+            testMethods = registerMethodsInGlobalMap(cls, rowNo, dataFeeder);
 /* we don't care if no test method will be executed. Thta will mean the test class is passed btw.
             if (testMethods == 0) {
                 //this should not happen, as this means no test method to execute within the test class.
@@ -287,11 +267,10 @@ public class GenericListTestSuite extends TestSuite {
      *
      * @param clazz      in which class we search for the test methods.
      * @param rowNo      in case of data-driven test, when the test class is repeated, this specifies the actual repetition.
-     * @param timeout    to be used as timeout for the test methods (inherits class timeouts).
      * @param dataFeeder is the data feeder class in order to load the proper test data.
      * @return the number of the registered test methods.
      */
-    protected int registerMethodsInGlobalMap(final Class<?> clazz, final int rowNo, final int timeout, final DataFeederLoader dataFeeder) {
+    protected int registerMethodsInGlobalMap(final Class<?> clazz, final int rowNo, final DataFeederLoader dataFeeder) {
         //register this class in the global class list
         String id = clazz.getName() + "/" + rowNo;
         if (testClassMap.containsKey(id)) {
@@ -301,7 +280,6 @@ public class GenericListTestSuite extends TestSuite {
             AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_DUPLICATED);
         }
         TestClassExecutionData classData = new TestClassExecutionData(id, environment);
-        classData.setTimeout(timeout);
         classData.setClassName(clazz.getName());
         classData.setDataFeederLoader(dataFeeder);
         classData.setDataRow(rowNo); //note: to load the parameters we just waiting for the paramnames

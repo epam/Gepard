@@ -36,17 +36,17 @@ public class SampleBadAfterClassBeforeClassTest implements GepardTestClass {
 
     @BeforeClass
     public void beforeClass() {
-        logComment(this, "This Test should fail, as the method annotated with @BeforeClass is not static.");
+        logComment("This Test should fail, as the method annotated with @BeforeClass is not static.");
     }
 
     @AfterClass
     public void afterClass() {
-        logComment(this, "This Test should fail, as the method annotated with @BeforeClass is not static.");
+        logComment("This Test should fail, as the method annotated with @BeforeClass is not static.");
     }
 
     @Test
     public void testMustPass() {
-        naTestCase(this, "Something is wrong if you can see this in the log...");
+        naTestCase("Something is wrong if you can see this in the log...");
     }
 
 }

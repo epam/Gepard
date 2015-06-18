@@ -1,8 +1,7 @@
 package com.epam.gepard.generic;
 
-import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.exception.SimpleGepardException;
+import com.epam.gepard.common.threads.TestClassExecutionThread;
 
 /**
  * @author Tamas_Kohegyi
@@ -10,31 +9,24 @@ import com.epam.gepard.exception.SimpleGepardException;
 public interface GepardTestClass {
 
     /**
-     * Detects the Test Class Execution data object for the given Object, that should be test class annotated with @TestClass.
-     * @param clazz is the test class object
-     * @return with Test Class Execution data object or null, if it was not properly set.
-     * May throw @SimpleGepardException in case @TestClass annotation does not present.
+     * Detects the Test Class Execution Data object for the running Test Class.
+     * @return with Test Class Execution Data object or null, if it was not properly set.
      */
-    default TestClassExecutionData getTestClassExecutionData(final Object clazz) {
-        String myId = Thread.currentThread().getName();
-        if (clazz.getClass().isAnnotationPresent(TestClass.class)) {
-            return GenericListTestSuite.getTestClassExecutionData(myId);
-        }
-        throw new SimpleGepardException("Given Object: " + clazz.toString()
-                + " is not annotated as Gepard Test Class, cannot determine Test Class Execution Data.");
+    default TestClassExecutionData getTestClassExecutionData() {
+        return TestClassExecutionThread.classDataInContext.get();
     }
 
-    default void logComment(final Object clazz, final String comment) {
-        getTestClassExecutionData(clazz).getHtmlRunReporter().logComment(comment);
+    default void logComment(final String comment) {
+        getTestClassExecutionData().getHtmlRunReporter().logComment(comment);
 
     }
 
-    default void logStep(final Object clazz, final String comment) {
-        getTestClassExecutionData(clazz).getHtmlRunReporter().logStep(comment);
+    default void logStep(final String comment) {
+        getTestClassExecutionData().getHtmlRunReporter().logStep(comment);
     }
 
-    default void logEvent(final Object clazz, final String comment) {
-        getTestClassExecutionData(clazz).getHtmlRunReporter().logEvent(comment);
+    default void logEvent(final String comment) {
+        getTestClassExecutionData().getHtmlRunReporter().logEvent(comment);
     }
 
     /**
@@ -42,12 +34,12 @@ public interface GepardTestClass {
      *
      * @param reason The reason why this TC is N/A
      */
-    default void naTestCase(final Object clazz, final String reason) {
-        getTestClassExecutionData(clazz).getHtmlRunReporter().naTestCase(reason);
+    default void naTestCase(final String reason) {
+        getTestClassExecutionData().getHtmlRunReporter().naTestCase(reason);
     }
 
-    default void dummyTestCase(final Object clazz) {
-        getTestClassExecutionData(clazz).getHtmlRunReporter().dummyTestCase();
+    default void dummyTestCase() {
+        getTestClassExecutionData().getHtmlRunReporter().dummyTestCase();
     }
 
 }

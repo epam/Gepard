@@ -39,9 +39,9 @@ public class DataDrivenSampleTestCSV implements GepardTestClass {
      */
     @Test
     public void testDoNotUseData() {
-        logComment(this, "This TC does not use data at all.");
-        if (getTestClassExecutionData(this).getDrivenDataRowNo() == fourthRow) {  //in case we are at row 4 (that is the 5th execution), set this TC as N/A
-            naTestCase(this, "To test this as well");
+        logComment("This TC does not use data at all.");
+        if (getTestClassExecutionData().getDrivenDataRowNo() == fourthRow) {  //in case we are at row 4 (that is the 5th execution), set this TC as N/A
+            naTestCase("To test this as well");
         }
     }
 
@@ -50,16 +50,16 @@ public class DataDrivenSampleTestCSV implements GepardTestClass {
      */
     @Test
     public void testDoUseData() {
-        String[] parameters = getTestClassExecutionData(this).getDrivenData().getParameters();
-        logComment(this, "First check if we have data available as we expect...");
+        String[] parameters = getTestClassExecutionData().getDrivenData().getParameters();
+        logComment("First check if we have data available as we expect...");
         Assert.assertTrue("Test is missing parameters!", parameters != null); //we need parameters
         Assert.assertTrue("Test is missing correct number of parameters!", parameters.length == threeTestDataIsExpected); //we need 2 parameters for this TC, so check it now
-        logComment(this, "Ok. We have exactly 3 params.");
-        logStep(this, "Test if we can use the params:");
-        logEvent(this, "Param 1:" + parameters[0] + ", Param 2:" + parameters[1] + ", Param 3:" + parameters[2]);
-        logStep(this, "Test fails, if Param 2 is 'WILLFAIL'");
-        if (getTestClassExecutionData(this).getDrivenDataRowNo() == 2) {
-            dummyTestCase(this); //in case we are at row 2 (that is the 3th execution), set this TC as Dummy one
+        logComment("Ok. We have exactly 3 params.");
+        logStep("Test if we can use the params:");
+        logEvent("Param 1:" + parameters[0] + ", Param 2:" + parameters[1] + ", Param 3:" + parameters[2]);
+        logStep("Test fails, if Param 2 is 'WILLFAIL'");
+        if (getTestClassExecutionData().getDrivenDataRowNo() == 2) {
+            dummyTestCase(); //in case we are at row 2 (that is the 3th execution), set this TC as Dummy one
         }
         Assert.assertTrue("This need to be failed.", parameters[2].compareTo("WILLFAIL") != 0); //fail the TC if the specific parameter has special value
     }

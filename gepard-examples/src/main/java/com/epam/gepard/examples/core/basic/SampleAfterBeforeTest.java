@@ -42,46 +42,46 @@ public class SampleAfterBeforeTest implements GepardTestClass {
 
     @Before
     public void before() {
-        logComment(this, "We started the Before method.");
+        logComment("We started the Before method.");
         Boolean b;
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[1]);
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[1]);
         if (b) {
             Assert.fail("forced fail at beforeTestCase");
         }
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[2]);
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[2]);
         if (b) {
-            naTestCase(this, "forced N/A at beforeTestCase");
+            naTestCase("forced N/A at beforeTestCase");
         }
-        logComment(this, "We finished the Before method.");
+        logComment("We finished the Before method.");
     }
 
     @After
     public void after() {
-        logComment(this, "We started the After method.");
+        logComment("We started the After method.");
         Boolean b;
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[3]);
         if (b) {
             Assert.fail("forced fail at afterTestCase");
         }
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[4]);
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[4]);
         if (b) {
-            naTestCase(this, "forced N/A at afterTestCase");
+            naTestCase("forced N/A at afterTestCase");
         }
-        logComment(this, "We finished the After method.");
+        logComment("We finished the After method.");
     }
 
     @Test
     public void testTestMustPass() {
-        logComment(this, "Par0:" + getTestClassExecutionData(this).getDrivenData().getParameters()[0]
-                + ", Par1:" + getTestClassExecutionData(this).getDrivenData().getParameters()[1]
-                + ", Par2:" + getTestClassExecutionData(this).getDrivenData().getParameters()[2]
-                + ", Par3:" + getTestClassExecutionData(this).getDrivenData().getParameters()[3]
-                + ", Par4:" + getTestClassExecutionData(this).getDrivenData().getParameters()[4]);
+        logComment("Par0:" + getTestClassExecutionData().getDrivenData().getParameters()[0]
+                + ", Par1:" + getTestClassExecutionData().getDrivenData().getParameters()[1]
+                + ", Par2:" + getTestClassExecutionData().getDrivenData().getParameters()[2]
+                + ", Par3:" + getTestClassExecutionData().getDrivenData().getParameters()[3]
+                + ", Par4:" + getTestClassExecutionData().getDrivenData().getParameters()[4]);
     }
 
     @Test
     public void testTestMustNA() {
-        naTestCase(this, "Set to N/A");
+        naTestCase("Set to N/A");
     }
 
     @Test

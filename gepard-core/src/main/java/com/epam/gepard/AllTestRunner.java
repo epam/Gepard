@@ -36,9 +36,7 @@ import com.epam.gepard.common.helper.ResultCollector;
 import com.epam.gepard.common.helper.TestFailureReporter;
 import com.epam.gepard.common.threads.ExecutorThreadManager;
 import com.epam.gepard.common.threads.RemoteControlHandlerThread;
-import com.epam.gepard.common.threads.TimeoutHandlerThread;
 import com.epam.gepard.common.threads.handler.RemoteControlHandler;
-import com.epam.gepard.common.threads.handler.TimeoutHandler;
 import com.epam.gepard.common.threads.helper.ServerSocketFactory;
 import com.epam.gepard.exception.ComplexGepardException;
 import com.epam.gepard.exception.ShutDownException;
@@ -82,12 +80,10 @@ public class AllTestRunner extends TestRunner {
 
     private static String systemUnderTestVersion;
 
-    private static TimeoutHandlerThread gepardTimeout;
     private static RemoteControlHandlerThread gepardRemote;
 
     private static ExecutorThreadManager executorThreadManager = new ExecutorThreadManager();
 
-    private final TimeoutHandler timeoutHandler = new TimeoutHandler();
     private final RemoteControlHandler remoteControlHandler = new RemoteControlHandler();
 
     private ReportFinalizer reportFinalizer;
@@ -163,8 +159,6 @@ public class AllTestRunner extends TestRunner {
                 AllTestRunner.gepardRemote.start(); //start remote control
             }
 
-            //initiate the timeout handler thread
-            initiateTheTimeoutHandlerThread(this);
             //if full remote control, then wait for the kill sign
             if (environment.getBooleanProperty(Environment.GEPARD_REMOTE_FULL_CONTROL)) {
                 initiateGepardRemoteControl();
@@ -185,12 +179,6 @@ public class AllTestRunner extends TestRunner {
                     ExitCode.EXIT_CODE_UNKNOWN_ERROR);
         }
         exitFromGepard();
-    }
-
-    private void initiateTheTimeoutHandlerThread(final AllTestRunner runner) {
-        AllTestRunner.gepardTimeout = new TimeoutHandlerThread(runner.getTimeoutHandler());
-        AllTestRunner.gepardTimeout.setName("GEPARD Timeout Handler"); //set its name
-        AllTestRunner.gepardTimeout.start(); //start remote control
     }
 
     private void initProperties(final Environment environment, final String propFileList) {
@@ -220,10 +208,6 @@ public class AllTestRunner extends TestRunner {
      */
     public static void setExitCode(final int exitCode) {
         AllTestRunner.exitCode = exitCode;
-    }
-
-    public static TimeoutHandlerThread getGepardTimeout() {
-        return gepardTimeout;
     }
 
     public static RemoteControlHandlerThread getGepardRemote() {
@@ -369,10 +353,6 @@ public class AllTestRunner extends TestRunner {
         if (shouldExit) {
             exitFromGepard(exitCode);
         }
-    }
-
-    public TimeoutHandler getTimeoutHandler() {
-        return timeoutHandler;
     }
 
     public RemoteControlHandler getRemoteControlHandler() {

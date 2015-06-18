@@ -47,7 +47,6 @@ public class RemoteControlHandler {
             s = testClassExecutionThread.isEnabled() ? s + "Enabled" : s + "Disabled";
             TestClassExecutionData o = testClassExecutionThread.getActiveTest();
             if (o != null) {
-                s = s + ", Health: " + o.getHealth() + ", Timeout: " + o.getDeathTimeout();
                 s = s + ", Executing: " + o.getID();
             }
             s = s + "\n\r";

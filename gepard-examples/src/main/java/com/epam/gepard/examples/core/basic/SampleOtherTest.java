@@ -40,58 +40,51 @@ public class SampleOtherTest implements GepardTestClass {
 
     @Test
     public void testTestMustPass() {
-        logComment(this, "This is empty so must pass...");
+        logComment("This is empty so must pass...");
     }
 
     @Test
     public void annotatedTestWithTwoStepsPassed() {
-        logStep(this, "Step 1");
-        logStep(this, "Step 2");
-        logComment(this, "And so on...");
+        logStep("Step 1");
+        logStep("Step 2");
+        logComment("And so on...");
     }
 
     @Test
     public void testFailedTest() {
-        logComment(this, "Test: failed test case");
+        logComment("Test: failed test case");
         Assert.fail("Forced TC failure.");
     }
 
     @Test
     public void testNotApplicableTest() {
-        logStep(this, "Test: N/A test case");
-        naTestCase(this, "test N/A purpose");
+        logStep("Test: N/A test case");
+        naTestCase("test N/A purpose");
     }
 
     @Test
     public void testTestCaseIsUnderConstructionPassed() {
-        logStep(this, "Test: Dummy Test Case, passed result");
-        dummyTestCase(this);
+        logStep("Test: Dummy Test Case, passed result");
+        dummyTestCase();
     }
 
     @Test
     public void testTestCaseIsUnderConstructionFailed() {
-        logStep(this, "Test: Dummy Test Case, failed result");
-        dummyTestCase(this);
+        logStep("Test: Dummy Test Case, failed result");
+        dummyTestCase();
         Assert.fail("Ups.");
     }
 
     @Test
     public void testTestCaseIsUnderConstructionNotApplicable() {
-        logStep(this, "Test: Dummy Test Case, N/A");
-        dummyTestCase(this);
-        naTestCase(this, "To test dummy and N/A pair");
-    }
-
-    @Test
-    public void testTimeoutTest() throws InterruptedException {
-        logStep(this, "Test the build in timeout. In testlist.txt, the timeout was set to 1 secs for this class.");
-        Thread.sleep(30000); //30 sec
-        Assert.fail("THIS IS BAD NO TIMEOUT OCCURRED!");
+        logStep("Test: Dummy Test Case, N/A");
+        dummyTestCase();
+        naTestCase("To test dummy and N/A pair");
     }
 
     @Test
     public void testSetSystemUnderTestVersion() {
-        logComment(this, "This is a sample on how to set the SUT (System Under Test) value, that is visible in the test report.");
+        logComment("This is a sample on how to set the SUT (System Under Test) value, that is visible in the test report.");
         Util util = new Util();
         AllTestRunner.setSystemUnderTestVersion(util.getGepardVersion());
     }

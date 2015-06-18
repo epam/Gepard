@@ -69,7 +69,6 @@ public final class Environment {
     public static final String GEPARD_DATA_DRIVEN_FEEDER_CLASS = "gepard.datadriven.feeder.class";
 
     public static final String GEPARD_LOAD_AND_EXIT = "gepard.loadandexit";
-    public static final String GEPARD_TEST_TIMEOUT = "gepard.test.timeout";
     public static final String GEPARD_PUBLIC_PATH = "gepard.public.path";
     public static final String GEPARD_PUBLIC_RESULT = "gepard.public.result";
     public static final String GEPARD_PUBLIC_ENABLED = "gepard.public.enabled";

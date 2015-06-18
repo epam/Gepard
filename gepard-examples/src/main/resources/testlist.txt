@@ -1,8 +1,8 @@
 com.epam.gepard.examples.core.basic.BasicTest
 com.epam.gepard.examples.core.basic.BasicNoTest
-com.epam.gepard.examples.core.basic.SampleOtherTest,,1
+com.epam.gepard.examples.core.basic.SampleOtherTest
 com.epam.gepard.examples.core.basic.SampleAfterBeforeTest,9
 com.epam.gepard.examples.core.basic.SampleAfterClassBeforeClassTest,9
 com.epam.gepard.examples.core.basic.SampleBadAfterClassBeforeClassTest
-#com.epam.gepard.examples.core.basic.SampleTimeoutHandlingTest,,2
+com.epam.gepard.examples.core.basic.SampleTimeoutHandlingTest
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSV,SimpleMultiplierDataFeeder:11

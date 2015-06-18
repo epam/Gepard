@@ -80,13 +80,6 @@ public final class TestClassExecutionData {
     private boolean selfEnabledBlocker;
 
     /**
-     * Store the class level timeout info.
-     */
-    //Timeout handler
-    private long heart; // 0 healthy, <0 less healthy
-    private final long defaultTimeout;
-    private long timeout;
-    /**
      * The test name that will appear in the log.
      */
     private String testScriptName = "Unnamed test";
@@ -110,8 +103,6 @@ public final class TestClassExecutionData {
      */
     public TestClassExecutionData(final String id, final Environment environment) {
         this.environment = environment;
-        this.defaultTimeout = Long.parseLong(environment.getProperty(Environment.GEPARD_TEST_TIMEOUT));
-        setDeathTimeout(defaultTimeout); //initiate the timeout
         systemOut = new StringBuilder();
         this.id = id;
         isProblematic = false;
@@ -138,68 +129,6 @@ public final class TestClassExecutionData {
 
     public DataFeederLoader getDataFeederLoader() {
         return dataFeederLoader;
-    }
-
-    // THREAD TIMEOUT HANDLING
-
-    /**
-     * Store the class level timeout info.
-     *
-     * @return the class level test execution timeout.
-     */
-    public long getTimeout() {
-        return timeout;
-    }
-
-    /**
-     * Sets the class level test execution timeout.
-     *
-     * @param timeout to be set.
-     */
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
-    }
-
-    /**
-     * Set the timeout of the TC execution.
-     *
-     * @param deathTimeout is the timeout is seconds.
-     */
-    public void setDeathTimeout(final long deathTimeout) {
-        this.timeout = deathTimeout;
-    }
-
-    /**
-     * Get the timeout of the TC execution.
-     *
-     * @return with the actual timeout.
-     */
-    public long getDeathTimeout() {
-        return timeout;
-    }
-
-    /**
-     * Decrease the health status. Used to count the timeout ticks.
-     * The thread tries to keep it at 0, this methods counts how old this value is, i.e. how long the thread does nothing.
-     */
-    public void timeoutTick() {
-        heart--;
-    }
-
-    /**
-     * Getter of class execution heart healthy factor.
-     *
-     * @return with the health level. The lower is the less healthy, 0 is the best status.
-     */
-    public long getHealth() {
-        return heart;
-    }
-
-    /**
-     * Set the class execution healthy. Its heart is ticking.
-     */
-    public void tick() {
-        heart = 0;
     }
 
     /**
@@ -311,7 +240,6 @@ public final class TestClassExecutionData {
         synchronized (systemOut) {
             systemOut.append(message).append("\n");
         }
-        tick(); //reset timeout counter
     }
 
     /**

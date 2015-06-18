@@ -168,7 +168,6 @@ public abstract class CommonTestCase extends TestCase {
                 return null;
             }
         });
-        long timeout = getTimeout();
         synchronized (classData) {
             classData.setTask(task); //now the time can interrupt it
         }
@@ -177,13 +176,9 @@ public abstract class CommonTestCase extends TestCase {
         } catch (ExecutionException ex) { //if the computation returns with exception
             throw ex.getCause();
         } catch (CancellationException e) { //the task execution is cancelled
-            String txt = "Test Class Activity Timeout occurred: " + timeout + " secs.";
+            String txt = "Test Class Activity Timeout occurred.";
             throw new TimeoutException(txt);
         }
-    }
-
-    private long getTimeout() {
-        return classData.getTimeout();
     }
 
     /**

@@ -88,9 +88,6 @@ public class ExecutorThreadManager {
         if (AllTestRunner.getGepardRemote() != null) {
             AllTestRunner.getGepardRemote().interrupt();
         }
-        if (AllTestRunner.getGepardTimeout() != null) {
-            AllTestRunner.getGepardTimeout().interrupt();
-        }
         for (TestClassExecutionThread testClassExecutionThread : threads) {
             if (testClassExecutionThread != null) {
                 testClassExecutionThread.setEnabled(false);

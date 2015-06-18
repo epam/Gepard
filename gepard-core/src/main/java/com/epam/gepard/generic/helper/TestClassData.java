@@ -27,20 +27,17 @@ public class TestClassData {
 
     private final Class<?> classOfTestClass;
     private final int count;
-    private final int timeout;
     private final String blocker;
 
     /**
      * Constructs a new instance of {@link TestClassData}.
      * @param classOfTestClass          is the TC class to be added
      * @param count        is the data multiplier - how many times this class should be added
-     * @param timeout      is the class level timeout value in seconds.
      * @param blocker      is the class blocker-string (for parallel execution)
      */
-    public TestClassData(final Class<?> classOfTestClass, final int count, final int timeout, final String blocker) {
+    public TestClassData(final Class<?> classOfTestClass, final int count, final String blocker) {
         this.classOfTestClass = classOfTestClass;
         this.count = count;
-        this.timeout = timeout;
         this.blocker = blocker;
     }
 
@@ -50,10 +47,6 @@ public class TestClassData {
 
     public int getCount() {
         return count;
-    }
-
-    public int getTimeout() {
-        return timeout;
     }
 
     public String getBlocker() {
