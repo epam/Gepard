@@ -19,7 +19,8 @@ package com.epam.gepard.examples.core.datadriven;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Test;
 
 /**
  * This test shows the Gepard behavior when no feeder exists, but a test would like to use it.
@@ -27,14 +28,16 @@ import com.epam.gepard.generic.OtherTestCase;
  * @author tkohegyi
  */
 @TestClass(id = "EX.DATA", name = "DataFeeder, Exceptional cases")
-public class DataFeederIsMissingTest extends OtherTestCase {
+public class DataFeederIsMissingTest implements GepardTestClass {
 
+    @Test
     public void testTestMustPass() {
         logComment("This is empty so must pass...");
     }
 
+    @Test
     public void testTestUseDataSoShouldThrowException() {
-        getTestParameters();
+        getDataDrivenTestParameter(0);
     }
 
 }

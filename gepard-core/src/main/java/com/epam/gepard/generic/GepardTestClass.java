@@ -50,7 +50,7 @@ public interface GepardTestClass {
         if (parameters != null) {
             value = parameters.getTestParameter(parameters.getParameterName(byPosition));
         } else {
-            throw new SimpleGepardException("Access to a data driven parameter in a not data driven test class.");
+            throw new SimpleGepardException("Try to access to a data driven parameter is failed, as it is not data driven test class.");
         }
         return value;
     }
@@ -61,7 +61,7 @@ public interface GepardTestClass {
         if (parameters != null) {
             value = parameters.getTestParameter(byParameterName);
         } else {
-            throw new SimpleGepardException("Access to a data driven parameter in a not data driven test class.");
+            throw new SimpleGepardException("Try to access to a data driven parameter is failed, as it is not data driven test class.");
         }
         return value;
     }

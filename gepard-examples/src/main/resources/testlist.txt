@@ -5,7 +5,7 @@
 com.epam.gepard.examples.core.basic.BasicTest
 com.epam.gepard.examples.core.basic.BasicNoTest
 
-#sample usage of not-applicable tests
+# sample usage of not-applicable tests
 com.epam.gepard.examples.core.basic.SampleAllNotApplicableTest
 
 # sample usage of timeout handling
@@ -16,7 +16,7 @@ com.epam.gepard.examples.core.basic.SampleParallelTestA,,AAA
 com.epam.gepard.examples.core.basic.SampleParallelTestB,,BBB
 com.epam.gepard.examples.core.basic.SampleParallelTestC,9,AAA*
 
-#sample usage of feeders and data driven tests
+# sample usage of feeders and data driven tests
 #     * - param //if param is a number, use SimpleMultiplierFeeder class
 #     * - feederclass
 #     * - feederclass
@@ -31,12 +31,11 @@ com.epam.gepard.examples.core.basic.SampleBadAfterClassBeforeClassTest
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSV,SimpleMultiplierDataFeeder:11
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTest,SimpleMultiplierDataFeeder:11@SingleRowSelectorDataFeeder:2,10
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVTestParameterTest,11
-#com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVB,SimpleMultiplierDataFeeder:11@BruteMultiplierDataFeeder:5,2
-#com.epam.gepard.examples.core.datadriven.LabelBasedDataFeederTest,:[]+[feeders.ONE:3:LABEL1]x[feeders.TWO:::RANDOM]
+com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVB,SimpleMultiplierDataFeeder:11@BruteMultiplierDataFeeder:5,2
+com.epam.gepard.examples.core.datadriven.LabelBasedDataFeederTest,:[]+[feeders.ONE:3:LABEL1]x[feeders.TWO:::RANDOM]
 
-
-#test data handling error
-#com.epam.gepard.examples.core.datadriven.DataFeederIsMissingTest
+# test data handling error
+com.epam.gepard.examples.core.datadriven.DataFeederIsMissingTest
 
 #Sample BDD test - Using JBehave
 ##com.epam.gepard.examples.gherkin.jbehave.JBehaveTest

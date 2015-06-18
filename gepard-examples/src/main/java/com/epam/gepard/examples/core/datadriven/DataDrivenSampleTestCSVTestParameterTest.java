@@ -19,11 +19,7 @@ package com.epam.gepard.examples.core.datadriven;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.annotations.TestParameter;
-import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.common.threads.TestClassExecutionThread;
 import com.epam.gepard.generic.GepardTestClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -37,11 +33,8 @@ import static org.junit.Assert.assertTrue;
 @TestClass(id = "DEMO-12", name = "Data Driven Test Sample - CSV - Recommended TDD approach")
 public class DataDrivenSampleTestCSVTestParameterTest implements GepardTestClass {
 
-    @TestParameter(id = "ID")
     private String tcRun = getDataDrivenTestParameter(0);
-    @TestParameter(id = "PART1")
     private String tcText = getDataDrivenTestParameter("PART1");
-    @TestParameter(id = "PART2")
     private String tcAssertText = getDataDrivenTestParameter("PART2");
 
     /**
