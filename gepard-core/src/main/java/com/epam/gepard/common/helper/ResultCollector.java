@@ -68,7 +68,7 @@ public class ResultCollector {
             }
             Thread.sleep(GepardConstants.ONE_SECOND_LENGTH.getConstant()); //wait for a sec
         } else { //lock is -1, Test Class is ready, flush the result
-            flushTestResult(executionData, result, htmlLog, csvLog);
+            flushTestResult(executionData, odd, htmlLog, csvLog);
             //collect suite level results
             allTestResults.increaseRunned(executionData.getRunned());
             allTestResults.increasePassed(executionData.getCountPassed());
@@ -97,6 +97,9 @@ public class ResultCollector {
         props2.setProperty("NotApplicable", String.valueOf(d.getCountNA()));
         props2.setProperty("Color", (d.getRunned() == 0) ? "#C0C0C0" : (d.getCountDummy() > 0 ? "#707070" : "#000000"));
         props2.setProperty("ResultColor", (d.getCountFailed() > 0) ? "#F0D0D0" : ((d.getCountNA() > 0) ? "#D0D0F0" : "#D0F0D0"));
+        if (d.isProblematic()) {
+            props2.setProperty("ResultColor", "#F0F0C0");
+        }
         props2.setProperty("RowColor", odd ? "#F0F0F0" : "#E4E4E4");
         htmlLog.insertBlock("TestRow", props2);
         csvLog.insertBlock("TestRow", props2);

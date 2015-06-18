@@ -90,13 +90,6 @@ public final class HtmlRunReporter extends RunListener {
      */
     @Override
     public void testRunStarted(final Description description) throws Exception {
-        testClassHtmlLog = new LogFileWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generictestsuite.html",
-                environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir + "/" + getDataDrivenSimpleClassName() + ".html", environment);
-        props.setProperty("ID", classData.getTestStriptId());
-        props.setProperty("Name", classData.getTestStriptName());
-        testClassHtmlLog.insertBlock("Header", props);
-        testClassHtmlLog.insertBlock("TableHead", props);
-        initDataDrivenLogAndAnnotations();
     }
 
     @Override
@@ -118,6 +111,7 @@ public final class HtmlRunReporter extends RunListener {
         props.setProperty("TestCase", methodName);
         props.setProperty("ScriptNameRow", getDataDrivenFullClassName());
         testMethodHtmlLog.insertBlock("Header", props);
+        initDataDrivenLogAndAnnotations();
     }
 
     @Override
@@ -186,13 +180,55 @@ public final class HtmlRunReporter extends RunListener {
     @Override
     public void testRunFinished(final Result result) throws Exception {
         if (result.getRunCount() == 0) {
-            testClassHtmlLog.insertBlock("NoTestCases", null);
+            if (result.getFailureCount() > 0) {
+                for (Failure failure : result.getFailures()) {
+                    String message = failure.getMessage();
+                    if (message == null) {
+                        message = "";
+                    }
+                    classData.setItAsProblematic();
+                    afterClassComment("Failure occurred: " + message + "<br/><br/><pre>" + failure.getTrace() + "</pre>");
+                }
+            } else {
+                testClassHtmlLog.insertBlock("NoTestCases", null);
+            }
         }
-        testClassHtmlLog.insertBlock("TableEnd", props);
-        testClassHtmlLog.insertBlock("Footer", null);
-        classData.getTestCaseSet().updateStatus();
     }
 
+    /**
+     * Need to call it well before any test class execution is requested.
+     */
+    public void hiddenBeforeTestClassExecution() {
+        testClassHtmlLog = new LogFileWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generictestsuite.html",
+                environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir + "/" + getDataDrivenSimpleClassName() + ".html", environment);
+        props.setProperty("ID", classData.getTestStriptId());
+        props.setProperty("Name", classData.getTestStriptName());
+        testClassHtmlLog.insertBlock("Header", props);
+        testClassHtmlLog.insertBlock("TableHead", props);
+    }
+
+    /**
+     * Need to call it after test class execution finished.
+     */
+    public void hiddenAfterTestClassExecution() {
+        testClassHtmlLog.insertBlock("TableEnd", props);
+        testClassHtmlLog.insertBlock("Footer", null);
+    }
+
+    /**
+     * Can be used in methods annotated with @BeforeClass annotation.
+     */
+    public void beforeClassComment(final String comment) {
+        props.setProperty("BeforeAfterClassMessage", comment);
+        testClassHtmlLog.insertBlock("BeforeAfterClassMessage", props);
+    }
+
+    /**
+     * Can be used in methods annotated with @AfterClass annotation.
+     */
+    public void afterClassComment(final String comment) {
+        beforeClassComment(comment);
+    }
 
     private void initDataDrivenLogAndAnnotations() {
         Util util = new Util();
@@ -430,7 +466,7 @@ public final class HtmlRunReporter extends RunListener {
      * @return the Data driven class name, i.e. returns with the classname + the actual data row.
      */
     private String getDataDrivenFullClassName() {
-        return classData.getClassName() + classData.getDrivenDataRowNo();
+        return classData.getClassName() + "/" + classData.getDrivenDataRowNo();
     }
 
     /**
@@ -508,8 +544,10 @@ public final class HtmlRunReporter extends RunListener {
     public void logStep(final String comment) {
         String consoleComment = comment.replace('\uFF5F', '(').replace('\uFF60', ')'); //Unicode to Console (partial transfer)
         systemOutPrintLn(step + ". " + consoleComment);
-        testMethodHtmlLog.insertText("<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#E0E0F0\">" + comment
-                + "</td></tr>\n");
+        if (testMethodHtmlLog != null) {
+            testMethodHtmlLog.insertText("<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#E0E0F0\">" + comment
+                    + "</td></tr>\n");
+        }
         step++;
     }
 
@@ -524,9 +562,10 @@ public final class HtmlRunReporter extends RunListener {
         systemOutPrintLn(comment);
 
         String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
-
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + addStr + "<div id=\"div_" + divStep
-                + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        if (testMethodHtmlLog != null) {
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + addStr + "<div id=\"div_" + divStep
+                    + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        }
         divStep++;
     }
 
@@ -541,9 +580,10 @@ public final class HtmlRunReporter extends RunListener {
         systemOutPrintLn(comment);
 
         String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
-
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + htmlComment + addStr + "<div id=\"div_" + divStep
-                + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        if (testMethodHtmlLog != null) {
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + htmlComment + addStr + "<div id=\"div_" + divStep
+                    + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        }
         divStep++;
     }
 
@@ -554,7 +594,9 @@ public final class HtmlRunReporter extends RunListener {
      */
     public void logComment(final String comment) {
         systemOutPrintLn(comment);
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + "</td></tr>");
+        if (testMethodHtmlLog != null) {
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + "</td></tr>");
+        }
     }
 
     /**
@@ -566,7 +608,9 @@ public final class HtmlRunReporter extends RunListener {
         if (!text.startsWith("<font")) {
             systemOutPrintLn(text);
         }
-        testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
+        if (testMethodHtmlLog != null) {
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + "</td></tr>\n");
+        }
     }
 
     /**
@@ -577,9 +621,11 @@ public final class HtmlRunReporter extends RunListener {
      */
     public void logResult(final String text, final String description) {
         step++;
+        if (testMethodHtmlLog != null) {
             String addStr = " <small>[<a href=\"javascript:showhide('div_" + step + "');\">details</a>]</small>";
             testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "<div id=\"div_" + step
                     + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
+        }
     }
 
 

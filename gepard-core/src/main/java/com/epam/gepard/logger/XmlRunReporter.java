@@ -188,7 +188,9 @@ public final class XmlRunReporter extends RunListener {
             }
         }
         fe.appendChild(doc.createTextNode(failure.getTrace()));
-        info.element.appendChild(fe);
+        if (info != null) {
+            info.element.appendChild(fe);
+        }
     }
 
     @Override

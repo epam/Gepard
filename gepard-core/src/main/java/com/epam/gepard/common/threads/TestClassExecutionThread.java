@@ -25,8 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
-import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.GenericResult;
 import com.epam.gepard.logger.HtmlRunReporter;
 import org.junit.runner.Computer;
 import org.junit.runner.JUnitCore;
@@ -232,24 +230,27 @@ public class TestClassExecutionThread extends Thread {
 
     private void execClass(final TestClassExecutionData o) {
         o.tick(); //this thread is healthy
+        String oldThreadName = Thread.currentThread().getName();
+        Thread.currentThread().setName(o.getClassName() + "/" + o.getDrivenDataRowNo());
         classData = o;
         try {
-//            HtmlRunReporter reporter = new HtmlRunReporter(o);
             HtmlRunReporter reporter = o.getHtmlRunReporter();
-
+            reporter.hiddenBeforeTestClassExecution();
             core.addListener(reporter);
 
             o.setDeathTimeout(o.getTimeout()); //set the TC timeout
             Result result = core.run(Computer.serial(), o.getTestClass());
-
             for (Failure failure : result.getFailures()) {
                 LOGGER.debug(failure.toString());
             }
+            classData.setCountOfRuns(result.getRunCount());
             core.removeListener(reporter);
+            reporter.hiddenAfterTestClassExecution();
         } catch (Throwable e) {
             //this is gas
             LOGGER.debug("Thread: got EX during JUnitCore execution.", e);
         }
+        Thread.currentThread().setName(oldThreadName);
         classData = null;
     }
 

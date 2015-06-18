@@ -16,9 +16,9 @@ public interface GepardTestClass {
      * May throw @SimpleGepardException in case @TestClass annotation does not present.
      */
     default TestClassExecutionData getTestClassExecutionData(final Object clazz) {
+        String myId = Thread.currentThread().getName();
         if (clazz.getClass().isAnnotationPresent(TestClass.class)) {
-            String classDataId = clazz.getClass().getAnnotation(TestClass.class).classDataId();
-            return GenericListTestSuite.getTestClassExecutionData(classDataId);
+            return GenericListTestSuite.getTestClassExecutionData(myId);
         }
         throw new SimpleGepardException("Given Object: " + clazz.toString()
                 + " is not annotated as Gepard Test Class, cannot determine Test Class Execution Data.");

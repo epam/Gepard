@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-5", name = "Data Driven Test Sample - CVS")
+@TestClass(id = "DEMO-10", name = "Data Driven Test Sample - CVS")
 public class DataDrivenSampleTestCSV implements GepardTestClass {
 
     private final int threeTestDataIsExpected = 3;

@@ -21,10 +21,12 @@ package com.epam.gepard.common.helper;
 
 import java.text.NumberFormat;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Properties;
 
 import com.epam.gepard.common.Environment;
 import com.epam.gepard.common.GepardConstants;
+import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.helper.AllTestResults;
 
@@ -70,7 +72,7 @@ public class ReportFinalizer {
         props.setProperty("TCnotapplicable", String.valueOf(allTestResults.getNotApplicable()));
         props.setProperty("Time", "<b>" + minuteDuration + "</b> minutes and <b>" + nf.format(secondDuration) + "</b> seconds");
         props.setProperty("SecondsTime", "" + duration);
-        props.setProperty("DateTime", GenericListTestSuite.formatDateTime(cal));
+        props.setProperty("DateTime", GenericListTestSuite.formatDateTime(cal)); //TODO as gSuite won't be used, counting TCs should be arranged somehow
         String applicationVersion = applicationUnderTestVersion;
         if (applicationVersion == null) {
             applicationVersion = "undetected";
@@ -78,9 +80,17 @@ public class ReportFinalizer {
         props.setProperty("Version", applicationVersion);
         String teid = environment.getProperty(Environment.TEST_ENVIRONMENT_ID, "Unknown");
         props.setProperty("TEID", teid);
-        props.setProperty("TCSrunned", String.valueOf(GenericListTestSuite.getTestClassCount()));
-        props.setProperty("TCUsed", Integer.toString(gSuite.getUsedTc()));
-        props.setProperty("TCNumber", Integer.toString(gSuite.getNumberTc()));
+        props.setProperty("TCSrunned", String.valueOf(GenericListTestSuite.getTestClassCount())); //TODO as gSuite won't be used, counting TCs should be arranged somehow
+        props.setProperty("TCUsed", Integer.toString(gSuite.getUsedTc())); //TODO as gSuite won't be used, counting TCs should be arranged somehow
+        int tcNumber = 0;
+        Iterator<String> iterator = GenericListTestSuite.getTestClassIds().iterator();
+        while (iterator.hasNext()) {
+            String s = iterator.next();
+            if (s.endsWith("/0")) { //ignore multiplications in map
+                tcNumber += GenericListTestSuite.getTestClassExecutionData(s).getCountOfRuns();
+            }
+        }
+        props.setProperty("TCNumber", Integer.toString(tcNumber));
         String resultUrl = environment.getProperty(Environment.GEPARD_PUBLIC_PATH) + "/" + environment.getProperty(Environment.GEPARD_PUBLIC_RESULT);
         String resultUrlHtml = "Test Results will be available <a href=" + resultUrl + ">here.</a><br/>";
         if (environment.getBooleanProperty(Environment.GEPARD_PUBLIC_ENABLED)) {

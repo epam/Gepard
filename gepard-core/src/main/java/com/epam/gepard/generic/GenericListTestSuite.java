@@ -36,7 +36,6 @@ import java.util.Set;
 import com.epam.gepard.annotations.AnnotationUpdater;
 import com.epam.gepard.logger.HtmlRunReporter;
 import junit.framework.Test;
-import junit.framework.TestCase;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
@@ -116,7 +115,6 @@ public class GenericListTestSuite extends TestSuite {
             String[] testDescriptor = line.split(",");
             Class<?> clazz = Class.forName(testDescriptor[TESTLIST_CLASS_NAME_FIELD]);
             //add as many classes to the stack as data driven approach requires
-            // Junit 3 filer would be: if (TestCase.class.isAssignableFrom(clazz) && filter.accept(clazz))
             if (filter.accept(clazz)) {
                 int count = 1;
                 DataFeederLoader dataFeeder = null;
@@ -140,9 +138,9 @@ public class GenericListTestSuite extends TestSuite {
 
                 //and add it to the suite
                 TestClassData testClassData = new TestClassData(clazz, count, timeout, blocker);
-                int tcMethods = add(testClassData, dataFeeder, originalLine);
+                int tcMethods = addTestClass(testClassData, dataFeeder, originalLine);
                 usedTc++; //count the used test classes
-                numberTc += tcMethods; //count the real number of the used TCs (ignoring data driven duplications)
+                //numberTc += tcMethods; //count the real number of the used TCs (ignoring data driven duplications)
             }
         }
         listReader.close();
@@ -173,7 +171,7 @@ public class GenericListTestSuite extends TestSuite {
      * @param originalLine is the original testlist row.
      * @return with the number of the registered test methods.
      */
-    public int add(final TestClassData testClassData, final DataFeederLoader dataFeeder, final String originalLine) {
+    public int addTestClass(final TestClassData testClassData, final DataFeederLoader dataFeeder, final String originalLine) {
         int rowNo = 0;
         int counter = testClassData.getCount();
         int testMethods = 0;
@@ -181,6 +179,7 @@ public class GenericListTestSuite extends TestSuite {
         String blocker = testClassData.getBlocker();
         while (counter > 0) {
             testMethods = registerMethodsInGlobalMap(cls, rowNo, testClassData.getTimeout(), dataFeeder);
+/* we don't care if no test method will be executed. Thta will mean the test class is passed btw.
             if (testMethods == 0) {
                 //this should not happen, as this means no test method to execute within the test class.
                 // exiting now with error.
@@ -188,6 +187,7 @@ public class GenericListTestSuite extends TestSuite {
                         + "\nPlease implement at least one test method!\nNow exiting...");
                 AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_WITHOUT_TEST_METHOD);
             }
+        */
             getTestForClass(cls);
             //addTest(t);
 

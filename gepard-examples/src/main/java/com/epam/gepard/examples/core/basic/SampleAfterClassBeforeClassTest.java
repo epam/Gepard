@@ -19,8 +19,10 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.common.TestClassExecutionData;
+import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.generic.GepardTestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.logger.HtmlRunReporter;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -32,39 +34,49 @@ import org.junit.Test;
  * In case parameter 1 is true, that cause forced N/A at beforetestcase
  * In case parameter 3 is true, that cause forced failure at aftertestcase
  * In case parameter 4 is true, that cause forced N/A at aftertestcase
- * <p/>
+ * <p>
  * The trick is that failure or setting N/A during beforetestcase or aftertestcase should not influence the result of the test case.
  *
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-4", name = "Basic AfterClass/BeforeClass Test Sample")
+@TestClass(id = "DEMO-5", name = "Basic AfterClass/BeforeClass Test Sample")
 public class SampleAfterClassBeforeClassTest implements GepardTestClass {
 
     @BeforeClass
-    public void beforeClass() {
+    public static void beforeClass() {
+        String myId = Thread.currentThread().getName();
+        TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(myId);
+        HtmlRunReporter reporter = classData.getHtmlRunReporter();
+        reporter.beforeClassComment("We started the BeforeClass method.");
         Boolean b;
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[0]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[1]);
         if (b) {
             org.junit.Assert.fail("forced fail at beforeClass");
         }
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[1]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[2]);
         if (b) {
-            naTestCase(this, "forced N/A at beforeClass");
+            reporter.naTestCase("forced N/A at beforeClass");
         }
+        reporter.beforeClassComment("We finished the BeforeClass method.");
     }
 
     @AfterClass
-    public void afterClass() {
+    public static void afterClass() {
+        String myId = Thread.currentThread().getName();
+        TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(myId);
+        HtmlRunReporter reporter = classData.getHtmlRunReporter();
+        reporter.afterClassComment("We started the AfterClass method.");
         Boolean b;
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[2]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[3]);
         if (b) {
-            org.junit.Assert.fail("forced fail at afterCass");
+            org.junit.Assert.fail("forced fail at AfterClass");
         }
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[4]);
         if (b) {
-            naTestCase(this, "forced N/A at afterClass");
+            reporter.naTestCase("forced N/A at AfterClass");
         }
+        reporter.afterClassComment("We finished the AfterClass method.");
     }
 
     @Test
@@ -72,7 +84,8 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
         logComment(this, "Par0:" + getTestClassExecutionData(this).getDrivenData().getParameters()[0]
                 + ", Par1:" + getTestClassExecutionData(this).getDrivenData().getParameters()[1]
                 + ", Par2:" + getTestClassExecutionData(this).getDrivenData().getParameters()[2]
-                + ", Par3:" + getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
+                + ", Par3:" + getTestClassExecutionData(this).getDrivenData().getParameters()[3]
+                + ", Par4:" + getTestClassExecutionData(this).getDrivenData().getParameters()[4]);
     }
 
     @Test

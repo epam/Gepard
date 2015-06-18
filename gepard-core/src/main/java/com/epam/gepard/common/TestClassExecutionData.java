@@ -55,6 +55,8 @@ public final class TestClassExecutionData {
     private int countFailed;
     private int countNA;
     private int countDummy;
+    private boolean isProblematic;
+    private int countOfRuns;
     /**
      * To store the data driven parameters for this test class run.
      */
@@ -95,7 +97,6 @@ public final class TestClassExecutionData {
 
     private StringBuilder systemOut;
     private Test tc;
-    //JUnit 4
     private Class<?> testClass;
 
     private String originalLine;
@@ -113,6 +114,7 @@ public final class TestClassExecutionData {
         setDeathTimeout(defaultTimeout); //initiate the timeout
         systemOut = new StringBuilder();
         this.id = id;
+        isProblematic = false;
     }
 
     public Class getTestClass() { return testClass; }
@@ -198,6 +200,20 @@ public final class TestClassExecutionData {
      */
     public void tick() {
         heart = 0;
+    }
+
+    /**
+     * Set the class as problematic (probably issue in @BeforeClass or @AfterClass methods.
+     */
+    public void setItAsProblematic() {
+        isProblematic = true;
+    }
+
+    /**
+     * Get info if the test class execution was problematic or not.
+     */
+    public boolean isProblematic() {
+        return isProblematic;
     }
 
     // THREAD LOCK HANDLING
@@ -440,4 +456,11 @@ public final class TestClassExecutionData {
 
     public HtmlRunReporter getHtmlRunReporter() { return htmlRunReporter; }
 
+    public int getCountOfRuns() {
+        return countOfRuns;
+    }
+
+    public void setCountOfRuns(int countOfRuns) {
+        this.countOfRuns = countOfRuns;
+    }
 }

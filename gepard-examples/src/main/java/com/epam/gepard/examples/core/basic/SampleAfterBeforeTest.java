@@ -37,35 +37,37 @@ import org.junit.Test;
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-3", name = "Basic After/Before Test Sample")
+@TestClass(id = "DEMO-4", name = "Basic After/Before Test Sample")
 public class SampleAfterBeforeTest implements GepardTestClass {
 
     @Before
     public void before() {
-        logComment(this, "We are in Before method.");
+        logComment(this, "We started the Before method.");
         Boolean b;
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[0]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[1]);
         if (b) {
             Assert.fail("forced fail at beforeTestCase");
         }
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[1]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[2]);
         if (b) {
             naTestCase(this, "forced N/A at beforeTestCase");
         }
+        logComment(this, "We finished the Before method.");
     }
 
     @After
     public void after() {
-        logComment(this, "We are in After method.");
+        logComment(this, "We started the After method.");
         Boolean b;
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[2]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
         if (b) {
             Assert.fail("forced fail at afterTestCase");
         }
-        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
+        b = Boolean.valueOf(getTestClassExecutionData(this).getDrivenData().getParameters()[4]);
         if (b) {
             naTestCase(this, "forced N/A at afterTestCase");
         }
+        logComment(this, "We finished the After method.");
     }
 
     @Test
@@ -73,7 +75,8 @@ public class SampleAfterBeforeTest implements GepardTestClass {
         logComment(this, "Par0:" + getTestClassExecutionData(this).getDrivenData().getParameters()[0]
                 + ", Par1:" + getTestClassExecutionData(this).getDrivenData().getParameters()[1]
                 + ", Par2:" + getTestClassExecutionData(this).getDrivenData().getParameters()[2]
-                + ", Par3:" + getTestClassExecutionData(this).getDrivenData().getParameters()[3]);
+                + ", Par3:" + getTestClassExecutionData(this).getDrivenData().getParameters()[3]
+                + ", Par4:" + getTestClassExecutionData(this).getDrivenData().getParameters()[4]);
     }
 
     @Test

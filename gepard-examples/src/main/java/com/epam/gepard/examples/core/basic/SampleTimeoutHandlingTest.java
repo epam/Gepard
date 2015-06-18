@@ -19,7 +19,9 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.Date;
 
@@ -28,41 +30,45 @@ import java.util.Date;
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-1", name = "Timeout Handling, Sample")
-public class SampleTimeoutHandlingTest extends OtherTestCase {
+@TestClass(id = "DEMO-7", name = "Timeout Handling, Sample")
+public class SampleTimeoutHandlingTest implements GepardTestClass {
 
+    @Test
     public void testSimpleTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
+        logStep(this, "Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
         Thread.sleep(30000); //30 sec
         org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 
+    @Test
     public void testDoNotLetTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
-        logComment("So this test must pass");
+        logStep(this, "Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
+        logComment(this, "So this test must pass");
         for (int i = 0; i < 5; i++) {
-            logStep("We may sleep, TC still not fail, count: " + i);
+            logStep(this, "We may sleep, TC still not fail, count: " + i);
             Thread.sleep(1000); //1 sec, but 5 times, it is far enough to test its activity reliability
         }
-        logComment("We WON!");
+        logComment(this, "We WON!");
     }
 
+    @Test
     public void testLetTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
-        logComment("So this test must pass");
+        logStep(this, "Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
+        logComment(this, "So this test must pass");
         for (int i = 0; i < 5; i++) {
-            logStep("We may sleep, TC still not fail, count: " + i);
+            logStep(this, "We may sleep, TC still not fail, count: " + i);
             Thread.sleep(1000); //1 sec, but 20 time, it is far enough to test its activity reliability
         }
-        logComment("We WON!");
-        logStep("But now, we continue and let this TC fail with timeout.");
+        logComment(this, "We WON!");
+        logStep(this, "But now, we continue and let this TC fail with timeout.");
         Thread.sleep(10000); //10 sec
         org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 
+    @Test
     public void testTimeoutWithoutInterruptPossibilityTest() {
-        logStep("Test the built in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
-        logComment("But now we do not let this test interrupted. Normal timeout is expected.");
+        logStep(this, "Test the built in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
+        logComment(this, "But now we do not let this test interrupted. Normal timeout is expected.");
         Date start = new Date();
         Date end = new Date(start.getTime() + 10000);
         while (true) { //10 sec activity without interrupt possibility
@@ -71,7 +77,7 @@ public class SampleTimeoutHandlingTest extends OtherTestCase {
                 break;
             }
         }
-        org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
+        Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 
 }
