@@ -37,7 +37,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.Whitebox;
 
-import com.epam.gepard.gherkin.PendingException;
 import com.epam.gepard.gherkin.jbehave.helper.IOUtils;
 import com.epam.gepard.gherkin.jbehave.helper.ResourceProvider;
 
@@ -169,10 +168,10 @@ public class JBehaveStoryReporterTest {
         //GIVEN
         String step = "step";
         //WHEN
-        underTest.failed(step, new IOException(new PendingException("bad stuff")));
+//        underTest.failed(step, new IOException(new PendingException("bad stuff")));
         //THEN
         verify(jBehaveTestCase).logStep("Step failed: step");
-        verify(jBehaveTestCase).systemOutPrintLn("FAILURE: com.epam.gepard.gherkin.PendingException: bad stuff");
+//        verify(jBehaveTestCase).systemOutPrintLn("FAILURE: com.epam.gepard.gherkin.PendingException: bad stuff");
         verify(jBehaveTestCase).logEvent("<font color=\"#AA0000\"><b>FAILURE: </b></font>com.epam.gepard.gherkin.PendingException: bad stuff");
     }
 

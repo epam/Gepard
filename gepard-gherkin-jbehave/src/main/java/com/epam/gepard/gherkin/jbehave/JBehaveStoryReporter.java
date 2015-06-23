@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import com.epam.gepard.logger.HtmlRunReporter;
 import org.jbehave.core.model.Story;
 import org.jbehave.core.reporters.NullStoryReporter;
 import org.slf4j.Logger;
@@ -105,18 +106,15 @@ public class JBehaveStoryReporter extends NullStoryReporter {
         jBehaveTestCase.logStep("Step failed: " + step);
         String htmlMessage = util.alertText("FAILURE: ") + util.escapeHTML(cause.getCause().toString());
         String consoleMessage = cause.getCause().toString();
-        jBehaveTestCase.systemOutPrintLn("FAILURE: " + consoleMessage);
-        jBehaveTestCase.setHtmlErrorMessage(htmlMessage);
-        jBehaveTestCase.setConsoleErrorMessage(consoleMessage);
+        HtmlRunReporter reporter = jBehaveTestCase.getTestClassExecutionData().getHtmlRunReporter();
+        reporter.systemOutPrintLn("FAILURE: " + consoleMessage);
         jBehaveTestCase.logEvent(htmlMessage);
-
     }
 
     @Override
     public void pending(final String step) {
-        String message = "Test is N/A: Step pending: " + step;
+        String message = "Step is pending: " + step;
         jBehaveTestCase.logPendingRow(message);
-        jBehaveTestCase.setConsoleErrorMessage(null);
         jBehaveTestCase.naTestCase(message);
     }
 

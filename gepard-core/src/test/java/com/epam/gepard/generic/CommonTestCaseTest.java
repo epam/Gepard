@@ -53,7 +53,6 @@ public class CommonTestCaseTest {
     @Test
     public void testSuiteHelperWithNonDataDrivenTestClassShouldCreateTest() {
         //GIVEN
-        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
         Class<?> testClass = TestMock.class;
         String scriptID = "id";
         String scriptName = "name";
@@ -120,7 +119,6 @@ public class CommonTestCaseTest {
     @Test
     public void testSetUpLogger() {
         //GIVEN
-        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
         environment.setProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH, "ABC123");
         environment.setProperty(Environment.GEPARD_HTML_RESULT_PATH, "DEF456");
         TestClassExecutionData classData = new TestClassExecutionData("id", environment);
@@ -166,7 +164,6 @@ public class CommonTestCaseTest {
     public void testGetTestParametersWithDataDrivenTestShouldReturnTestParameters() {
         //GIVEN
         String[] expected = new String[]{"1", "2"};
-        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
         TestClassExecutionData classData = new TestClassExecutionData("id", environment);
         DataDrivenParameters drivenData = Mockito.mock(DataDrivenParameters.class);
         given(drivenData.getParameters()).willReturn(expected);
@@ -179,7 +176,6 @@ public class CommonTestCaseTest {
     }
 
     private void givenBasicTestClassExecutionData() {
-        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
         TestClassExecutionData classData = new TestClassExecutionData("id", environment);
         Whitebox.setInternalState(underTest, "classData", classData);
     }

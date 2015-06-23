@@ -20,20 +20,18 @@ package com.epam.gepard.gherkin.cucumber;
  ===========================================================================*/
 
 import java.io.IOException;
-import java.util.Properties;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestResult;
+import com.epam.gepard.generic.GepardTestClass;
+import com.epam.gepard.logger.HtmlRunReporter;
+import com.epam.gepard.logger.LogFileWriter;
 
+import cucumber.api.Scenario;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
-import com.epam.gepard.common.Environment;
-import com.epam.gepard.common.NATestCaseException;
-import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.generic.CommonTestCase;
 import com.epam.gepard.generic.GenericListTestSuite;
-import com.epam.gepard.gherkin.cucumber.helper.CucumberError;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -43,7 +41,7 @@ import cucumber.api.junit.Cucumber;
  * @author tkohegyi
  */
 @CucumberOptions(strict = true, monochrome = true)
-public abstract class CucumberTestCase extends CommonTestCase {
+public abstract class CucumberTestCase implements GepardTestClass {
 
     /**
      * When any failure happens, this should be set to true by the connector class.
@@ -52,30 +50,7 @@ public abstract class CucumberTestCase extends CommonTestCase {
     private boolean isFailed;
     private String consoleErrorMessage;
     private int step = 1; // used to count scenarios executed within this Test Class execution
-
-    /**
-     * Constructs a new instance of {@link CucumberTestCase}.
-     */
-    public CucumberTestCase() {
-        super("gherkin-cucumber");
-    }
-
-    @Override
-    public final void setUp() throws Exception {
-        super.setUp();
-        super.setUp2();
-    }
-
-    /**
-     * jUnit tearDown is empty now.
-     *
-     * @throws Exception in case of trouble
-     */
-    @Override
-    protected final void tearDown() throws Exception {
-        super.tearDown2();
-        super.tearDown();
-    }
+    private Scenario scenario;
 
     /**
      * Write "Scenario finished" message at the end of the scenario.
@@ -83,8 +58,12 @@ public abstract class CucumberTestCase extends CommonTestCase {
      */
     public void logScenarioEnded() {
         String testPassed = "Scenario finished.";
-        getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#a0d0a0\">" + testPassed + "</td></tr>");
-        systemOutPrintLn(testPassed);
+        HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();
+        LogFileWriter htmlLog = reporter.getTestMethodHtmlLog();
+        if (htmlLog != null) {
+            htmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#a0d0a0\">" + testPassed + "</td></tr>");
+        }
+        reporter.systemOutPrintLn(testPassed);
     }
 
     /**
@@ -99,15 +78,20 @@ public abstract class CucumberTestCase extends CommonTestCase {
         if (example != null) {
             consoleInfo += " with Example row: " + example;
         }
-        systemOutPrintLn(step + ". " + consoleInfo);
-        getMainTestLogger().insertText(
-                "<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#a0d0a0\"> " + consoleInfo + "</td></tr>\n");
+        HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();
+        LogFileWriter htmlLog = reporter.getTestMethodHtmlLog();
+        if (htmlLog != null) {
+            htmlLog.insertText(
+                    "<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#a0d0a0\"> " + consoleInfo + "</td></tr>\n");
+        }
+        reporter.systemOutPrintLn(step + ". " + consoleInfo);
         step++;
     }
 
     /**
      * The entry point to the Cucumber test. Sets up the test case and runs it.
      */
+    @Test
     public void testRunCucumber() {
         try {
             Cucumber cucumber = new Cucumber(this.getClass());
@@ -130,36 +114,8 @@ public abstract class CucumberTestCase extends CommonTestCase {
         this.consoleErrorMessage = consoleErrorMessage;
     }
 
-    @Override
-    public void run(final TestResult result) {
-        TestClassExecutionData o = getClassData();
-
-        setTcase(Environment.createTestCase(getName(), o.getTestCaseSet()));
-
-        setUpLogger();
-        Properties props = new Properties();
-        props.setProperty("ID", getTestID());
-        props.setProperty("Name", getTestName());
-        props.setProperty("TestCase", getName());
-        props.setProperty("ScriptNameRow", getClassData().getID());
-        getMainTestLogger().insertBlock("Header", props);
-        try {
-            runSuper(result);
-        } finally {
-            getMainTestLogger().insertBlock("Footer", null);
-            getMainTestLogger().close();
-            setMainTestLogger(null);
-            getTcase().updateStatus();
-            setTcase(null);
-        }
-    }
-
-    /**
-     * We override the run method in order to support HTML logs.
-     * @param result Test result
-     */
-    protected void runSuper(final TestResult result) {
-        super.run(result);
+    public Scenario getScenario() {
+        return scenario;
     }
 
     /**
@@ -167,7 +123,7 @@ public abstract class CucumberTestCase extends CommonTestCase {
      * to create the Failure logs.
      *
      * @throws Exception AssertionFailedError or ThreadDeath
-     */
+     * /
     @Override
     protected void runTest() throws Exception {
         try {
@@ -209,5 +165,6 @@ public abstract class CucumberTestCase extends CommonTestCase {
         }
 
     }
+    */
 
 }

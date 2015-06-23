@@ -38,16 +38,17 @@ com.epam.gepard.examples.core.datadriven.LabelBasedDataFeederTest,:[]+[feeders.O
 com.epam.gepard.examples.core.datadriven.DataFeederIsMissingTest
 
 #Sample BDD test - Using JBehave
-##com.epam.gepard.examples.gherkin.jbehave.JBehaveTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveFailTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleFailTest
-#com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveFailTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleFailTest
+com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
 
 #Sample BDD test - Using Cucumber
 #com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest
 #com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest
 #com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
+
 #com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest
 
 #Sample Android - test

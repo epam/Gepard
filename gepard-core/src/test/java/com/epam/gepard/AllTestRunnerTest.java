@@ -34,7 +34,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import com.epam.gepard.common.Environment;
-import com.epam.gepard.common.helper.ConsoleWriter;
 import com.epam.gepard.common.helper.ReportFinalizer;
 import com.epam.gepard.common.helper.ResultCollector;
 import com.epam.gepard.common.helper.TestFailureReporter;
@@ -51,8 +50,6 @@ import com.epam.gepard.logger.helper.LogFileWriterFactory;
  */
 public class AllTestRunnerTest {
 
-    @Mock
-    private ConsoleWriter consoleWriter;
     @Mock
     private LogFolderCreator logFolderCreator;
     @Mock
@@ -100,7 +97,7 @@ public class AllTestRunnerTest {
         Whitebox.setInternalState(underTest, "executorThreadManager", executorThreadManager);
         environment.setProperty(Environment.GEPARD_LOAD_AND_EXIT, "false");
         //WHEN
-        underTest.runAll(testListFile, consoleWriter);
+        underTest.runAll(testListFile);
         //THEN
         verify(logFolderCreator).prepareOutputFolders();
         verify(executorThreadManager).initiateAndStartExecutorThreads(environment.getProperty(Environment.GEPARD_THREADS),
@@ -109,7 +106,6 @@ public class AllTestRunnerTest {
         verify(csvLog).insertBlock(eq("Header"), Mockito.any(Properties.class));
         verify(quickLog).insertBlock(eq("Header"), Mockito.any(Properties.class));
         verify(executorThreadManager).closeRunningThreads();
-        verify(consoleWriter).printStatusAfterTestRunCheck();
         verify(failureReporter).generateTestlistFailure();
     }
 
@@ -119,7 +115,7 @@ public class AllTestRunnerTest {
         String testListFile = "src/test/resources/testlist.txt";
         environment.setProperty(Environment.GEPARD_LOAD_AND_EXIT, "true");
         //WHEN
-        underTest.runAll(testListFile, consoleWriter);
+        underTest.runAll(testListFile);
         //THEN expected Exception
     }
 
@@ -127,7 +123,7 @@ public class AllTestRunnerTest {
     public void testRunAllWhenTestListNull() throws Exception {
         //GIVEN in setup
         //WHEN
-        underTest.runAll(null, consoleWriter);
+        underTest.runAll(null);
         //THEN expected Exception
     }
 }

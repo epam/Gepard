@@ -23,8 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.gepard.common.Environment;
-import com.epam.gepard.common.TestCaseExecutionData;
-import com.epam.gepard.generic.GenericListTestSuite;
 
 /**
  * Provides message blocks to AllTestRunner class to print out texts to the console.
@@ -73,24 +71,6 @@ public class ConsoleWriter {
         CONSOLE_LOG.info("Filter class:      " + environment.getProperty(Environment.GEPARD_FILTER_CLASS));
         CONSOLE_LOG.info("Filter expr:       " + environment.getProperty(Environment.GEPARD_FILTER_EXPRESSION));
         CONSOLE_LOG.info("Testlist file:     " + environment.getProperty(Environment.GEPARD_TESTLIST_FILE));
-    }
-
-    /**
-     * Prints out status information about test runs.
-     */
-    public void printStatusAfterTestRunCheck() {
-        for (String s : GenericListTestSuite.getTestCaseMap().keySet()) {
-            TestCaseExecutionData d = GenericListTestSuite.getTestCaseMap().get(s);
-            if (!d.isProperStart()) {
-                CONSOLE_LOG.info("Test: " + d.getID() + " is not started properly, check the beforeTestCase() method.");
-            }
-            if (!d.isProperEnd()) {
-                CONSOLE_LOG.info("Test: " + d.getID() + " is not ended properly, check the afterTestCase() method.");
-            }
-            if (d.getExitStatus() != 0) {
-                CONSOLE_LOG.info("Test: " + d.getID() + " is caused internal exception, check its log.");
-            }
-        }
     }
 
 }

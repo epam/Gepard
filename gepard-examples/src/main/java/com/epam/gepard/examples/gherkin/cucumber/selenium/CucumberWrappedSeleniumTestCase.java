@@ -30,6 +30,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.epam.gepard.logger.HtmlRunReporter;
+import com.epam.gepard.logger.LogFileWriter;
 import junit.framework.AssertionFailedError;
 
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +72,6 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
     public static final String SELENIUM_BROWSER_INTERNET_EXPLORER = "gepard.selenium.browserString.IE";
     public static final String SELENIUM_BROWSER_GOOGLE_CHROME = "gepard.selenium.browserString.GoogleChrome";
     public static final String SELENIUM_BROWSER_SAFARI = "gepard.selenium.browserString.Safari";
-    public static final String SELENIUM_BROWSER_OPERA = "gepard.selenium.browserString.Opera";
     private static int dumpFileCount;
 
     private SeleniumUtil seleniumUtil = new SeleniumUtil();
@@ -127,7 +128,7 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
      */
     public CucumberWrappedSeleniumTestCase() {
         super();
-        environmentHelper = new EnvironmentHelper(getClassData().getEnvironment());
+        environmentHelper = new EnvironmentHelper(getTestClassExecutionData().getEnvironment());
         setBaseURL(environmentHelper.getTestEnvironmentURL());
         setBrowserString(environmentHelper.getTestEnvironmentBrowser());
         setNeedCaptureNetworkTraffic(true);
@@ -370,10 +371,12 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
      */
     public void logEvent(final String text, final boolean makeDump) {
         String addStr = "";
+        HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();
+        LogFileWriter htmlLog = reporter.getTestMethodHtmlLog();
         if (!text.startsWith("<font")) {
-            systemOutPrintLn(text);
+            reporter.systemOutPrintLn(text);
         }
-        if (getMainTestLogger() != null) {
+        if (htmlLog != null) {
             if (makeDump) {
                 try {
                     String dumpFileName = dumpSource(true);
@@ -395,7 +398,7 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
                     addStr = " <small>[Dump failed]</small>";
                 }
             }
-            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "</td></tr>\n");
+            htmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "</td></tr>\n");
         }
     }
 
@@ -433,7 +436,9 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
      */
     public String dumpSource(boolean escapeHTML) throws FileNotFoundException {
         String newFilePath;
-        String logPath = getMainTestLogger().getLogPath();
+        HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();
+        LogFileWriter htmlLog = reporter.getTestMethodHtmlLog();
+        String logPath = htmlLog.getLogPath();
         String logPathCanonical = logPath.replace('\\', '/');
         int pos = logPathCanonical.lastIndexOf('/');
         dumpFileCount++;
@@ -447,28 +452,6 @@ public abstract class CucumberWrappedSeleniumTestCase extends CucumberTestCase {
         dumpSource(newFilePath, escapeHTML);
 
         return newFilePath;
-    }
-
-    /**
-     * We re-declared the runTest method in order to throw only AssertionFailedErrors and
-     * to create the Failure logs.
-     *
-     * @throws junit.framework.AssertionFailedError or ThreadDeath
-     */
-    @Override
-    protected void runTest() {
-        try {
-            if (setupException != null) {
-                //Set this TC as N/A, based on the problem detected during setup
-                naTestCase(setupException.getMessage());
-            }
-            super.runTest();
-        } catch (NATestCaseException e) { //we rethrow the Exception as AssertionFailedError
-            logEvent("<font color=\"#0000AA\"><b>N/A</b></font><br>\nMessage: " + e.getMessage());
-            systemOutPrintLn("Test is N/A: " + e.getMessage());
-        } catch (Throwable e) { //we rethrow the Exception as AssertionFailedError
-            throw new AssertionFailedError(e.getMessage());
-        }
     }
 
 }

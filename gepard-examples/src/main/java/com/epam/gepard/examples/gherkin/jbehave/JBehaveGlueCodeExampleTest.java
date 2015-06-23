@@ -26,6 +26,8 @@ import org.jbehave.core.annotations.When;
 
 import com.epam.gepard.gherkin.jbehave.JBehaveTestCase;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Glue code for the example story files.
  * @author Adam_Csaba_Kiraly

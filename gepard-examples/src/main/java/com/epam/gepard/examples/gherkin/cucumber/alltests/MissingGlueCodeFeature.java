@@ -17,7 +17,6 @@ package com.epam.gepard.examples.gherkin.cucumber.alltests;
  You should have received a copy of the GNU General Public License
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
-
 import com.epam.gepard.gherkin.cucumber.CucumberTestCaseConnector;
 import com.epam.gepard.gherkin.cucumber.ParentCucumberTestCase;
 import cucumber.api.java.en.Given;

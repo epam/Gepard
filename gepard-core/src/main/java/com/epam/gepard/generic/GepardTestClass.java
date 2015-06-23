@@ -20,7 +20,10 @@ public interface GepardTestClass {
 
     default void logComment(final String comment) {
         getTestClassExecutionData().getHtmlRunReporter().logComment(comment);
+    }
 
+    default void logComment(final String comment, final String description) {
+        getTestClassExecutionData().getHtmlRunReporter().logComment(comment, description);
     }
 
     default void logStep(final String comment) {

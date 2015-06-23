@@ -70,7 +70,7 @@ public class CucumberEventListener extends RunListener {
      */
     public void testStarted(Description description) {
         if (description.isSuite()) {
-            testCase.logScenarioStarted(testCase.getTestName(), description.toString());
+            testCase.logScenarioStarted(testCase.getTestClassExecutionData().getTestStriptName(), description.toString());
         } else if (!description.isTest()) {
             LOGGER.error("UNDISCOVERED PATH: testStarted/???:  " + description.toString());
         }

@@ -151,8 +151,9 @@ public final class HtmlRunReporter extends RunListener {
             PropertiesData data = createFailurePropertiesData(isDummy, false, errorMsg);
             props = createProperties(classData, description.getMethodName(), u, data, dataDrivenName);
             String stackTrace = testFailure.getTrace();
-            systemOutPrintLn("Test failed: " + testFailure.getMessage());
-            logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + testFailure.getMessage(), "<code><small><br><pre>" + stackTrace
+            String failureMessage = testFailure.getMessage();
+            systemOutPrintLn("Test failed: " + failureMessage);
+            logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + u.escapeHTML(failureMessage), "<code><small><br><pre>" + u.escapeHTML(stackTrace)
                     + "</pre></small></code>");
         } else { // passed test case
             PropertiesData data = createPropertiesData(isDummy, false);
@@ -174,6 +175,7 @@ public final class HtmlRunReporter extends RunListener {
      */
     @Override
     public void testRunFinished(final Result result) throws Exception {
+        Util u = new Util();
         if (result.getRunCount() == 0) {
             if (result.getFailureCount() > 0) {
                 for (Failure failure : result.getFailures()) {
@@ -182,7 +184,7 @@ public final class HtmlRunReporter extends RunListener {
                         message = "";
                     }
                     classData.setItAsProblematic();
-                    afterClassComment("Failure occurred: " + message + "<br/><br/><pre>" + failure.getTrace() + "</pre>");
+                    afterClassComment("Failure occurred: " + message + "<br/><br/><pre>" + u.escapeHTML(failure.getTrace()) + "</pre>");
                 }
             } else {
                 testClassHtmlLog.insertBlock("NoTestCases", null);
@@ -373,6 +375,10 @@ public final class HtmlRunReporter extends RunListener {
         logComment("This is a dummy test case");
     }
 
+    public LogFileWriter getTestMethodHtmlLog() {
+        return testMethodHtmlLog;
+    }
+
     private class PropertiesData {
         private final String extText;
         private final String extColor;
@@ -504,7 +510,7 @@ public final class HtmlRunReporter extends RunListener {
      * @param comment     Comment message
      * @param description is a multi-row string description for the comment.
      */
-    void logComment(final String comment, final String description) {
+    public void logComment(final String comment, final String description) {
         systemOutPrintLn(comment);
 
         String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
