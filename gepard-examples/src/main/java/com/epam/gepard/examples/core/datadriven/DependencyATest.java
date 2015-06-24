@@ -19,7 +19,7 @@ package com.epam.gepard.examples.core.datadriven;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 
 /**
  * This test is prepared to demonstrate dependency handling between test cases.
@@ -28,7 +28,7 @@ import com.epam.gepard.generic.OtherTestCase;
  * @author tkohegyi
  */
 @TestClass(id = "DEMO-3", name = "Dependency Sample (a)")
-public class DependencyATest extends OtherTestCase {
+public class DependencyATest implements GepardTestClass {
 
     public void testNeedToPass() {
         logComment("This is empty so must pass...");

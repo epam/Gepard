@@ -21,6 +21,7 @@ package com.epam.gepard.examples.selenium;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.selenium.SeleniumTestCase;
 import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -32,6 +33,7 @@ import org.openqa.selenium.WebDriver;
 @GepardSeleniumTestClass(baseUrl = "http://www.google.com", browser = "*firefox")
 public class BasicSeleniumTest extends SeleniumTestCase {
 
+    @Test
     public void testGoogleMainPage() {
         String seleniumHost = getEnvironmentHelper().getProperty(SeleniumTestCase.SELENIUM_HOST);
         String baseUrl = getBaseURL();

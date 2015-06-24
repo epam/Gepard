@@ -17,8 +17,7 @@ package com.epam.gepard.examples.gherkin.cucumber.alltests;
  You should have received a copy of the GNU General Public License
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
-import com.epam.gepard.gherkin.cucumber.CucumberTestCaseConnector;
-import com.epam.gepard.gherkin.cucumber.ParentCucumberTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import org.junit.Assert;
@@ -28,8 +27,7 @@ import org.junit.Assert;
  * Glue code for the parent cucumber test case.
  * Glue code is good, test fails on When statement.
  */
-@ParentCucumberTestCase(name = "com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest")
-public class BrokenFeature extends CucumberTestCaseConnector {
+public class BrokenFeature implements GepardTestClass {
 
     /**
      * Sample Cucumber glue code, this part pass.

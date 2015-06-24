@@ -34,6 +34,7 @@ public interface GepardTestClass {
         getTestClassExecutionData().getHtmlRunReporter().logEvent(comment);
     }
 
+    default void logWarning(final String comment) { getTestClassExecutionData().getHtmlRunReporter().logWarning(comment); }
     /**
      * Sets the testcase. N/A test cases are tests with Not Applicable results.
      *

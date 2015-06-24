@@ -193,6 +193,16 @@ public final class HtmlRunReporter extends RunListener {
     }
 
     /**
+     * This extra method is necessary in order to handle special error cases, like failures in Cucumber.
+     * @param problem is the exception.
+     */
+    public void setTestFailed(final Throwable problem) {
+        testFailed = true;
+        Failure f = new Failure(Description.EMPTY, problem);
+        testFailure = f;
+    }
+
+    /**
      * Need to call it well before any test class execution is requested.
      */
     public void hiddenBeforeTestClassExecution() {
@@ -501,6 +511,18 @@ public final class HtmlRunReporter extends RunListener {
                     + "</td></tr>\n");
         }
         step++;
+    }
+
+    /**
+     * Write a warning message to the log, without the step number.
+     *
+     * @param warning Comment message
+     */
+    public void logWarning(final String warning) {
+        systemOutPrintLn("WARNING:" + warning);
+        if (testMethodHtmlLog != null) {
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0D0D0\">" + warning + "</td></tr>");
+        }
     }
 
     /**

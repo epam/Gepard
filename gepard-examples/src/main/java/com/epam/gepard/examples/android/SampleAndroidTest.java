@@ -19,7 +19,8 @@ package com.epam.gepard.examples.android;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.android.AndroidTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Test;
 
 /**
  * This test class demonstrates the capabilities of Android extension of Gepard.
@@ -28,8 +29,9 @@ import com.epam.gepard.android.AndroidTestCase;
  * @author tkohegyi
  */
 @TestClass(id = "ANDROID", name = "Sample Android Test")
-public class SampleAndroidTest extends AndroidTestCase {
+public class SampleAndroidTest implements GepardTestClass {
 
+    @Test
     public void testTestMustPass() throws Exception {
         dummyTestCase(); //
         naTestCase("This Gepard feature is not-yet implemented");

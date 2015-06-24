@@ -19,21 +19,17 @@ package com.epam.gepard.selenium;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestResult;
-
+import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.common.NATestCaseException;
+import com.epam.gepard.generic.GepardTestClass;
+import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
+import com.epam.gepard.selenium.browsers.BrowserEnum;
+import com.epam.gepard.selenium.browsers.SeleniumUtil;
+import com.epam.gepard.selenium.helper.EnvironmentHelper;
+import com.epam.gepard.util.FileUtil;
+import com.epam.gepard.util.Util;
+import com.thoughtworks.selenium.Selenium;
+import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.OutputType;
@@ -44,25 +40,23 @@ import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.common.Environment;
-import com.epam.gepard.common.NATestCaseException;
-import com.epam.gepard.common.TestClassExecutionData;
-import com.epam.gepard.generic.CommonTestCase;
-import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
-import com.epam.gepard.selenium.browsers.BrowserEnum;
-import com.epam.gepard.selenium.browsers.SeleniumUtil;
-import com.epam.gepard.selenium.helper.EnvironmentHelper;
-import com.epam.gepard.util.FileUtil;
-import com.epam.gepard.util.Util;
-import com.thoughtworks.selenium.Selenium;
-import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This class represents a TestCase, which supports Selenium WebDriver.
+ *
  * @author Tamas_Kohegyi
  */
-public abstract class SeleniumTestCase extends CommonTestCase {
+public abstract class SeleniumTestCase implements GepardTestClass {
     public static final String DEFAULT_TIMEOUT = "30000";
     public static final String SELENIUM_PORT = "gepard.selenium.port";
     public static final String SELENIUM_HOST = "gepard.selenium.host";
@@ -71,7 +65,6 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     public static final String SELENIUM_BROWSER_INTERNET_EXPLORER = "gepard.selenium.browserString.IE";
     public static final String SELENIUM_BROWSER_GOOGLE_CHROME = "gepard.selenium.browserString.GoogleChrome";
     public static final String SELENIUM_BROWSER_SAFARI = "gepard.selenium.browserString.Safari";
-    public static final String SELENIUM_BROWSER_OPERA = "gepard.selenium.browserString.Opera";
     private static int dumpFileCount;
 
     private SeleniumUtil seleniumUtil = new SeleniumUtil();
@@ -102,7 +95,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     /**
      * Determines if selenium should remember the traffic or not to get it with the captureNetworkTraffic method.
      * Its default value is <b>false</b>.
-     * <p/>
+     * <p>
      * Set this to <b>true</b> in case you would like to use the captureNetworkTraffic method of selenium.
      * Be aware that captureNetworkTraffic method might cause exceptions in selenium (especially on Linux OS),
      * because its selenium implementation is not bug-free.
@@ -112,7 +105,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     /**
      * Determines if selenium should allow adding custom headers to requests with selenium's addCustomRequestHeader method.
      * Its default value is <b>false</b>.
-     * <p/>
+     * <p>
      * Set this to <b>true</b> in case you would like to use the addCustomRequestHeader method of selenium.
      */
     private boolean addCustomRequestHeaders;
@@ -127,23 +120,10 @@ public abstract class SeleniumTestCase extends CommonTestCase {
      * Default constructor, loads the basic starting points, the browser string, and the initial/base url.
      */
     public SeleniumTestCase() {
-        super("name");
-        environmentHelper = new EnvironmentHelper(getClassData().getEnvironment());
+        environmentHelper = new EnvironmentHelper(getTestClassExecutionData().getEnvironment());
         setBaseURL(environmentHelper.getTestEnvironmentURL());
         setBrowserString(environmentHelper.getTestEnvironmentBrowser());
         setNeedCaptureNetworkTraffic(true);
-    }
-
-    @Override
-    public final void setUp() throws Exception {
-        super.setUp();
-        super.setUp2();
-    }
-
-    @Override
-    protected final void tearDown() throws Exception {
-        super.tearDown2();
-        super.tearDown();
     }
 
     public SeleniumUtil getSeleniumUtil() {
@@ -206,7 +186,6 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     /**
      * Initialization of the test class, we use this beforeTestCase method to setup selenium.
      */
-    @Override
     public void beforeTestCase() {
         if (this.getClass().isAnnotationPresent(TestClass.class)) {
             if (this.getClass().isAnnotationPresent(GepardSeleniumTestClass.class)) {
@@ -230,7 +209,6 @@ public abstract class SeleniumTestCase extends CommonTestCase {
      * Initialization code executed on a dummy instance when the test case method ends.
      * Use this as POSTCONDITION.
      */
-    @Override
     public void afterTestCase() {
         if (webDriver != null) {
             webDriver.quit(); //close all opened browser window
@@ -384,9 +362,9 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     public void logEvent(final String text, final boolean makeDump) {
         String addStr = "";
         if (!text.startsWith("<font")) {
-            systemOutPrintLn(text);
+            getTestClassExecutionData().addSysOut(text);
         }
-        if (getMainTestLogger() != null) {
+        if (getTestClassExecutionData().getHtmlRunReporter().getTestMethodHtmlLog() != null) {
             if (makeDump) {
                 try {
                     String dumpFileName = dumpSource(true);
@@ -408,7 +386,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
                     addStr = " <small>[Dump failed]</small>";
                 }
             }
-            getMainTestLogger().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "</td></tr>\n");
+            getTestClassExecutionData().getHtmlRunReporter().getTestMethodHtmlLog().insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "</td></tr>\n");
         }
     }
 
@@ -446,7 +424,7 @@ public abstract class SeleniumTestCase extends CommonTestCase {
      */
     public String dumpSource(boolean escapeHTML) throws FileNotFoundException {
         String newFilePath;
-        String logPath = getMainTestLogger().getLogPath();
+        String logPath = getTestClassExecutionData().getHtmlRunReporter().getTestMethodHtmlLog().getLogPath();
         String logPathCanonical = logPath.replace('\\', '/');
         int pos = logPathCanonical.lastIndexOf('/');
         dumpFileCount++;
@@ -460,77 +438,6 @@ public abstract class SeleniumTestCase extends CommonTestCase {
         dumpSource(newFilePath, escapeHTML);
 
         return newFilePath;
-    }
-
-    /**
-     * We override the run method in order to support HTML logs.
-     *
-     * @param result Test result
-     */
-    protected void runSuper(TestResult result) {
-        super.run(result);
-    }
-
-    /**
-     * We override the run method in order to support HTML logs.
-     *
-     * @param result Test result
-     */
-    @Override
-    public void run(TestResult result) {
-        TestClassExecutionData o = getClassData();
-
-        setTcase(Environment.createTestCase(getName(), o.getTestCaseSet()));
-
-        setUpLogger();
-        Properties props = new Properties();
-        props.setProperty("ID", getTestID());
-        props.setProperty("Name", getTestName());
-        props.setProperty("TestCase", getName());
-        props.setProperty("ScriptNameRow", getClassData().getID());
-        getMainTestLogger().insertBlock("Header", props);
-        try {
-            runSuper(result);
-        } finally {
-            getMainTestLogger().insertBlock("Footer", null);
-            getMainTestLogger().close();
-            setMainTestLogger(null);
-            getTcase().updateStatus();
-            setTcase(null);
-        }
-    }
-
-    /**
-     * We re-declared the runTest method in order to throw only AssertionFailedErrors and
-     * to create the Failure logs.
-     *
-     * @throws AssertionFailedError or ThreadDeath
-     */
-    @Override
-    protected void runTest() {
-        try {
-            if (setupException != null) {
-                //Set this TC as N/A, based on the problem detected during setup
-                naTestCase(setupException.getMessage());
-            }
-            super.runTest();
-            logEvent("<font color=\"#00AA00\"><b>Test passed.</b></font>");
-            systemOutPrintLn("Test passed.");
-        } catch (AssertionFailedError e) { //we rethrow the AssertionFailedError
-            String stackTrace = getFullStackTrace(e);
-            systemOutPrintLn("ERROR: " + e.getMessage());
-            logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + e.getMessage(), "<code><small><br><pre>" + stackTrace
-                    + "</pre></small></code>");
-            throw e;
-        } catch (NATestCaseException e) { //we rethrow the Exception as AssertionFailedError
-            logEvent("<font color=\"#0000AA\"><b>N/A</b></font><br>\nMessage: " + e.getMessage());
-            systemOutPrintLn("Test is N/A: " + e.getMessage());
-        } catch (Throwable e) { //we rethrow the Exception as AssertionFailedError
-            systemOutPrintLn("ERROR: " + e.getMessage());
-            logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + e.getMessage(), "<code><small><br><pre>"
-                    + getFullStackTrace(e) + "</pre></small></code>");
-            throw new AssertionFailedError(e.getMessage());
-        }
     }
 
 }

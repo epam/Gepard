@@ -45,17 +45,15 @@ com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleFailTest
 com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
 
 #Sample BDD test - Using Cucumber
-#com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest
-#com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest
-#com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
-
-#com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest
+com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest
+com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest
+com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
 
 #Sample Android - test
-#com.epam.gepard.examples.android.SampleAndroidTest
+com.epam.gepard.examples.android.SampleAndroidTest
 
 #Sample test using Rest Assured to test a service + LabelBasedDataFeeder loader class
-#com.epam.gepard.examples.service.RestServiceTest,:[com/epam/gepard/examples/service/RestServiceTest.csv]x[feeders.DEVICE:4:APP_TABLET_IPAD;APP_TABLET_ANDROID;APP_PHONE_IPHONE;APP_PHONE_ANDROID]
+com.epam.gepard.examples.service.RestServiceTest,:[com/epam/gepard/examples/service/RestServiceTest.csv]x[feeders.DEVICE:4:APP_TABLET_IPAD;APP_TABLET_ANDROID;APP_PHONE_IPHONE;APP_PHONE_ANDROID]
 
 #Sample SoapUI test
 #com.epam.gepard.examples.soapui.SoapUITestBase
@@ -63,3 +61,4 @@ com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
 #Sample Selenium Tests, disable, but enable it if you have running Selenium server at default port
 #com.epam.gepard.examples.selenium.BasicSeleniumTest
 #com.epam.gepard.examples.selenium.conditionwatchers.Http404ConditionDemo
+#com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest

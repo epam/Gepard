@@ -17,8 +17,7 @@ package com.epam.gepard.examples.gherkin.cucumber.substituted;
  You should have received a copy of the GNU General Public License
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
-import com.epam.gepard.gherkin.cucumber.CucumberTestCaseConnector;
-import com.epam.gepard.gherkin.cucumber.ParentCucumberTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -26,8 +25,7 @@ import cucumber.api.java.en.When;
 /**
  * Glue code for the parent cucumber test case.
  */
-@ParentCucumberTestCase(name = "com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest")
-public class SubstitutedFeature extends CucumberTestCaseConnector {
+public class SubstitutedFeature implements GepardTestClass {
 
     /**
      * Sample Cucumber glue code.
