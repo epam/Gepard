@@ -602,5 +602,6 @@ public final class HtmlRunReporter extends RunListener {
         }
     }
 
-
+    public int getDivStep() { return divStep; }
+    public void increaseDivStep() { divStep++; }
 }

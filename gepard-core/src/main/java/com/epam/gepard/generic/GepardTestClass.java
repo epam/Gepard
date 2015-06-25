@@ -35,6 +35,12 @@ public interface GepardTestClass {
     }
 
     default void logWarning(final String comment) { getTestClassExecutionData().getHtmlRunReporter().logWarning(comment); }
+
+    default void logResult(final String comment, final String description) { getTestClassExecutionData().getHtmlRunReporter().logResult(comment, description); }
+
+    default int getDivStep() { return getTestClassExecutionData().getHtmlRunReporter().getDivStep(); }
+    default void increaseDivStep() { getTestClassExecutionData().getHtmlRunReporter().increaseDivStep(); }
+
     /**
      * Sets the testcase. N/A test cases are tests with Not Applicable results.
      *
