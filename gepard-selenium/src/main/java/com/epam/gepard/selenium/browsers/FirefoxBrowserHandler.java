@@ -18,12 +18,12 @@ package com.epam.gepard.selenium.browsers;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.selenium.SeleniumTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 
 /**
  * This browser utility class contains all the FireFox specific methods.
  *
- * @author robert_ambrus
+ * @author robert_ambrus, tkohegyi
  */
 public class FirefoxBrowserHandler extends BrowserHandlerBase {
     private static final String SET_JS = "{prefs=Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);"
@@ -34,30 +34,11 @@ public class FirefoxBrowserHandler extends BrowserHandlerBase {
     /**
      * Constructor of the class.
      *
-     * @param tc parameter specifies the Test Case object
+     * @param tc parameter specifies the Test Class object
+     * @param wdu parameter specifies the WebDriver Util object
      */
-    public FirefoxBrowserHandler(SeleniumTestCase tc) {
-        super(tc);
-    }
-
-    /**
-     * Restart the browser with the specified settings.
-     *
-     * @param clearCookies      parameter specifies whether clear cookies
-     * @param javascriptSupport parameter specifies whether enable javascript support
-     */
-    @Override
-    public void restartBrowser(final CookieHandler cookieHandler, final boolean clearCookies, final boolean javascriptSupport) {
-        //clear domain cookies if necessary
-        if (clearCookies) {
-            cookieHandler.deleteAllCookiesOnDomain(getTc());
-        }
-
-        //restart browser
-        getTc().restartBrowser();
-
-        //set javascript support
-        setJavascriptSupport(javascriptSupport);
+    public FirefoxBrowserHandler(final GepardTestClass tc, final WebDriverUtil wdu) {
+        super(tc, wdu);
     }
 
     /**
@@ -72,7 +53,7 @@ public class FirefoxBrowserHandler extends BrowserHandlerBase {
             return;
         }
 
-        getTc().getSelenium().getEval(SET_JS.replace("%STATUS%", Boolean.toString(status)));
+        getWebDriverUtil().getSelenium().getEval(SET_JS.replace("%STATUS%", Boolean.toString(status)));
 
         getTc().logComment("Browser Javascript support status [" + status + "] set.");
     }
@@ -84,6 +65,6 @@ public class FirefoxBrowserHandler extends BrowserHandlerBase {
      */
     @Override
     public boolean getJavascriptSupport() {
-        return Boolean.parseBoolean(getTc().getSelenium().getEval(GET_JS));
+        return Boolean.parseBoolean(getWebDriverUtil().getSelenium().getEval(GET_JS));
     }
 }

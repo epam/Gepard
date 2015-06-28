@@ -20,13 +20,12 @@ along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
+import com.epam.gepard.gherkin.cucumber.CucumberTestCase;
 
 /**
  * Wrapper Junit test for Cucumber glue code placed next to this class.
  * Many such glue code presents next to this class.
  */
-@GepardSeleniumTestClass(baseUrl = "http://www.google.com", browser = "*firefox")
 @TestClass(id = "Cuke + Selenium", name = "Combined Cucumber and Selenium Tests")
-public class CucumberWithSeleniumTest extends CucumberWrappedSeleniumTestCase {
+public class CucumberWithSeleniumTest extends CucumberTestCase {
 }

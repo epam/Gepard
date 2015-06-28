@@ -19,8 +19,11 @@ package com.epam.gepard.examples.selenium;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.selenium.SeleniumTestCase;
-import com.epam.gepard.selenium.annotation.GepardSeleniumTestClass;
+import com.epam.gepard.common.Environment;
+import com.epam.gepard.generic.GepardTestClass;
+import com.epam.gepard.selenium.browsers.WebDriverUtil;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
@@ -30,17 +33,27 @@ import org.openqa.selenium.WebDriver;
  * @author tkohegyi
  */
 @TestClass(id = "SELENIUM", name = "Basic Selenium Test")
-@GepardSeleniumTestClass(baseUrl = "http://www.google.com", browser = "*firefox")
-public class BasicSeleniumTest extends SeleniumTestCase {
+public class BasicSeleniumTest implements GepardTestClass {
+
+    private WebDriverUtil webDriverUtil = new WebDriverUtil(this);
+
+    @Before
+    public void buildWebDriverInstance() {
+        webDriverUtil.buildWebDriverInstance("http://www.epam.com");
+    }
+
+    @After
+    public void destroyWebDriverInstance() {
+        webDriverUtil.destroyWebDriverInstance();
+    }
 
     @Test
     public void testGoogleMainPage() {
-        String seleniumHost = getEnvironmentHelper().getProperty(SeleniumTestCase.SELENIUM_HOST);
-        String baseUrl = getBaseURL();
-        logComment("Using Selenium Host:" + seleniumHost);
-        logComment("Using Default Base Url:" + baseUrl);
-        getSeleniumUtil().gotoUrl(this, "http://google.hu");
-        WebDriver wd = getWebDriver();
+        Environment e = getTestClassExecutionData().getEnvironment();
+        String seleniumHostPort = e.getProperty(WebDriverUtil.SELENIUM_HOST) + ":" + e.getProperty(WebDriverUtil.SELENIUM_PORT);
+        logComment("Using Selenium at: " + seleniumHostPort);
+        webDriverUtil.gotoUrl("http://google.hu");
+        WebDriver wd = webDriverUtil.getWebDriver();
         logComment("We are at: " + wd.getTitle());
     }
 

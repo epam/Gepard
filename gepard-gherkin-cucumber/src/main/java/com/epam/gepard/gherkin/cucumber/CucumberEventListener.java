@@ -74,7 +74,8 @@ public class CucumberEventListener extends RunListener implements GepardTestClas
             failedScenario = false;
             logScenarioStarted(description);
         } else if (!description.isTest()) {
-            LOGGER.error("UNDISCOVERED PATH: testStarted/???:  " + description.toString());
+            String errorMessage = "UNDISCOVERED PATH: testStarted/???:  " + description.toString();
+            LOGGER.error(errorMessage);
         }
     }
 
@@ -87,7 +88,8 @@ public class CucumberEventListener extends RunListener implements GepardTestClas
         if (description.isSuite()) {
             logScenarioEnded(failedScenario);
         } else if (!description.isTest()) {
-            LOGGER.error("UNDISCOVERED PATH: testFinished/???:  " + description.toString());
+            String errorMessage = "UNDISCOVERED PATH: testFinished/???:  " + description.toString();
+            LOGGER.error(errorMessage);
         }
     }
 
@@ -159,15 +161,15 @@ public class CucumberEventListener extends RunListener implements GepardTestClas
         if (description.isSuite()) {
             String message = "UNDISCOVERED SCENARIO PATH: " + description.toString();
             LOGGER.error(message);
-            logComment(message);
+            naTestCase(message);
         } else if (description.isTest()) {
             String message = "UNDISCOVERED TEST PATH: " + description.toString();
             LOGGER.error(message);
-            logComment(message);
+            naTestCase(message);
         } else {
             String message = "UNDISCOVERED ??? PATH: " + description.toString();
             LOGGER.error(message);
-            logComment(message);
+            naTestCase(message);
         }
     }
 
@@ -210,12 +212,14 @@ public class CucumberEventListener extends RunListener implements GepardTestClas
     public void logScenarioEnded(final boolean isFailedScenario) {
         HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();
         LogFileWriter htmlLog = reporter.getTestMethodHtmlLog();
-        String testPassed = "bgcolor=\"#b0e0b0\">Scenario finished.";
+        String colorInfo = "bgcolor=\"#b0e0b0\">";
+        String testPassed = "Scenario finished.";
         if (isFailedScenario) {
-            testPassed = "bgcolor=\"#e0b0b0\">Scenario finished with failure.";
+            colorInfo = "bgcolor=\"#e0b0b0\">";
+            testPassed = "Scenario finished with failure.";
         }
         if (htmlLog != null) {
-            htmlLog.insertText("<tr><td>&nbsp;</td><td " + testPassed + "</td></tr>");
+            htmlLog.insertText("<tr><td>&nbsp;</td><td " + colorInfo + testPassed + "</td></tr>");
         }
         reporter.systemOutPrintLn(testPassed);
     }

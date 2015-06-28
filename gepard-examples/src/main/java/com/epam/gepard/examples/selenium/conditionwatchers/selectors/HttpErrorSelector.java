@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
  */
 public enum HttpErrorSelector implements Selector {
     ERROR_HTTP_500("body[class='page common 500errorpage articlepage ']"),
-    ERROR_HTTP_404("body[class='page common 404errorpage articlepage ']");
+    ERROR_HTTP_404("body > div > div.parsys.iparsys.header_container > div.iparys_inherited > div > div > header > div > div.parbase.breadcrumbs-menu > div > ul > li:nth-child(2) > a");
 
     private String selector;
 

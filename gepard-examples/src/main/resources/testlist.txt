@@ -5,18 +5,18 @@
 com.epam.gepard.examples.core.basic.BasicTest
 com.epam.gepard.examples.core.basic.BasicNoTest
 
-# sample usage of not-applicable tests
+# Sample usage of not-applicable tests
 com.epam.gepard.examples.core.basic.SampleAllNotApplicableTest
 
-# sample usage of timeout handling
+# Sample usage of timeout handling
 com.epam.gepard.examples.core.basic.SampleTimeoutHandlingTest
 
-#sample for using blocker strings in case of parallel test execution
+# Sample for using blocker strings in case of parallel test execution
 com.epam.gepard.examples.core.basic.SampleParallelTestA,,AAA
 com.epam.gepard.examples.core.basic.SampleParallelTestB,,BBB
 com.epam.gepard.examples.core.basic.SampleParallelTestC,9,AAA*
 
-# sample usage of feeders and data driven tests
+# Sample usage of feeders and data driven tests
 #     * - param //if param is a number, use SimpleMultiplierFeeder class
 #     * - feederclass
 #     * - feederclass
@@ -37,28 +37,29 @@ com.epam.gepard.examples.core.datadriven.LabelBasedDataFeederTest,:[]+[feeders.O
 # test data handling error
 com.epam.gepard.examples.core.datadriven.DataFeederIsMissingTest
 
-#Sample BDD test - Using JBehave
+# Sample BDD test - Using JBehave
 com.epam.gepard.examples.gherkin.jbehave.JBehaveTest
 com.epam.gepard.examples.gherkin.jbehave.JBehaveFailTest
 com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleTest
 com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleFailTest
 com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
 
-#Sample BDD test - Using Cucumber
+# Sample BDD test - Using Cucumber
 com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest
 com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest
 com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
 
-#Sample Android - test
-com.epam.gepard.examples.android.SampleAndroidTest
+# Sample Selenium Tests, disabled, but you may enable it if you have running Selenium server at default port
+#com.epam.gepard.examples.selenium.BasicSeleniumTest,,WEBDRIVER
+#com.epam.gepard.examples.selenium.conditionwatchers.Http404ConditionDemo,,WEBDRIVER
+#com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest,,WEBDRIVER
 
-#Sample test using Rest Assured to test a service + LabelBasedDataFeeder loader class
-com.epam.gepard.examples.service.RestServiceTest,:[com/epam/gepard/examples/service/RestServiceTest.csv]x[feeders.DEVICE:4:APP_TABLET_IPAD;APP_TABLET_ANDROID;APP_PHONE_IPHONE;APP_PHONE_ANDROID]
+# Sample Android - test, this is under construction, don't expect that it will work
+#com.epam.gepard.examples.android.SampleAndroidTest
 
-#Sample SoapUI test
+# Sample test using Rest Assured to test a service + LabelBasedDataFeeder loader class
+# this is under construction, don't expect that it will work
+#com.epam.gepard.examples.service.RestServiceTest,:[com/epam/gepard/examples/service/RestServiceTest.csv]x[feeders.DEVICE:4:APP_TABLET_IPAD;APP_TABLET_ANDROID;APP_PHONE_IPHONE;APP_PHONE_ANDROID]
+
+# Sample SoapUI test, this is under construction, don't expect that it will work
 #com.epam.gepard.examples.soapui.SoapUITestBase
-
-#Sample Selenium Tests, disable, but enable it if you have running Selenium server at default port
-#com.epam.gepard.examples.selenium.BasicSeleniumTest
-#com.epam.gepard.examples.selenium.conditionwatchers.Http404ConditionDemo
-#com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest
