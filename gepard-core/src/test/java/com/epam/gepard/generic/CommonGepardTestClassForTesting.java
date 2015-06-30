@@ -1,6 +1,7 @@
 package com.epam.gepard.generic;
 
 import org.junit.Ignore;
+import org.junit.Test;
 
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
@@ -22,24 +23,18 @@ import org.junit.Ignore;
 ===========================================================================*/
 
 /**
- * {@link CommonTestCase} implementation for testing.
- * @author Adam_Csaba_Kiraly
+ * {@link com.epam.gepard.generic.GepardTestClass} implementation for testing.
+ *
+ * @author tkohegyi
  */
 @Ignore
-public class CommonTestCaseImplementationForTesting extends CommonTestCase {
-
-    /**
-     * Creates a new instance of {@link CommonTestCaseImplementationForTesting}.
-     */
-    public CommonTestCaseImplementationForTesting() {
-        super("testPassed");
-    }
+public class CommonGepardTestClassForTesting implements GepardTestClass {
 
     /**
      * An empty test that passes.
      */
+    @Test
     public void testPassed() {
-
     }
 
 }

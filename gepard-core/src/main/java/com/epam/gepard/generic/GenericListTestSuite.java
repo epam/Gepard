@@ -34,12 +34,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.epam.gepard.logger.HtmlRunReporter;
-import junit.framework.Test;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.common.Environment;
-import com.epam.gepard.common.TestCaseExecutionData;
 import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.common.threads.BlockingInfo;
 import com.epam.gepard.common.threads.TestClassExecutionThread;
@@ -52,7 +50,7 @@ import com.epam.gepard.util.ExitCode;
 /**
  * This class loads the testlist file, evaluates it ad builds up the test suite to be executed.
  */
-public class GenericListTestSuite extends TestSuite {
+public class GenericListTestSuite {
 
     /**
      * Gepard level global map, to store anything you believe is important to be stored during the tests.
@@ -67,15 +65,11 @@ public class GenericListTestSuite extends TestSuite {
      */
     private static Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<>(); //global TestClass exec info
 
-    /**
-     * Gepard level global map, to store all the test cases those are executed.
-     * Do NOT touch it, otherwise you will do nasty things. It is used internally by Gepard.
-     */
-    private static Map<String, TestCaseExecutionData> testCaseMap = new LinkedHashMap<>(); //global TestCase exec info
-
     private static final int TESTLIST_CLASS_NAME_FIELD = 0;
     private static final int TESTLIST_FEEDER_DESCRIPTOR_FIELD = 1;
     private static final int TESTLIST_BLOCKER_FIELD = 2;
+    private static int actualDataRow; //this is used during the load of the tests, do NOT use it during execution
+    private static String actualTestClassName; //this is used during the load of the tests, do NOT use it during execution
 
     private int usedTc; // = 0; //number of used Test Classes - will be used at report
     private int numberTc; // = 0; //number of TCs
@@ -93,7 +87,6 @@ public class GenericListTestSuite extends TestSuite {
      */
     public GenericListTestSuite(final String testListFile, final ExpressionTestFilter filter, final Environment environment) throws IOException,
         ClassNotFoundException {
-        super("GenericListTestSuite");
         this.environment = environment;
         LineNumberReader listReader = new LineNumberReader(new InputStreamReader(new FileInputStream(testListFile)));
         String originalLine;
@@ -152,7 +145,6 @@ public class GenericListTestSuite extends TestSuite {
         while (counter > 0) {
             registerMethodsInGlobalMap(cls, rowNo, dataFeeder);
             getTestForClass(cls);
-            //addTest(t);
 
             //set test for parallel execution
             String id = cls.getName() + "/" + rowNo;
@@ -216,19 +208,17 @@ public class GenericListTestSuite extends TestSuite {
      * This class ensures that the test class receives all data-driven (and other)information before its execution.
      *
      * @param clazz is the test class to be initialized.
-     * @return a @GenericTestSuite class.
      */
-    protected Test getTestForClass(final Class<?> clazz) {
-        Test returnSuite = new TestSuite(clazz);
+    protected void getTestForClass(final Class<?> clazz) {
         try {
             final Method method = clazz.getDeclaredMethod("suite");
             //calls the static suite method of the test class, where the Enums are defined
-            returnSuite = (Test) method.invoke(null); // this call loads the parameters!
+            method.invoke(null); // this call loads the parameters!
         } catch (final NoSuchMethodException e) {
             // Handle annotated classes
             // More annotation handling should be added here to handle more test types
             if (clazz.isAnnotationPresent(TestClass.class)) {
-                returnSuite = CommonTestCase.suiteHelper(clazz, clazz.getAnnotation(TestClass.class).id(), clazz.getAnnotation(TestClass.class)
+                GenericListTestSuite.suiteHelper(clazz, clazz.getAnnotation(TestClass.class).id(), clazz.getAnnotation(TestClass.class)
                         .name(), null, environment);
             } else {
                 //no proper annotation at Test Class, cannot continue
@@ -240,7 +230,57 @@ public class GenericListTestSuite extends TestSuite {
             AllTestRunner.exitFromGepardWithCriticalException("\nERROR: Unknown error occurred, please fix!", e, true,
                     ExitCode.EXIT_CODE_TEST_CLASS_INITIALIZATION_ERROR);
         }
-        return returnSuite;
+    }
+
+    /**
+     * General suite method of the test class. Called by Gepard before any test execution.
+     * Do not touch it, most of the cases this method should be unchanged.
+     *
+     * @param testClass      is the test class.
+     * @param scriptID       is the ID of the script - may come from annotation.
+     * @param scriptName     is the name of the script - may come from annotation.
+     * @param parameterNames is the names of the parameters - may come from annotation too.
+     * @param environment    holds the application properties
+     * @return with the JUnit TestSuite object.
+     */
+    public static void suiteHelper(final Class testClass, final String scriptID, final String scriptName, final String[] parameterNames,
+                                   final Environment environment) {
+        //first either reset the counter or increase it, based on the given test class name
+        String testClassName = testClass.getName();
+        if ((actualTestClassName == null) || (!actualTestClassName.contentEquals(testClassName))) {
+            actualTestClassName = testClassName;
+            setActualDataRow(0);
+        } else {
+            setActualDataRow(getActualDataRow() + 1);
+        }
+        //set script id and name
+        String id = testClass.getName() + "/" + getActualDataRow();
+        TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(id); //get the class exec object
+        classData.setTestStriptId(scriptID);
+        classData.loadParameters(parameterNames);
+        String extension = "";
+        if (classData.getDrivenData() != null) {
+            extension = " - " + classData.getDrivenData().getParameters()[0]; //puts the first parameter into the test name
+        }
+        classData.setTestStriptName(scriptName + extension);
+    }
+
+    /**
+     * Returns with the actual data row used from the full data array, by the specific TC.
+     *
+     * @return with the number.
+     */
+    public static int getActualDataRow() {
+        return actualDataRow;
+    }
+
+    /**
+     * Sets the actual data row within the data array for this TC.
+     *
+     * @param actualDataRow is the specific row.
+     */
+    public static void setActualDataRow(final int actualDataRow) {
+        GenericListTestSuite.actualDataRow = actualDataRow;
     }
 
     /**
@@ -251,7 +291,7 @@ public class GenericListTestSuite extends TestSuite {
      * @param dataFeeder is the data feeder class in order to load the proper test data.
      * @return the number of the registered test methods.
      */
-    protected int registerMethodsInGlobalMap(final Class<?> clazz, final int rowNo, final DataFeederLoader dataFeeder) {
+    protected void registerMethodsInGlobalMap(final Class<?> clazz, final int rowNo, final DataFeederLoader dataFeeder) {
         //register this class in the global class list
         String id = clazz.getName() + "/" + rowNo;
         if (testClassMap.containsKey(id)) {
@@ -267,22 +307,6 @@ public class GenericListTestSuite extends TestSuite {
         classData.setTestClass(clazz);  //for Junit 4
         testClassMap.put(id, classData);
         new HtmlRunReporter(classData); //this prepares everything that need to be prepared for Html Logging the execution of the test class
-
-        //register test methods, and ancestor test methods, too
-        int testMethod = 0;
-        Class<?> superClass = clazz;
-        while (superClass != null && !("java.lang.Object".equals(superClass.getCanonicalName()))) {
-            for (Method method : superClass.getDeclaredMethods()) {
-                if ((method.getName().startsWith("test")) || (method.isAnnotationPresent(org.junit.Test.class))) {
-                    String methodId = TestCaseExecutionData.constructID(clazz.getName(), method.getName(), Integer.toString(rowNo));
-                    getTestCaseMap().put(methodId, new TestCaseExecutionData(methodId));
-                    testMethod++; //count the test methods, i.e. the physical TCs
-                }
-            }
-            superClass = superClass.getSuperclass();
-        }
-
-        return testMethod;
     }
 
     /**
@@ -351,14 +375,6 @@ public class GenericListTestSuite extends TestSuite {
 
     public static int getTestClassCount() {
         return testClassMap.size();
-    }
-
-    public static Map<String, TestCaseExecutionData> getTestCaseMap() {
-        return testCaseMap;
-    }
-
-    public static void setTestCaseMap(final Map<String, TestCaseExecutionData> testCaseMap) {
-        GenericListTestSuite.testCaseMap = testCaseMap;
     }
 
     public static void setTestClassMap(final Map<String, TestClassExecutionData> testClassMap) {

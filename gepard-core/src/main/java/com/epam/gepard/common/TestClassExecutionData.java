@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.datadriven.DataDrivenParameters;
 import com.epam.gepard.datadriven.DataFeederLoader;
-import com.epam.gepard.inspector.TestCaseSet;
 
 /**
  * This class holds Test Class execution information.
@@ -70,7 +69,6 @@ public final class TestClassExecutionData {
 
     private int lock; //Thread lock handling. 0 = not locked, waiting for lock.
     private Future task;
-    private TestCaseSet testCaseSet;
 
     private final String id;
     /**
@@ -122,10 +120,6 @@ public final class TestClassExecutionData {
 
     public void setTask(final Future task) {
         this.task = task;
-    }
-
-    public TestCaseSet getTestCaseSet() {
-        return testCaseSet;
     }
 
     public DataFeederLoader getDataFeederLoader() {
@@ -301,10 +295,6 @@ public final class TestClassExecutionData {
 
     public String getOriginalLine() {
         return originalLine;
-    }
-
-    public void setTestCaseSet(final TestCaseSet testCaseSet) {
-        this.testCaseSet = testCaseSet;
     }
 
     public int getDrivenDataRowNo() {

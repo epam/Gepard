@@ -23,7 +23,6 @@ import java.lang.reflect.Constructor;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.filter.matcher.SimpleMatcher;
-import com.epam.gepard.generic.CommonTestCase;
 import com.gargoylesoftware.base.testing.AcceptAllTestFilter;
 
 /**
@@ -106,20 +105,6 @@ public class DefaultTestFilter extends AcceptAllTestFilter implements Expression
         String className = clazz.getName();
         if (isMatching(this.classFilter, className)) {
             needToInclude = true;
-        } else {
-            // testID checking
-            Class<?>[] constrparamtypes = {String.class};
-            Object[] constrparams = {""};
-            try {
-                Constructor<?> constr = clazz.getConstructor(constrparamtypes);
-                Object obj = constr.newInstance(constrparams);
-                if (obj instanceof CommonTestCase) {
-                    needToInclude = true;
-                }
-            } catch (Exception e) {
-                AllTestRunner
-                        .exitFromGepardWithCriticalException("Exception in DefaultTestFilter when instantiating class " + className, e, false, 0);
-            }
         }
         // does not match
         return needToInclude;

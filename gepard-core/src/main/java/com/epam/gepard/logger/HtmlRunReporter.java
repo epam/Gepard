@@ -75,7 +75,6 @@ public final class HtmlRunReporter extends RunListener {
             classData.setTestStriptName(clazz.getAnnotation(TestClass.class).name());
             classData.setHtmlRunReporter(this);
         }
-        classData.setTestCaseSet(Environment.createTestCaseSet(classData.getTestStriptName(), Environment.getScript()));
     }
 
     /**
