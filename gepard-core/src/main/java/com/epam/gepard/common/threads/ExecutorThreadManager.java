@@ -19,14 +19,11 @@ package com.epam.gepard.common.threads;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.util.Calendar;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.common.Environment;
-import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.util.Util;
 
 /**
@@ -52,7 +49,6 @@ public class ExecutorThreadManager {
         CONSOLE_LOG.info(util.getGepardVersion() + " uses " + threadCount + " thread(s).");
 
         //MULTI THREADED EXEC
-        Environment.setScript(Environment.createTestScript("" + GenericListTestSuite.formatDateTime(Calendar.getInstance())));
         //init threads. Note: always the max number of threads are created, just some of them is enabled for TC execution.
         //the purpose is to keep the possibility of dynamically change the number of active threads during run-time (see remote control)
         for (int ti = 0; ti < MAX_EXEC_THREADS; ti++) {

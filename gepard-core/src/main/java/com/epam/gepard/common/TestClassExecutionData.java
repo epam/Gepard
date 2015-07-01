@@ -19,10 +19,7 @@ package com.epam.gepard.common;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.util.concurrent.Future;
-
 import com.epam.gepard.logger.HtmlRunReporter;
-import junit.framework.Test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +65,6 @@ public final class TestClassExecutionData {
     private DataFeederLoader dataFeederLoader;
 
     private int lock; //Thread lock handling. 0 = not locked, waiting for lock.
-    private Future task;
 
     private final String id;
     /**
@@ -87,9 +83,7 @@ public final class TestClassExecutionData {
     private String testScriptId = "0.000";
 
     private StringBuilder systemOut;
-    private Test tc;
     private Class<?> testClass;
-    private Object realClass;
 
     private String originalLine;
     private Environment environment;
@@ -112,14 +106,6 @@ public final class TestClassExecutionData {
 
     public String getID() {
         return id;
-    }
-
-    public Future getTask() {
-        return task;
-    }
-
-    public void setTask(final Future task) {
-        this.task = task;
     }
 
     public DataFeederLoader getDataFeederLoader() {
@@ -187,7 +173,7 @@ public final class TestClassExecutionData {
      * The test name that will appear in the log.
      * @return with the annotated name of the test class.
      */
-    public String getTestStriptName() {
+    public String getTestScriptName() {
         return testScriptName;
     }
 
@@ -195,7 +181,7 @@ public final class TestClassExecutionData {
      * Sets the test class name from annotation.
      * @param testScriptName is the given name.
      */
-    public void setTestStriptName(final String testScriptName) {
+    public void setTestScriptName(final String testScriptName) {
         this.testScriptName = testScriptName;
     }
 
@@ -203,20 +189,12 @@ public final class TestClassExecutionData {
      * The TS ID that will appear in the log.
      * @return with the annotated ID value.
      */
-    public String getTestStriptId() {
+    public String getTestScriptId() {
         return testScriptId;
     }
 
-    public void setTestStriptId(final String testScriptId) {
+    public void setTestScriptId(final String testScriptId) {
         this.testScriptId = testScriptId;
-    }
-
-    public void setTC(final Test tc) {
-        this.tc = tc;
-    }
-
-    public Test getTC() {
-        return tc;
     }
 
     public int getRunned() {
@@ -275,11 +253,10 @@ public final class TestClassExecutionData {
 
     /**
      * Load data driven parameters for the specific run (row) of the test class.
-     * @param parameterNames will be used as names of the parameters.
      */
-    public void loadParameters(final String[] parameterNames) {
+    public void loadParameters() {
         if (dataFeederLoader != null) {
-            setParameters(dataFeederLoader.getParameterRow(className, drivenDataRowNo, parameterNames));
+            setParameters(dataFeederLoader.getParameterRow(className, drivenDataRowNo));
         } else {
             AllTestRunner.CONSOLE_LOG.info("Loaded: " + className + ", Non-Data-driven test");
         }

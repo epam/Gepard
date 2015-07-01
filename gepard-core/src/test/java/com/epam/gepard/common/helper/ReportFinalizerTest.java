@@ -19,25 +19,25 @@ package com.epam.gepard.common.helper;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
-import java.text.NumberFormat;
-import java.util.Calendar;
-import java.util.Properties;
-
+import com.epam.gepard.common.Environment;
+import com.epam.gepard.generic.GenericListTestSuite;
+import com.epam.gepard.helper.AllTestResults;
+import com.epam.gepard.helper.DateHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epam.gepard.common.Environment;
-import com.epam.gepard.generic.GenericListTestSuite;
-import com.epam.gepard.helper.AllTestResults;
-import com.epam.gepard.inspector.TestScript;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Properties;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 /**
  * Unit tests for {@link ReportFinalizer}.
+ *
  * @author Tibor_Kovacs
  */
 public class ReportFinalizerTest {
@@ -50,8 +50,6 @@ public class ReportFinalizerTest {
     private AllTestResults allTestResults;
     @Mock
     private Properties props;
-    @Mock
-    private TestScript script;
 
     private Environment environment;
 
@@ -62,14 +60,12 @@ public class ReportFinalizerTest {
         MockitoAnnotations.initMocks(this);
         environment = new Environment();
         underTest = new ReportFinalizer(environment);
-        Environment.setScript(script);
         given(allTestResults.getRunned()).willReturn(10);
         given(allTestResults.getFailed()).willReturn(2);
         given(allTestResults.getPassed()).willReturn(8);
         given(allTestResults.getDummy()).willReturn(0);
         given(allTestResults.getNotApplicable()).willReturn(0);
         given(gSuite.getUsedTc()).willReturn(5);
-        given(gSuite.getNumberTc()).willReturn(4);
     }
 
     @Test
@@ -85,6 +81,7 @@ public class ReportFinalizerTest {
         //WHEN
         underTest.finalizeTheReport(gSuite, allTestResults, APPLICATION_VERSION, elapsedTime, props);
         //THEN
+        DateHelper dateHelper = new DateHelper();
         verify(props).setProperty("Runned", String.valueOf(10));
         verify(props).setProperty("Failed", String.valueOf(2));
         verify(props).setProperty("Passed", String.valueOf(8));
@@ -92,11 +89,11 @@ public class ReportFinalizerTest {
         verify(props).setProperty("TCnotapplicable", String.valueOf(0));
         verify(props).setProperty("Time", "<b>" + expectedMinuteDuration + "</b> minutes and <b>" + nf.format(40.0) + "</b> seconds");
         verify(props).setProperty("SecondsTime", "" + expectedDuration);
-        verify(props).setProperty("DateTime", GenericListTestSuite.formatDateTime(cal));
+        verify(props).setProperty("DateTime", dateHelper.getShortStringFromDate(cal));
         verify(props).setProperty("Version", APPLICATION_VERSION);
         verify(props).setProperty("TEID", "Unknown");
         verify(props).setProperty("TCUsed", Integer.toString(5));
-        verify(props).setProperty("TCNumber", Integer.toString(4));
+        verify(props).setProperty("TCNumber", Integer.toString(0)); //no tests were added
         verify(props).setProperty("ResultURLHTML", "");
     }
 
@@ -113,6 +110,7 @@ public class ReportFinalizerTest {
         //WHEN
         underTest.finalizeTheReport(gSuite, allTestResults, null, elapsedTime, props);
         //THEN
+        DateHelper dateHelper = new DateHelper();
         verify(props).setProperty("Runned", String.valueOf(10));
         verify(props).setProperty("Failed", String.valueOf(2));
         verify(props).setProperty("Passed", String.valueOf(8));
@@ -120,11 +118,11 @@ public class ReportFinalizerTest {
         verify(props).setProperty("TCnotapplicable", String.valueOf(0));
         verify(props).setProperty("Time", "<b>" + expectedMinuteDuration + "</b> minutes and <b>" + nf.format(40.0) + "</b> seconds");
         verify(props).setProperty("SecondsTime", "" + expectedDuration);
-        verify(props).setProperty("DateTime", GenericListTestSuite.formatDateTime(cal));
+        verify(props).setProperty("DateTime", dateHelper.getShortStringFromDate(cal));
         verify(props).setProperty("Version", "undetected");
         verify(props).setProperty("TEID", "Unknown");
         verify(props).setProperty("TCUsed", Integer.toString(5));
-        verify(props).setProperty("TCNumber", Integer.toString(4));
+        verify(props).setProperty("TCNumber", Integer.toString(0)); //no tests were added
         verify(props).setProperty("ResultURLHTML", "");
     }
 
@@ -144,6 +142,7 @@ public class ReportFinalizerTest {
         //WHEN
         underTest.finalizeTheReport(gSuite, allTestResults, APPLICATION_VERSION, elapsedTime, props);
         //THEN
+        DateHelper dateHelper = new DateHelper();
         verify(props).setProperty("Runned", String.valueOf(10));
         verify(props).setProperty("Failed", String.valueOf(2));
         verify(props).setProperty("Passed", String.valueOf(8));
@@ -151,11 +150,11 @@ public class ReportFinalizerTest {
         verify(props).setProperty("TCnotapplicable", String.valueOf(0));
         verify(props).setProperty("Time", "<b>" + expectedMinuteDuration + "</b> minutes and <b>" + nf.format(40.0) + "</b> seconds");
         verify(props).setProperty("SecondsTime", "" + expectedDuration);
-        verify(props).setProperty("DateTime", GenericListTestSuite.formatDateTime(cal));
+        verify(props).setProperty("DateTime", dateHelper.getShortStringFromDate(cal));
         verify(props).setProperty("Version", APPLICATION_VERSION);
         verify(props).setProperty("TEID", "Unknown");
         verify(props).setProperty("TCUsed", Integer.toString(5));
-        verify(props).setProperty("TCNumber", Integer.toString(4));
+        verify(props).setProperty("TCNumber", Integer.toString(0)); //no tests were added
         verify(props).setProperty("ResultURLHTML", "Test Results will be available <a href=test/path>here.</a><br/>");
     }
 }

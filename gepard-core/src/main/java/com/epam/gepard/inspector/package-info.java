@@ -17,7 +17,7 @@
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 /**
- * Interface classes for TestCaseStep / TestCase / TestCaseSet / TestScript.
+ * Inspector classes for Gepard.
  */
 package com.epam.gepard.inspector;
 

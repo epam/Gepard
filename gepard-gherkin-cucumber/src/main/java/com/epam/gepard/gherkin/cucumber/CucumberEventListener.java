@@ -188,7 +188,7 @@ public class CucumberEventListener extends RunListener implements GepardTestClas
             innerScenario = scenario.getName();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             LOGGER.error("Cannot access Scenario object at: " + example.toString(), e);
-            innerScenario = getTestClassExecutionData().getTestStriptName();
+            innerScenario = getTestClassExecutionData().getTestScriptName();
         }
         innerScenario = innerScenario.replace('\uFF5F', '(').replace('\uFF60', ')'); //Unicode to Console (partial transfer)
         String consoleInfo = "Scenario: \"" + innerScenario + "\"";

@@ -87,8 +87,8 @@ public class ResultCollector {
         CONSOLE_LOG.info(s);
         //write the Test Class result row
         Properties props2 = new Properties();
-        props2.setProperty("Number", d.getTestStriptId().replace(',', ';').replace('{', '(').replace('}', ')'));
-        props2.setProperty("Name", d.getTestStriptName().replace(',', ';').replace('{', '(').replace('}', ')'));
+        props2.setProperty("Number", d.getTestScriptId().replace(',', ';').replace('{', '(').replace('}', ')'));
+        props2.setProperty("Name", d.getTestScriptName().replace(',', ';').replace('{', '(').replace('}', ')'));
         props2.setProperty("URL", d.getTestURL());
         props2.setProperty("Passed", String.valueOf(d.getCountPassed()));
         props2.setProperty("Failed", String.valueOf(d.getCountFailed()));

@@ -25,10 +25,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import com.epam.gepard.AllTestRunner;
-import com.epam.gepard.inspector.TestCase;
-import com.epam.gepard.inspector.TestCaseSet;
-import com.epam.gepard.inspector.TestFactory;
-import com.epam.gepard.inspector.TestScript;
 
 /**
  * <p>Title: Environment Class.</p>
@@ -56,7 +52,6 @@ public final class Environment {
 
     public static final String GEPARD_FILTER_CLASS = "gepard.filter.class";
     public static final String GEPARD_FILTER_EXPRESSION = "gepard.filter.expression";
-    public static final String GEPARD_INSPECTOR_TEST_FACTORY = "gepard.inspector.testfactory";
 
     public static final String GEPARD_TESTLIST_FILE = "gepard.testlist.file";
     public static final String GEPARD_TESTLIST_FAILURE_PATH = "gepard.testlist-failure.path";
@@ -81,8 +76,7 @@ public final class Environment {
     public static final String TEST_ENVIRONMENT_ID = "TEID";
 
     private static final String DELIMITER = ",";
-    private static TestFactory factory;
-    private static TestScript script;
+//    private static TestScript script;
     private static String testEnvironmentID;
     private final Properties properties = new AntProperties();
 
@@ -172,47 +166,6 @@ public final class Environment {
      */
     public void setProperty(final String name, final String value) {
         properties.setProperty(name, value);
-    }
-
-    public static void setFactory(final TestFactory factory) {
-        Environment.factory = factory;
-    }
-
-    /**
-     * Creates a new {@link TestScript} with the given name.
-     * @param name the given name
-     * @return a new {@link TestScript} with the given name.
-     */
-    public static TestScript createTestScript(final String name) {
-        return factory.createTestScript(name);
-    }
-
-    public static TestScript getScript() {
-        return script;
-    }
-
-    public static void setScript(final TestScript script) {
-        Environment.script = script;
-    }
-
-    /**
-     * Creates a new {@link TestCase} with the given name in the given parent {@link TestCaseSet}.
-     * @param name the given name
-     * @param testCaseSet the given parent
-     * @return new {@link TestCase} with the given name in the given parent {@link TestCaseSet}
-     */
-    public static TestCase createTestCase(final String name, final TestCaseSet testCaseSet) {
-        return factory.createTestCase(name, testCaseSet);
-    }
-
-    /**
-     * Creates a new {@link TestCaseSet} object with the given name in the given parent {@link TestScript}.
-     * @param name the given name
-     * @param testScript the given testScript
-     * @return a new {@link TestCaseSet} object with the given name in the given parent {@link TestScript}.
-     */
-    public static TestCaseSet createTestCaseSet(final String name, final TestScript testScript) {
-        return factory.createTestCaseSet(name, testScript);
     }
 
     /**

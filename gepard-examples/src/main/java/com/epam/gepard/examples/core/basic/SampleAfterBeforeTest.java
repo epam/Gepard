@@ -19,6 +19,7 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.exception.SimpleGepardException;
 import com.epam.gepard.generic.GepardTestClass;
 import org.junit.After;
 import org.junit.Assert;
@@ -42,6 +43,9 @@ public class SampleAfterBeforeTest implements GepardTestClass {
 
     @Before
     public void before() {
+        if (getTestClassExecutionData() == null) {
+            throw new SimpleGepardException("Gepard framework is missing.");
+        }
         logComment("We started the Before method.");
         Boolean b;
         b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[1]);
@@ -57,6 +61,9 @@ public class SampleAfterBeforeTest implements GepardTestClass {
 
     @After
     public void after() {
+        if (getTestClassExecutionData() == null) {
+            throw new SimpleGepardException("Gepard framework is missing.");
+        }
         logComment("We started the After method.");
         Boolean b;
         b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[3]);

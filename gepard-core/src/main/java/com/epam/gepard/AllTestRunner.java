@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Properties;
 
+import com.epam.gepard.helper.DateHelper;
 import junit.textui.TestRunner;
 
 import org.slf4j.Logger;
@@ -43,7 +44,6 @@ import com.epam.gepard.exception.ShutDownException;
 import com.epam.gepard.filter.ExpressionTestFilter;
 import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.helper.AllTestResults;
-import com.epam.gepard.inspector.TestFactory;
 import com.epam.gepard.logger.LogFileWriter;
 import com.epam.gepard.logger.LogFinalizer;
 import com.epam.gepard.logger.LogFolderCreator;
@@ -222,7 +222,6 @@ public class AllTestRunner extends TestRunner {
      */
     void runAll(final String testListFile) throws Exception {
         logFolderCreator.prepareOutputFolders();
-        setupTestFactory();
         //---------------
         GenericListTestSuite gSuite = tryToCreateTestSuiteList(testListFile);
 
@@ -240,14 +239,13 @@ public class AllTestRunner extends TestRunner {
         //now the test is running, we have nothing else to do just prepare the summary result, first the header
         Properties props = new Properties();
         Calendar cal = Calendar.getInstance();
-        props.setProperty("Date", gSuite.formatDate(cal));
+        DateHelper dateHelper = new DateHelper();
+        props.setProperty("Date", dateHelper.getShortStringFromDate(cal));
         //set up Loggers
         LogFileWriter htmlLog = logFileWriterFactory.createSpecificLogWriter("index.html", "html", Environment.GEPARD_HTML_RESULT_PATH, environment);
         LogFileWriter csvLog = logFileWriterFactory.createSpecificLogWriter("results.csv", "csv", Environment.GEPARD_CSV_RESULT_PATH, environment);
         LogFileWriter quickLog = logFileWriterFactory.createSpecificLogWriter("results.plain", "plain", Environment.GEPARD_RESULT_PATH, environment);
         prepareHeaders(props, htmlLog, csvLog, quickLog);
-
-        Environment.setScript(Environment.createTestScript("" + GenericListTestSuite.formatDateTime(cal)));
 
         resultCollector.waitForExecutionEndAndCollectResults(allTestResults, htmlLog, csvLog);
         //Test Execution is ended
@@ -260,8 +258,6 @@ public class AllTestRunner extends TestRunner {
 
         logFinalizer.finalizeLogs(props, htmlLog, csvLog, quickLog, executorThreadManager.getThreadCount());
         CONSOLE_LOG.info("\n");
-        //final check
-        //consoleWriter.printStatusAfterTestRunCheck();
 
         failureReporter.generateTestlistFailure(); // generate the testlist-failure.txt file to help re-execution
         CONSOLE_LOG.info("Gepard Test Done.");
@@ -271,12 +267,6 @@ public class AllTestRunner extends TestRunner {
         String threads = environment.getProperty(Environment.GEPARD_THREADS);
         String xmlResultPath = environment.getProperty(Environment.GEPARD_XML_RESULT_PATH);
         executorThreadManager.initiateAndStartExecutorThreads(threads, xmlResultPath);
-    }
-
-    private void setupTestFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        String tfactory = environment.getProperty(Environment.GEPARD_INSPECTOR_TEST_FACTORY);
-        CONSOLE_LOG.info("");
-        Environment.setFactory((TestFactory) Class.forName(tfactory).newInstance());
     }
 
     private void prepareHeaders(final Properties props, final LogFileWriter htmlLog, final LogFileWriter csvLog, final LogFileWriter quickLog) {

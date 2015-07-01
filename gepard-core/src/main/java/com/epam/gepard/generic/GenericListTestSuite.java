@@ -19,22 +19,6 @@ package com.epam.gepard.generic;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.lang.reflect.Method;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import com.epam.gepard.logger.HtmlRunReporter;
-
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.common.Environment;
@@ -45,7 +29,18 @@ import com.epam.gepard.datadriven.DataDrivenParameterArray;
 import com.epam.gepard.datadriven.DataFeederLoader;
 import com.epam.gepard.filter.ExpressionTestFilter;
 import com.epam.gepard.generic.helper.TestClassData;
+import com.epam.gepard.logger.HtmlRunReporter;
 import com.epam.gepard.util.ExitCode;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class loads the testlist file, evaluates it ad builds up the test suite to be executed.
@@ -68,11 +63,10 @@ public class GenericListTestSuite {
     private static final int TESTLIST_CLASS_NAME_FIELD = 0;
     private static final int TESTLIST_FEEDER_DESCRIPTOR_FIELD = 1;
     private static final int TESTLIST_BLOCKER_FIELD = 2;
-    private static int actualDataRow; //this is used during the load of the tests, do NOT use it during execution
-    private static String actualTestClassName; //this is used during the load of the tests, do NOT use it during execution
+    private int actualDataRow; //this is used during the load of the tests, do NOT use it during execution
+    private String actualTestClassName; //this is used during the load of the tests, do NOT use it during execution
 
     private int usedTc; // = 0; //number of used Test Classes - will be used at report
-    private int numberTc; // = 0; //number of TCs
 
     private Environment environment;
 
@@ -81,12 +75,12 @@ public class GenericListTestSuite {
      *
      * @param testListFile is the filename of the testlist file.
      * @param filter       is the filter of the test classes.
-     * @param environment holds the properties of the application
-     * @throws IOException in case testlist file cannot be accessed properly
+     * @param environment  holds the properties of the application
+     * @throws IOException            in case testlist file cannot be accessed properly
      * @throws ClassNotFoundException in case the specified feeder class is not available.
      */
     public GenericListTestSuite(final String testListFile, final ExpressionTestFilter filter, final Environment environment) throws IOException,
-        ClassNotFoundException {
+            ClassNotFoundException {
         this.environment = environment;
         LineNumberReader listReader = new LineNumberReader(new InputStreamReader(new FileInputStream(testListFile)));
         String originalLine;
@@ -134,8 +128,8 @@ public class GenericListTestSuite {
      * Add a Test Class to the suite.
      *
      * @param testClassData holds the data necessary for adding the test class
-     * @param dataFeeder   is the Data Feeder class that should be used to load the data-driven values.
-     * @param originalLine is the original testlist row.
+     * @param dataFeeder    is the Data Feeder class that should be used to load the data-driven values.
+     * @param originalLine  is the original testlist row.
      */
     public void addTestClass(final TestClassData testClassData, final DataFeederLoader dataFeeder, final String originalLine) {
         int rowNo = 0;
@@ -144,7 +138,7 @@ public class GenericListTestSuite {
         String blocker = testClassData.getBlocker();
         while (counter > 0) {
             registerMethodsInGlobalMap(cls, rowNo, dataFeeder);
-            getTestForClass(cls);
+            handleTestClassAnnotation(cls);
 
             //set test for parallel execution
             String id = cls.getName() + "/" + rowNo;
@@ -205,82 +199,40 @@ public class GenericListTestSuite {
     }
 
     /**
-     * This class ensures that the test class receives all data-driven (and other)information before its execution.
+     * This class ensures that the test class receives all data-driven (and other) information before its execution.
      *
      * @param clazz is the test class to be initialized.
      */
-    protected void getTestForClass(final Class<?> clazz) {
-        try {
-            final Method method = clazz.getDeclaredMethod("suite");
-            //calls the static suite method of the test class, where the Enums are defined
-            method.invoke(null); // this call loads the parameters!
-        } catch (final NoSuchMethodException e) {
-            // Handle annotated classes
-            // More annotation handling should be added here to handle more test types
-            if (clazz.isAnnotationPresent(TestClass.class)) {
-                GenericListTestSuite.suiteHelper(clazz, clazz.getAnnotation(TestClass.class).id(), clazz.getAnnotation(TestClass.class)
-                        .name(), null, environment);
-            } else {
-                //no proper annotation at Test Class, cannot continue
-                AllTestRunner.CONSOLE_LOG.info("\nERROR: @TestClass annotation is missing at class: " + clazz.getCanonicalName() + "Please fix!");
-                AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_ANNOTATION_MISSING);
+    protected void handleTestClassAnnotation(final Class<?> clazz) {
+        // Handle annotated classes
+        if (clazz.isAnnotationPresent(TestClass.class)) {
+            handleTestClassInternalCounter(clazz);
+            //set script id and name
+            String id = clazz.getName() + "/" + actualDataRow;
+            TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(id); //get the class exec object
+            classData.setTestScriptId(clazz.getAnnotation(TestClass.class).id());
+            classData.loadParameters();
+            String extension = "";
+            if (classData.getDrivenData() != null) {
+                extension = " - " + classData.getDrivenData().getParameters()[0]; //puts the first parameter into the test name
             }
-        } catch (final Exception e) {
-            //something has happened during the data class load
-            AllTestRunner.exitFromGepardWithCriticalException("\nERROR: Unknown error occurred, please fix!", e, true,
-                    ExitCode.EXIT_CODE_TEST_CLASS_INITIALIZATION_ERROR);
+            classData.setTestScriptName(clazz.getAnnotation(TestClass.class).name() + extension);
+        } else {
+            //no proper annotation at Test Class, cannot continue
+            AllTestRunner.CONSOLE_LOG.info("\nERROR: @TestClass annotation is missing at class: " + clazz.getCanonicalName() + "Please fix!");
+            AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_ANNOTATION_MISSING);
         }
     }
 
-    /**
-     * General suite method of the test class. Called by Gepard before any test execution.
-     * Do not touch it, most of the cases this method should be unchanged.
-     *
-     * @param testClass      is the test class.
-     * @param scriptID       is the ID of the script - may come from annotation.
-     * @param scriptName     is the name of the script - may come from annotation.
-     * @param parameterNames is the names of the parameters - may come from annotation too.
-     * @param environment    holds the application properties
-     * @return with the JUnit TestSuite object.
-     */
-    public static void suiteHelper(final Class testClass, final String scriptID, final String scriptName, final String[] parameterNames,
-                                   final Environment environment) {
+    public void handleTestClassInternalCounter(final Class testClass) {
         //first either reset the counter or increase it, based on the given test class name
         String testClassName = testClass.getName();
         if ((actualTestClassName == null) || (!actualTestClassName.contentEquals(testClassName))) {
             actualTestClassName = testClassName;
-            setActualDataRow(0);
+            actualDataRow = 0;
         } else {
-            setActualDataRow(getActualDataRow() + 1);
+            actualDataRow++;
         }
-        //set script id and name
-        String id = testClass.getName() + "/" + getActualDataRow();
-        TestClassExecutionData classData = GenericListTestSuite.getTestClassExecutionData(id); //get the class exec object
-        classData.setTestStriptId(scriptID);
-        classData.loadParameters(parameterNames);
-        String extension = "";
-        if (classData.getDrivenData() != null) {
-            extension = " - " + classData.getDrivenData().getParameters()[0]; //puts the first parameter into the test name
-        }
-        classData.setTestStriptName(scriptName + extension);
-    }
-
-    /**
-     * Returns with the actual data row used from the full data array, by the specific TC.
-     *
-     * @return with the number.
-     */
-    public static int getActualDataRow() {
-        return actualDataRow;
-    }
-
-    /**
-     * Sets the actual data row within the data array for this TC.
-     *
-     * @param actualDataRow is the specific row.
-     */
-    public static void setActualDataRow(final int actualDataRow) {
-        GenericListTestSuite.actualDataRow = actualDataRow;
     }
 
     /**
@@ -309,47 +261,12 @@ public class GenericListTestSuite {
         new HtmlRunReporter(classData); //this prepares everything that need to be prepared for Html Logging the execution of the test class
     }
 
-    /**
-     * Format a Calendar object as date.
-     *
-     * @param cal is the source of the calendar.
-     * @return Date string
-     */
-    public String formatDate(final Calendar cal) {
-        NumberFormat df = DecimalFormat.getInstance();
-        df.setMinimumIntegerDigits(2);
-        df.setMaximumIntegerDigits(2);
-        return cal.get(Calendar.YEAR) + "-" + df.format((long) cal.get(Calendar.MONTH) + 1) + "-" + df.format(cal.get(Calendar.DATE));
-    }
-
-    /**
-     * Format a Calendar object as date and time.
-     *
-     * @param cal is the source of the calendar.
-     * @return Date and time string
-     */
-    public static String formatDateTime(final Calendar cal) {
-        NumberFormat df = DecimalFormat.getInstance();
-        df.setMinimumIntegerDigits(2);
-        df.setMaximumIntegerDigits(2);
-        return cal.get(Calendar.YEAR) + "-" + df.format((long) cal.get(Calendar.MONTH) + 1) + "-" + df.format(cal.get(Calendar.DATE)) + " "
-                + df.format(cal.get(Calendar.HOUR_OF_DAY)) + ":" + df.format(cal.get(Calendar.MINUTE)) + ":" + df.format(cal.get(Calendar.SECOND));
-    }
-
     public int getUsedTc() {
         return usedTc;
     }
 
-    public void setUsedTc(final int usedTc) {
-        this.usedTc = usedTc;
-    }
-
-    public int getNumberTc() {
-        return numberTc;
-    }
-
-    public void setNumberTc(final int numberTc) {
-        this.numberTc = numberTc;
+    public int getTestClassCount() {
+        return testClassMap.size();
     }
 
     public static Map<String, Object> getGlobalDataStorage() {
@@ -362,6 +279,7 @@ public class GenericListTestSuite {
 
     /**
      * Returns the {@link TestClassExecutionData} that belongs to the given id.
+     *
      * @param testClassId the given id of the test class
      * @return the {@link TestClassExecutionData} that belongs to the given id.
      */
@@ -371,10 +289,6 @@ public class GenericListTestSuite {
 
     public static Set<String> getTestClassIds() {
         return testClassMap.keySet();
-    }
-
-    public static int getTestClassCount() {
-        return testClassMap.size();
     }
 
     public static void setTestClassMap(final Map<String, TestClassExecutionData> testClassMap) {

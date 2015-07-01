@@ -19,27 +19,53 @@ public interface GepardTestClass {
     }
 
     default void logComment(final String comment) {
-        getTestClassExecutionData().getHtmlRunReporter().logComment(comment);
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().logComment(comment);
+        }
     }
 
     default void logComment(final String comment, final String description) {
-        getTestClassExecutionData().getHtmlRunReporter().logComment(comment, description);
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().logComment(comment, description);
+        }
     }
 
     default void logStep(final String comment) {
-        getTestClassExecutionData().getHtmlRunReporter().logStep(comment);
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().logStep(comment);
+        }
     }
 
     default void logEvent(final String comment) {
-        getTestClassExecutionData().getHtmlRunReporter().logEvent(comment);
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().logEvent(comment);
+        }
     }
 
-    default void logWarning(final String comment) { getTestClassExecutionData().getHtmlRunReporter().logWarning(comment); }
+    default void logWarning(final String comment) {
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().logWarning(comment);
+        }
+    }
 
-    default void logResult(final String comment, final String description) { getTestClassExecutionData().getHtmlRunReporter().logResult(comment, description); }
+    default void logResult(final String comment, final String description) {
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().logResult(comment, description);
+        }
+    }
 
-    default int getDivStep() { return getTestClassExecutionData().getHtmlRunReporter().getDivStep(); }
-    default void increaseDivStep() { getTestClassExecutionData().getHtmlRunReporter().increaseDivStep(); }
+    default int getDivStep() {
+        if (getTestClassExecutionData() != null) {
+            return getTestClassExecutionData().getHtmlRunReporter().getDivStep();
+        }
+        throw new SimpleGepardException("Gepard Environment is missing.");
+    }
+
+    default void increaseDivStep() {
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().increaseDivStep();
+        }
+    }
 
     /**
      * Sets the testcase. N/A test cases are tests with Not Applicable results.
@@ -47,7 +73,11 @@ public interface GepardTestClass {
      * @param reason The reason why this TC is N/A
      */
     default void naTestCase(final String reason) {
-        getTestClassExecutionData().getHtmlRunReporter().naTestCase(reason);
+        if (getTestClassExecutionData() != null) {
+            getTestClassExecutionData().getHtmlRunReporter().naTestCase(reason);
+        } else {
+            throw new SimpleGepardException("N/A Test case is expected.");
+        }
     }
 
     default void dummyTestCase() {

@@ -71,8 +71,8 @@ public final class HtmlRunReporter extends RunListener {
         classData.setTestURL(getTestURL());
 
         if (clazz.isAnnotationPresent(TestClass.class)) {
-            classData.setTestStriptId(clazz.getAnnotation(TestClass.class).id());
-            classData.setTestStriptName(clazz.getAnnotation(TestClass.class).name());
+            classData.setTestScriptId(clazz.getAnnotation(TestClass.class).id());
+            classData.setTestScriptName(clazz.getAnnotation(TestClass.class).name());
             classData.setHtmlRunReporter(this);
         }
     }
@@ -95,13 +95,13 @@ public final class HtmlRunReporter extends RunListener {
                         + readDirectory() + "/" + methodName + classData.getDrivenDataRowNo() + ".html",
                 classData.getEnvironment());
         step = 1;
-        classData.addSysOut("\nRunning test: " + classData.getClassName() + "." + methodName + "\nName: " + classData.getTestStriptName());
+        classData.addSysOut("\nRunning test: " + classData.getClassName() + "." + methodName + "\nName: " + classData.getTestScriptName());
         testFailed = false;
         testNA = false;
         testDummy = false;
         Properties props = new Properties();
-        props.setProperty("ID", classData.getTestStriptId());
-        props.setProperty("Name", classData.getTestStriptName());
+        props.setProperty("ID", classData.getTestScriptId());
+        props.setProperty("Name", classData.getTestScriptName());
         props.setProperty("TestCase", methodName);
         props.setProperty("ScriptNameRow", getDataDrivenFullClassName());
         testMethodHtmlLog.insertBlock("Header", props);
@@ -207,8 +207,8 @@ public final class HtmlRunReporter extends RunListener {
     public void hiddenBeforeTestClassExecution() {
         testClassHtmlLog = new LogFileWriter(environment.getProperty(Environment.GEPARD_RESULT_TEMPLATE_PATH) + "/" + "temp_generictestsuite.html",
                 environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir + "/" + getDataDrivenSimpleClassName() + ".html", environment);
-        props.setProperty("ID", classData.getTestStriptId());
-        props.setProperty("Name", classData.getTestStriptName());
+        props.setProperty("ID", classData.getTestScriptId());
+        props.setProperty("Name", classData.getTestScriptName());
         testClassHtmlLog.insertBlock("Header", props);
         testClassHtmlLog.insertBlock("TableHead", props);
     }

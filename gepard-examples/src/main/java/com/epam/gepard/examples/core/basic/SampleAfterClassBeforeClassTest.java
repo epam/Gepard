@@ -21,7 +21,6 @@ package com.epam.gepard.examples.core.basic;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.common.TestClassExecutionData;
 import com.epam.gepard.common.threads.TestClassExecutionThread;
-import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.generic.GepardTestClass;
 import com.epam.gepard.logger.HtmlRunReporter;
 import org.junit.AfterClass;

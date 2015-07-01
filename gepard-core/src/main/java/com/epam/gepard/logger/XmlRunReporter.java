@@ -30,8 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.framework.AssertionFailedError;
-
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -168,13 +166,13 @@ public final class XmlRunReporter extends RunListener {
         String name = failure.getDescription().getDisplayName();
         TestInfo info = testCases.get(name);
         Element fe;
-        if (!(failure.getException() instanceof AssertionFailedError)) {
+        if (!(failure.getException() instanceof AssertionError)) {
             fe = doc.createElement("error");
             fe.setAttribute("message", failure.getMessage());
             fe.setAttribute("type", failure.getException().getClass().getName());
             errors.incrementAndGet();
         } else {
-            AssertionFailedError ae = (AssertionFailedError) failure.getException();
+            AssertionError ae = (AssertionError) failure.getException();
             if (handleIgnore && (ae.getCause() instanceof NATestCaseException)) {
                 fe = doc.createElement("ignore");
                 fe.setAttribute("message", ae.getCause().getMessage());
