@@ -233,10 +233,17 @@ public abstract class SeleniumTestCase extends CommonTestCase {
     @Override
     public void afterTestCase() {
         if (webDriver != null) {
-            webDriver.quit(); //close all opened browser window
+        //CHECKSTYLE.OFF
+        try {
+                webDriver.close();
+                Thread.sleep(5000);
+                webDriver.quit(); //close all opened browser window
+            } catch(Exception e) {
+            }            
             webDriver = null;
             selenium = null;
         }
+        //CHECKSTYLE.ON
     }
 
     private void initiateSelenium() {

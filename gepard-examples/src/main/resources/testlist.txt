@@ -43,7 +43,7 @@ com.epam.gepard.examples.gherkin.jbehave.JBehaveExampleInvalidTest
 com.epam.gepard.examples.gherkin.cucumber.substituted.SubstitutedGherkinTest
 com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest
 com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
-com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest
+#com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest,,,WEBDRIVER
 
 #Sample Android - test
 #com.epam.gepard.examples.android.SampleAndroidTest
@@ -55,5 +55,5 @@ com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest
 #com.epam.gepard.examples.soapui.SoapUITestBase
 
 #Sample Selenium Tests, disable, but enable it if you have running Selenium server at default port
-#com.epam.gepard.examples.selenium.BasicSeleniumTest
-#com.epam.gepard.examples.selenium.conditionwatchers.Http404ConditionDemo
+#com.epam.gepard.examples.selenium.BasicSeleniumTest,,,WEBDRIVER
+#com.epam.gepard.examples.selenium.conditionwatchers.Http404ConditionDemo,,,WEBDRIVER
