@@ -23,6 +23,7 @@ import com.epam.gepard.exception.SimpleGepardException;
 import com.epam.gepard.generic.GepardTestClass;
 import com.epam.gepard.logger.HtmlRunReporter;
 import com.epam.gepard.logger.LogFileWriter;
+import cucumber.api.PendingException;
 import gherkin.formatter.model.Scenario;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -30,8 +31,6 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import cucumber.api.PendingException;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -131,6 +130,7 @@ public class CucumberEventListener extends RunListener implements GepardTestClas
 
     /**
      * Set isFailed indicator.
+     *
      * @param consoleErrorMessage is the error message to be logged.
      */
     public void setFailed(final String consoleErrorMessage) {
@@ -208,6 +208,7 @@ public class CucumberEventListener extends RunListener implements GepardTestClas
     /**
      * Write "Scenario finished" message at the end of the scenario.
      *
+     * @param isFailedScenario that notifies this method whether passed or failed type of scenario end should be reported.
      */
     public void logScenarioEnded(final boolean isFailedScenario) {
         HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();

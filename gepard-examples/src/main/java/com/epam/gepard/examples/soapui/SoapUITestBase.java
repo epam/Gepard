@@ -33,7 +33,6 @@ public class SoapUITestBase extends SoapUITestCase {
 
     /**
      * Simple test that loads the project file and executes it.
-     * @throws Exception in case of test failure
      */
     @Test
     public void soapUISampleAuthenticationExample() {
@@ -51,7 +50,8 @@ public class SoapUITestBase extends SoapUITestCase {
     @Test
     public void soapUISampleSOAPProjectExample() throws Exception {
         dummyTestCase(); // this is just a trial, don't use it
-        String projectFile = getTestClassExecutionData().getEnvironment().getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-SOAP-Project-soapui-project.xml");
+        String projectFile = getTestClassExecutionData().getEnvironment()
+                .getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-SOAP-Project-soapui-project.xml");
 
         //run the mock service first
         SoapUIMockServiceRunner mockServiceRunner = new SoapUIMockServiceRunner();
@@ -72,7 +72,8 @@ public class SoapUITestBase extends SoapUITestCase {
     @Test
     public void soapUISampleRESTProjectExample() throws Exception {
         dummyTestCase(); // this is just a trial, don't use it
-        String projectFile = getTestClassExecutionData().getEnvironment().getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-REST-Project-soapui-project.xml");
+        String projectFile = getTestClassExecutionData().getEnvironment()
+                .getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-REST-Project-soapui-project.xml");
 
         //run the mock service first
         SoapUIMockServiceRunner mockServiceRunner = new SoapUIMockServiceRunner();

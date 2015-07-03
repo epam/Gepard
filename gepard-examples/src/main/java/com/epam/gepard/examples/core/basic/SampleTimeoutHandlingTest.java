@@ -32,8 +32,10 @@ import org.junit.rules.Timeout;
 @TestClass(id = "DEMO-4", name = "Timeout Handling, Sample")
 public class SampleTimeoutHandlingTest implements GepardTestClass {
 
+    //CHECKSTYLE.OFF
     @Rule
     public Timeout globalTimeout = Timeout.seconds(5);
+    //CHECKSTYLE.ON
 
     @Test(timeout = 2000)
     public void simpleMethodTimeoutTest() throws InterruptedException {

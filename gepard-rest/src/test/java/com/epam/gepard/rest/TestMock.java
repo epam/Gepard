@@ -1,7 +1,9 @@
-package com.epam.gepard.util;
+package com.epam.gepard.rest;
 
-import java.util.List;
-import java.util.Set;
+import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Test;
+
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
 
@@ -20,21 +22,22 @@ import java.util.Set;
  You should have received a copy of the GNU General Public License
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
-import com.epam.gepard.annotations.TestParameter;
 
 /**
- * Mock class used in {@link ReflectionUtilsExtensionTest}.
+ * Used for testing.
+ *
  * @author Adam_Csaba_Kiraly
  */
-public class FieldMockOne {
+@TestClass(id = "TEST", name = "Self-Test Class")
+public class TestMock implements GepardTestClass {
 
-    @TestParameter(separator = ",")
-    private String[] array;
+    private String one;
+    private String two;
 
-    @TestParameter(separator = "doesNotMatter")
-    private List<String> list;
-
-    @TestParameter(separator = "doesNotMatter")
-    private Set<String> set;
-
+    /**
+     * Just and empty and always passing test.
+     */
+    @Test
+    public void emptyTest() {
+    }
 }

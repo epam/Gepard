@@ -54,6 +54,9 @@ com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest
 #com.epam.gepard.examples.selenium.conditionwatchers.Http404ConditionDemo,,WEBDRIVER
 #com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest,,WEBDRIVER
 
+# Sample BDD test with JBehave that gets the feature file from JIRA, and use Selenium to execute the test
+#com.epam.gepard.examples.gherkin.jbehave.FeatureFileFromJiraTicket,1
+
 # Sample Android - test, this is under construction, don't expect that it will work
 #com.epam.gepard.examples.android.SampleAndroidTest
 

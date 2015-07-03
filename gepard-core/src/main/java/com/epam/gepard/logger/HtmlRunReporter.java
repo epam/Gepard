@@ -31,6 +31,9 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -40,21 +43,21 @@ import java.util.Properties;
  */
 public final class HtmlRunReporter extends RunListener {
 
-    TestClassExecutionData classData;
+    private TestClassExecutionData classData;
     private String classDir = "";
     private Environment environment;
     private LogFileWriter testClassHtmlLog; //per test class
     private LogFileWriter testMethodHtmlLog; //per test case
     private final LogFileWriterFactory logFileWriterFactory = new LogFileWriterFactory();
-    int step; //test step, restarts from 1 in every executed test method
-    int divStep = 1;
-    Properties props = new Properties();
+    private int step; //test step, restarts from 1 in every executed test method
+    private int divStep = 1;
+    private Properties props = new Properties();
     private Boolean testFailed = false;
     private Boolean testNA = false;
     private Boolean testDummy = false;
     private FileUtil fileUtil = new FileUtil();
     private String testNAMessage = "";
-    private Failure testFailure = null;
+    private List<Failure> testFailure;
 
 
     /**
@@ -65,6 +68,7 @@ public final class HtmlRunReporter extends RunListener {
     public HtmlRunReporter(final TestClassExecutionData classData) {
         this.classData = classData;
         this.environment = classData.getEnvironment();
+        testFailure = new ArrayList<>();
         Class<?> clazz = classData.getTestClass();
         unPackClassNameAndDir(clazz);
         fileUtil.createDirectory(environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + classDir);
@@ -78,14 +82,21 @@ public final class HtmlRunReporter extends RunListener {
     }
 
     /**
-     * Called when a Test Case Set = Test Class is started by the executor
+     * Called when a Test Case Set = Test Class is started by the executor.
+     *
      * @param description specified the just started test class
-     * @throws Exception
+     * @throws Exception in case of problem
      */
     @Override
     public void testRunStarted(final Description description) throws Exception {
     }
 
+    /**
+     * Called when a Test method is started by the executor.
+     *
+     * @param description specifies the just started test method
+     * @throws Exception in case of problem
+     */
     @Override
     public void testStarted(final Description description) throws Exception {
         fileUtil.createDirectory(environment.getProperty(Environment.GEPARD_HTML_RESULT_PATH) + "/" + readDirectory());
@@ -108,6 +119,12 @@ public final class HtmlRunReporter extends RunListener {
         initDataDrivenLog();
     }
 
+    /**
+     * Called when a Test method is failed.
+     *
+     * @param failure holds the problem
+     * @throws Exception in case of problem
+     */
     @Override
     public void testFailure(final Failure failure) throws Exception {
         if (!testNA) {
@@ -116,16 +133,28 @@ public final class HtmlRunReporter extends RunListener {
                 testNAMessage = failure.getMessage();
             } else {
                 testFailed = true;
-                testFailure = failure;
+                testFailure.add(failure);
             }
         }
     }
 
+    /**
+     * Called when a Test method is ignored/not executed.
+     *
+     * @param description specifies the just ignored test method
+     * @throws Exception in case of problem
+     */
     @Override
     public void testIgnored(final Description description) throws Exception {
         AllTestRunner.CONSOLE_LOG.info("testIgnored" + description.getTestClass().getCanonicalName() + " IGNORED");
     }
 
+    /**
+     * Called when a Test method execution is finished.
+     *
+     * @param description specifies the just executed test method
+     * @throws Exception in case of problem
+     */
     @Override
     public void testFinished(final Description description) throws Exception {
         //After running the test case
@@ -149,11 +178,21 @@ public final class HtmlRunReporter extends RunListener {
             String errorMsg = "---No error message---";
             PropertiesData data = createFailurePropertiesData(isDummy, false, errorMsg);
             props = createProperties(classData, description.getMethodName(), u, data, dataDrivenName);
-            String stackTrace = testFailure.getTrace();
-            String failureMessage = testFailure.getMessage();
+            String stackTrace = testFailure.get(0).getTrace();
+            String failureMessage = testFailure.get(0).getMessage();
             systemOutPrintLn("Test failed: " + failureMessage);
             logResult("<font color=\"#AA0000\"><b>Test failed.</b></font><br>\nMessage: " + u.escapeHTML(failureMessage), "<code><small><br><pre>" + u.escapeHTML(stackTrace)
                     + "</pre></small></code>");
+            if (testFailure.size() > 1) {
+                //multiple failures we have
+                for (int i = 1; i < testFailure.size(); i++) {
+                    stackTrace = testFailure.get(i).getTrace();
+                    failureMessage = testFailure.get(i).getMessage();
+                    systemOutPrintLn("Additional failure: " + failureMessage);
+                    logResult("<font color=\"#AA0000\"><b>Additional Failure.</b></font><br>\nMessage: " + u.escapeHTML(failureMessage),
+                            "<code><small><br><pre>" + u.escapeHTML(stackTrace) + "</pre></small></code>");
+                }
+            }
         } else { // passed test case
             PropertiesData data = createPropertiesData(isDummy, false);
             props = createProperties(classData, description.getMethodName(), u, data, dataDrivenName);
@@ -169,8 +208,9 @@ public final class HtmlRunReporter extends RunListener {
 
     /**
      * Called when a Test Case Sat = TestClass execution is finished by the executor.
+     *
      * @param result gives info on the test class execution
-     * @throws Exception
+     * @throws Exception in case of problem
      */
     @Override
     public void testRunFinished(final Result result) throws Exception {
@@ -193,12 +233,12 @@ public final class HtmlRunReporter extends RunListener {
 
     /**
      * This extra method is necessary in order to handle special error cases, like failures in Cucumber.
+     *
      * @param problem is the exception.
      */
     public void setTestFailed(final Throwable problem) {
         testFailed = true;
-        Failure f = new Failure(Description.EMPTY, problem);
-        testFailure = f;
+        testFailure.add(new Failure(Description.EMPTY, problem));
     }
 
     /**
@@ -223,6 +263,7 @@ public final class HtmlRunReporter extends RunListener {
 
     /**
      * Can be used in methods annotated with @BeforeClass annotation.
+     * @param comment that should be logged.
      */
     public void beforeClassComment(final String comment) {
         props.setProperty("BeforeAfterClassMessage", comment);
@@ -231,6 +272,7 @@ public final class HtmlRunReporter extends RunListener {
 
     /**
      * Can be used in methods annotated with @AfterClass annotation.
+     * @param comment that should be logged.
      */
     public void afterClassComment(final String comment) {
         beforeClassComment(comment);
@@ -369,6 +411,10 @@ public final class HtmlRunReporter extends RunListener {
         return extColor;
     }
 
+    /**
+     * Makes a test method as Not Applicable (N/A).
+     * @param reason is the reason why it is N/A.
+     */
     public void naTestCase(String reason) {
         testNA = true;
         String comment = "This test case is N/A";
@@ -379,6 +425,9 @@ public final class HtmlRunReporter extends RunListener {
         throw new NATestCaseException(comment);
     }
 
+    /**
+     * Makes a test method as Dummy.
+     */
     public void dummyTestCase() {
         testDummy = true;
         logComment("This is a dummy test case");
@@ -534,12 +583,12 @@ public final class HtmlRunReporter extends RunListener {
     public void logComment(final String comment, final String description) {
         systemOutPrintLn(comment);
 
-        String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
+        String addStr = " <small>[<a href=\"javascript:showhide('div_" + getDivStep() + "');\">details</a>]</small>";
         if (testMethodHtmlLog != null) {
-            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + addStr + "<div id=\"div_" + divStep
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + comment + addStr + "<div id=\"div_" + getDivStep()
                     + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
         }
-        divStep++;
+        increaseDivStep();
     }
 
     /**
@@ -552,12 +601,12 @@ public final class HtmlRunReporter extends RunListener {
     public void logComment(final String comment, final String htmlComment, final String description) {
         systemOutPrintLn(comment);
 
-        String addStr = " <small>[<a href=\"javascript:showhide('div_" + divStep + "');\">details</a>]</small>";
+        String addStr = " <small>[<a href=\"javascript:showhide('div_" + getDivStep() + "');\">details</a>]</small>";
         if (testMethodHtmlLog != null) {
-            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + htmlComment + addStr + "<div id=\"div_" + divStep
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0E0\">" + htmlComment + addStr + "<div id=\"div_" + getDivStep()
                     + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
         }
-        divStep++;
+        increaseDivStep();
     }
 
     /**
@@ -593,14 +642,26 @@ public final class HtmlRunReporter extends RunListener {
      * @param description Event description/info
      */
     public void logResult(final String text, final String description) {
-        step++;
         if (testMethodHtmlLog != null) {
-            String addStr = " <small>[<a href=\"javascript:showhide('div_" + step + "');\">details</a>]</small>";
-            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "<div id=\"div_" + step
+            String addStr = " <small>[<a href=\"javascript:showhide('div_" + getDivStep() + "');\">details</a>]</small>";
+            testMethodHtmlLog.insertText("<tr><td>&nbsp;</td><td bgcolor=\"#F0F0F0\">" + text + addStr + "<div id=\"div_" + getDivStep()
                     + "\" style=\"display:none\"><br>\n" + description + "</div></td></tr>\n");
         }
+        increaseDivStep();
     }
 
-    public int getDivStep() { return divStep; }
-    public void increaseDivStep() { divStep++; }
+    /**
+     * Get step information for div tags in html log.
+     * @return with the actual div step.
+     */
+    public int getDivStep() {
+        return divStep;
+    }
+
+    /**
+     * Increase the div step counter.
+     */
+    public void increaseDivStep() {
+        divStep++;
+    }
 }

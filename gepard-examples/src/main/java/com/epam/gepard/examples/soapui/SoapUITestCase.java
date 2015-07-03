@@ -185,6 +185,10 @@ public abstract class SoapUITestCase implements GepardTestClass {
         }
     }
 
+    /**
+     * Pre-condition of eveyr SoapUI test, that prepares the loggers.
+     * @throws Exception in case of problem
+     */
     @Before
     public final void setUp() throws Exception {
         //clean up log files

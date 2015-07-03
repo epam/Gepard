@@ -19,9 +19,6 @@ package com.epam.gepard.filter;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.lang.reflect.Constructor;
-
-import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.filter.matcher.SimpleMatcher;
 import com.gargoylesoftware.base.testing.AcceptAllTestFilter;
 

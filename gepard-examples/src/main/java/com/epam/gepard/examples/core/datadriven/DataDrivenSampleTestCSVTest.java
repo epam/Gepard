@@ -50,7 +50,8 @@ public class DataDrivenSampleTestCSVTest implements GepardTestClass {
         logComment("Ok. We have exactly 3 params.");
         logStep("Test if we can use the params:");
         logEvent("Param 1:" + parameters[0] + ", Param 2:" + parameters[1] + ", Param 3:" + parameters[2]);
-        logEvent("Param 1:" + getTestClassExecutionData().getDrivenData().getTestParameter("ID") + ", Param 2:" + getTestClassExecutionData().getDrivenData().getTestParameter("PART1")
+        logEvent("Param 1:" + getTestClassExecutionData().getDrivenData().getTestParameter("ID")
+                + ", Param 2:" + getTestClassExecutionData().getDrivenData().getTestParameter("PART1")
                 + ", Param 3:" + getTestClassExecutionData().getDrivenData().getTestParameter("PART2"));
         logStep("Test fails, if Param 2 is 'WILLFAIL'");
         assertTrue("This need to be failed.", parameters[2].compareTo("WILLFAIL") != 0);

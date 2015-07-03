@@ -147,9 +147,6 @@
     </module>
     <module name="MagicNumber" />
     <module name="MissingSwitchDefault" />
-    <module name="RedundantThrows">
-      <property name="severity" value="error" />
-    </module>
     <module name="SimplifyBooleanExpression">
       <property name="severity" value="error" />
     </module>

@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.epam.gepard.exception.SimpleGepardException;
 import org.jbehave.core.model.Story;
 import org.junit.Before;
 import org.junit.Test;
@@ -136,7 +135,7 @@ public class JBehaveStoryReporterTest {
     @Test
     public void testExampleShouldLogToHtml() {
         //GIVEN
-        Map<String, String> tableRow = new HashMap<String, String>();
+        Map<String, String> tableRow = new HashMap<>();
         tableRow.put("a", "1");
         //WHEN
         underTest.example(tableRow);

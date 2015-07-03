@@ -29,12 +29,20 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
- * @author Tamas_Kohegyi
+ * Helper class to handle date related information in tests.
+ *
+ * @author Tamas_Kohegyi, and from
  */
 public class DateHelper {
 
-    List<SimpleDateFormat> knownPatterns;
+    private static final long ONE_DAY_IN_MILLISECS = 1000 * 60 * 60 * 24;
+    private static final long DAYS_IN_WEEK = 7;
 
+    private List<SimpleDateFormat> knownPatterns;
+
+    /**
+     * Setup Date helper class, by preparing the understandable date formats.
+     */
     public DateHelper() {
         knownPatterns = new ArrayList<>();
         knownPatterns.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"));
@@ -45,28 +53,48 @@ public class DateHelper {
         knownPatterns.add(new SimpleDateFormat("yyyy-MM-dd"));
     }
 
+    /**
+     * Transfer String content to Date object.
+     *
+     * @param dateCandidate is the string to be converted.
+     * @return with the new Date object, or null, if transfer was not successful.
+     */
     public Date getDateFromString(final String dateCandidate) {
 
         for (SimpleDateFormat pattern : knownPatterns) {
             try {
                 // Take a try
                 return new Date(pattern.parse(dateCandidate).getTime());
+                //CHECKSTYLE.OFF
             } catch (ParseException pe) {
                 // Loop on
             }
+            //CHECKSTYLE.ON
         }
         return null;
     }
 
+    /**
+     * Transfer Date object to String, using pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ".
+     *
+     * @param date is the used date object
+     * @return with string
+     */
     public String getLongStringFromDate(final Date date) {
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        String dateString = DATE_FORMAT.format(date);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        String dateString = dateFormat.format(date);
         return dateString;
     }
 
+    /**
+     * Transfer Date object to String, using pattern: "yyyy-MM-dd".
+     *
+     * @param date is the used date object
+     * @return with string
+     */
     public String getShortStringFromDate(final Date date) {
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-        String dateString = DATE_FORMAT.format(date);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = dateFormat.format(date);
         return dateString;
     }
 
@@ -83,22 +111,31 @@ public class DateHelper {
         return cal.get(Calendar.YEAR) + "-" + df.format((long) cal.get(Calendar.MONTH) + 1) + "-" + df.format(cal.get(Calendar.DATE));
     }
 
-    public long dayDiffsInWorkingDays(Date start, Date end){
-        //Ignore argument check
-
+    /**
+     * Calculate number of days passed between two Dates, not counting Saturdays and Sundays.
+     *
+     * @param start is the starting date
+     * @param end   is the ending date
+     * @return with the diff in days
+     */
+    public long dayDiffsInWorkingDays(Date start, Date end) {
+        //work with start date
         Calendar c1 = GregorianCalendar.getInstance();
         c1.setTime(start);
         int w1 = c1.get(Calendar.DAY_OF_WEEK);
         c1.add(Calendar.DAY_OF_WEEK, -w1 + 1);
 
+        //work with end date
         Calendar c2 = GregorianCalendar.getInstance();
         c2.setTime(end);
         int w2 = c2.get(Calendar.DAY_OF_WEEK);
         c2.add(Calendar.DAY_OF_WEEK, -w2 + 1);
 
-        //end Saturday to start Saturday
-        long days = (c2.getTimeInMillis()-c1.getTimeInMillis())/(1000*60*60*24);
-        long daysWithoutSunday = days-(days*2/7);
+        //difference in days
+        long days = (c2.getTimeInMillis() - c1.getTimeInMillis()) / ONE_DAY_IN_MILLISECS;
+
+        //remove Saturdays and Sundays
+        long daysWithoutSunday = days - (days * 2 / DAYS_IN_WEEK);
 
         if (w1 == Calendar.SUNDAY) {
             w1 = Calendar.MONDAY;
@@ -106,9 +143,16 @@ public class DateHelper {
         if (w2 == Calendar.SUNDAY) {
             w2 = Calendar.MONDAY;
         }
-        return daysWithoutSunday-w1+w2;
+        return daysWithoutSunday - w1 + w2;
     }
 
+    /**
+     * Add N days to the existing Date object.
+     *
+     * @param d is the starting date
+     * @param i number of days to add
+     * @return with the new date object
+     */
     public Date addDays(final Date d, int i) {
         Calendar c = Calendar.getInstance();
         c.setTime(d);

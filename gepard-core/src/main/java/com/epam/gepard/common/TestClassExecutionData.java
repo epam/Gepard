@@ -101,8 +101,13 @@ public final class TestClassExecutionData {
         isProblematic = false;
     }
 
-    public Class getTestClass() { return testClass; }
-    public void setTestClass(final Class<?> testClass) { this.testClass = testClass; }
+    public Class getTestClass() {
+        return testClass;
+    }
+
+    public void setTestClass(final Class<?> testClass) {
+        this.testClass = testClass;
+    }
 
     public String getID() {
         return id;
@@ -121,6 +126,7 @@ public final class TestClassExecutionData {
 
     /**
      * Get info if the test class execution was problematic or not.
+     * @return with the boolean info
      */
     public boolean isProblematic() {
         return isProblematic;
@@ -350,7 +356,9 @@ public final class TestClassExecutionData {
         this.htmlRunReporter = htmlRunReporter;
     }
 
-    public HtmlRunReporter getHtmlRunReporter() { return htmlRunReporter; }
+    public HtmlRunReporter getHtmlRunReporter() {
+        return htmlRunReporter;
+    }
 
     public int getCountOfRuns() {
         return countOfRuns;

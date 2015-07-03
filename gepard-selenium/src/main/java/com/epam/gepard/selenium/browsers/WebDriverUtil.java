@@ -51,6 +51,7 @@ import java.util.Date;
 
 /**
  * Utility functions for Selenium.
+ *
  * @author Tamas_Kohegyi
  */
 
@@ -65,6 +66,7 @@ public class WebDriverUtil {
     public static final String SELENIUM_BROWSER_INTERNET_EXPLORER = "gepard.selenium.browserString.IE";
     public static final String SELENIUM_BROWSER_GOOGLE_CHROME = "gepard.selenium.browserString.GoogleChrome";
     public static final String SELENIUM_BROWSER_SAFARI = "gepard.selenium.browserString.Safari";
+    private static final long WEB_DRIVER_SHUTDOWN_DELAY = 5000;
     private static int dumpFileCount;
     private GepardTestClass tc;
 
@@ -85,18 +87,27 @@ public class WebDriverUtil {
 
     private String browserString;
 
+    /**
+     * Main WebDriver util class for Gepard.
+     *
+     * @param clazz is the parent class that uses this class.
+     */
     public WebDriverUtil(final GepardTestClass clazz) {
         tc = clazz;
         environmentHelper = new EnvironmentHelper(tc.getTestClassExecutionData().getEnvironment());
         setBrowserString(environmentHelper.getTestEnvironmentBrowser());
     }
 
-
+    /**
+     * By using the default URL, creates a WebDriver object and Selenium object as well.
+     *
+     * @param baseUrl is the default URL for the browser, must not be null!
+     * @return withthe new WebDriver object
+     */
     public WebDriver buildWebDriverInstance(final String baseUrl) {
         if (browserString == null) {
             throw new SimpleGepardException("No browser to be used was specified.");
         }
-
 
         DesiredCapabilities capabilities = detectCapabilities();
 
@@ -115,13 +126,19 @@ public class WebDriverUtil {
         return webDriver;
     }
 
+    /**
+     * Destroys the WebDriver object of this util class, as necessary.
+     */
     public void destroyWebDriverInstance() {
         if (webDriver != null) {
             webDriver.close();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(WEB_DRIVER_SHUTDOWN_DELAY);
                 webDriver.quit(); //close all opened browser window
-            } catch(Exception e) {
+            } catch (Exception e) {
+                if (!(e instanceof WebDriverException)) {
+                    throw new SimpleGepardException("Issue occurred meanwhile waiting for WebDriver Quit.", e);
+                }
             }
             webDriver = null;
         }
@@ -205,7 +222,10 @@ public class WebDriverUtil {
         return webDriver;
     }
 
-    public GepardTestClass getGepardTestClass() { return tc; }
+    public GepardTestClass getGepardTestClass() {
+        return tc;
+    }
+
     /**
      * Identify whether the current browser is a firefox instance.
      *
@@ -323,7 +343,7 @@ public class WebDriverUtil {
     /**
      * Click on a specific button on the page.
      *
-     * @param tc is the caller Test Case
+     * @param tc   is the caller Test Case
      * @param path is the path to the button
      */
     public void clickOnElement(final GepardTestClass tc, final String path) {

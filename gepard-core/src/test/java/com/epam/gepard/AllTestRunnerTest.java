@@ -19,14 +19,16 @@ package com.epam.gepard;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-
-import java.util.Properties;
-
+import com.epam.gepard.common.Environment;
+import com.epam.gepard.common.helper.ReportFinalizer;
+import com.epam.gepard.common.helper.ResultCollector;
+import com.epam.gepard.common.helper.TestFailureReporter;
+import com.epam.gepard.common.threads.ExecutorThreadManager;
+import com.epam.gepard.logger.LogFileWriter;
+import com.epam.gepard.logger.LogFinalizer;
+import com.epam.gepard.logger.LogFolderCreator;
+import com.epam.gepard.logger.helper.LogFileWriterFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,19 +36,15 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.Whitebox;
 
-import com.epam.gepard.common.Environment;
-import com.epam.gepard.common.helper.ReportFinalizer;
-import com.epam.gepard.common.helper.ResultCollector;
-import com.epam.gepard.common.helper.TestFailureReporter;
-import com.epam.gepard.common.threads.ExecutorThreadManager;
-import com.epam.gepard.exception.ShutDownException;
-import com.epam.gepard.logger.LogFileWriter;
-import com.epam.gepard.logger.LogFinalizer;
-import com.epam.gepard.logger.LogFolderCreator;
-import com.epam.gepard.logger.helper.LogFileWriterFactory;
+import java.util.Properties;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 
 /**
  * Unit tests for {@link AllTestRunner}.
+ *
  * @author Tibor_Kovacs
  */
 public class AllTestRunnerTest {
@@ -90,10 +88,10 @@ public class AllTestRunnerTest {
         environment.setProperty(Environment.GEPARD_FILTER_EXPRESSION, "?");
     }
 
-//    @Test
-    public void testRunAll() throws Exception {
+    @Test
+    public void testRunAllWithEmptyTestlist() throws Exception {
         //GIVEN
-        String testListFile = "src/test/resources/testlist.txt";
+        String testListFile = "src/test/resources/testlist_empty.txt";
         Whitebox.setInternalState(underTest, "executorThreadManager", executorThreadManager);
         environment.setProperty(Environment.GEPARD_LOAD_AND_EXIT, "false");
         //WHEN
@@ -109,7 +107,7 @@ public class AllTestRunnerTest {
         verify(failureReporter).generateTestlistFailure();
     }
 
-//    @Test(expected = ShutDownException.class)
+    //    @Test(expected = ShutDownException.class)
     public void testRunAllWhenGepardLoadAndExitFalse() throws Exception {
         //GIVEN
         String testListFile = "src/test/resources/testlist.txt";
@@ -119,11 +117,12 @@ public class AllTestRunnerTest {
         //THEN expected Exception
     }
 
-//    @Test(expected = ShutDownException.class)
+    //    @Test(expected = ShutDownException.class)
     public void testRunAllWhenTestListNull() throws Exception {
         //GIVEN in setup
         //WHEN
         underTest.runAll(null);
         //THEN expected Exception
     }
+
 }

@@ -45,7 +45,7 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
 
     @BeforeClass
     public static void beforeClass() {
-        TestClassExecutionData classData = TestClassExecutionThread.classDataInContext.get();
+        TestClassExecutionData classData = TestClassExecutionThread.CLASS_DATA_IN_CONTEXT.get();
         HtmlRunReporter reporter = classData.getHtmlRunReporter();
         reporter.beforeClassComment("We started the BeforeClass method.");
         Boolean b;
@@ -62,7 +62,7 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
 
     @AfterClass
     public static void afterClass() {
-        TestClassExecutionData classData = TestClassExecutionThread.classDataInContext.get();
+        TestClassExecutionData classData = TestClassExecutionThread.CLASS_DATA_IN_CONTEXT.get();
         HtmlRunReporter reporter = classData.getHtmlRunReporter();
         reporter.afterClassComment("We started the AfterClass method.");
         Boolean b;

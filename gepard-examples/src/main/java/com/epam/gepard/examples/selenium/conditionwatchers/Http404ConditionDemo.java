@@ -25,7 +25,9 @@ public class Http404ConditionDemo implements GepardTestClass {
     private WebDriverUtil webDriverUtil = new WebDriverUtil(this);
 
     /**
-     * Pre-condition for every test: register a condition watcher for E500 and E404.
+     * Pre-condition for every test:
+     * - register a condition watcher for E500 and E404
+     * - build WebDriver instance
      * Note that only E404 will be used in this example test.
      */
     @Before
@@ -37,6 +39,9 @@ public class Http404ConditionDemo implements GepardTestClass {
         conditionWatcher.register(HttpErrorWatchCondition.HTTP_404, ConditionSeverity.ERROR);
     }
 
+    /**
+     * Post-condition for every test:: destroy WebDriver instance.
+     */
     @After
     public void destroyWebDriverInstance() {
         webDriverUtil.destroyWebDriverInstance();

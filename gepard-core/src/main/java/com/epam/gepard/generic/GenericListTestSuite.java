@@ -224,7 +224,7 @@ public class GenericListTestSuite {
         }
     }
 
-    public void handleTestClassInternalCounter(final Class testClass) {
+    private void handleTestClassInternalCounter(final Class testClass) {
         //first either reset the counter or increase it, based on the given test class name
         String testClassName = testClass.getName();
         if ((actualTestClassName == null) || (!actualTestClassName.contentEquals(testClassName))) {
@@ -241,7 +241,6 @@ public class GenericListTestSuite {
      * @param clazz      in which class we search for the test methods.
      * @param rowNo      in case of data-driven test, when the test class is repeated, this specifies the actual repetition.
      * @param dataFeeder is the data feeder class in order to load the proper test data.
-     * @return the number of the registered test methods.
      */
     protected void registerMethodsInGlobalMap(final Class<?> clazz, final int rowNo, final DataFeederLoader dataFeeder) {
         //register this class in the global class list

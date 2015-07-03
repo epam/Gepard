@@ -43,18 +43,19 @@ import com.epam.gepard.logger.XmlRunReporter;
  */
 public class TestClassExecutionThread extends Thread {
 
+    public static final InheritableThreadLocal<TestClassExecutionData> CLASS_DATA_IN_CONTEXT = new InheritableThreadLocal<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestClassExecutionThread.class);
+    private static final Semaphore AVAILABLE = new Semaphore(1, false);
+
     /**
      * Key is the blocker, value is the lock of the blocker.
      */
     private static Map<String, BlockingInfo> testClassBlockingMap = new LinkedHashMap<>(); //blocking TClass map
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestClassExecutionThread.class);
-
-    private static final Semaphore AVAILABLE = new Semaphore(1, false);
-    public static final InheritableThreadLocal<TestClassExecutionData> classDataInContext = new InheritableThreadLocal<TestClassExecutionData>();
 
     //TC executor
-    private boolean enabled; // = false; //weather TC execution enabled for this thread or not
     private final JUnitCore core = new JUnitCore();
+    private boolean enabled; // = false; //weather TC execution enabled for this thread or not
     private TestClassExecutionData classData; // = null; //points to the actual tc, under exec
     private String xmlResultPath;
 
@@ -231,7 +232,7 @@ public class TestClassExecutionThread extends Thread {
 
     private void execClass(final TestClassExecutionData o) {
         classData = o;
-        classDataInContext.set(o);
+        CLASS_DATA_IN_CONTEXT.set(o);
         try {
             HtmlRunReporter reporter = o.getHtmlRunReporter();
             reporter.hiddenBeforeTestClassExecution();
@@ -248,7 +249,7 @@ public class TestClassExecutionThread extends Thread {
             //this is gas
             LOGGER.debug("Thread: got EX during JUnitCore execution.", e);
         }
-        classDataInContext.set(null);
+        CLASS_DATA_IN_CONTEXT.set(null);
         classData = null;
     }
 
