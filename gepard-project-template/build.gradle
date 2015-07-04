@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    compile "com.epam.gepard:gepard-core:4.0.34"
+    compile "com.epam.gepard:gepard-core:4.0.35"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
