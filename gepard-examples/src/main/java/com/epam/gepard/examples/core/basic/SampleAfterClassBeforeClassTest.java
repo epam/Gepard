@@ -47,7 +47,7 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
     public static void beforeClass() {
         TestClassExecutionData classData = TestClassExecutionThread.CLASS_DATA_IN_CONTEXT.get();
         HtmlRunReporter reporter = classData.getHtmlRunReporter();
-        reporter.beforeClassComment("We started the BeforeClass method.");
+        reporter.beforeClassLogComment("We started the BeforeClass method.");
         Boolean b;
         b = Boolean.valueOf(classData.getDrivenData().getParameters()[1]);
         if (b) {
@@ -57,14 +57,14 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
         if (b) {
             reporter.naTestCase("forced N/A at beforeClass");
         }
-        reporter.beforeClassComment("We finished the BeforeClass method.");
+        reporter.beforeClassLogComment("We finished the BeforeClass method.");
     }
 
     @AfterClass
     public static void afterClass() {
         TestClassExecutionData classData = TestClassExecutionThread.CLASS_DATA_IN_CONTEXT.get();
         HtmlRunReporter reporter = classData.getHtmlRunReporter();
-        reporter.afterClassComment("We started the AfterClass method.");
+        reporter.afterClassLogComment("We started the AfterClass method.");
         Boolean b;
         b = Boolean.valueOf(classData.getDrivenData().getParameters()[3]);
         if (b) {
@@ -74,7 +74,7 @@ public class SampleAfterClassBeforeClassTest implements GepardTestClass {
         if (b) {
             reporter.naTestCase("forced N/A at AfterClass");
         }
-        reporter.afterClassComment("We finished the AfterClass method.");
+        reporter.afterClassLogComment("We finished the AfterClass method.");
     }
 
     @Test

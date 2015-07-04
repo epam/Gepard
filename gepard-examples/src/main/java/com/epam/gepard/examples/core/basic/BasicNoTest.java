@@ -19,6 +19,7 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.generic.GepardTestClass;
 import org.junit.Assert;
 
 /**
@@ -27,7 +28,7 @@ import org.junit.Assert;
  * @author tkohegyi
  */
 @TestClass(id = "DEMO-2", name = "Sample, basic test, without any test method")
-public class BasicNoTest {
+public class BasicNoTest implements GepardTestClass {
 
     public void nobodyRecognisesThisAsTestMethod() {
         Assert.assertNotNull(this);

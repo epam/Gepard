@@ -223,7 +223,7 @@ public final class HtmlRunReporter extends RunListener {
                         message = "";
                     }
                     classData.setItAsProblematic();
-                    afterClassComment("Failure occurred: " + message + "<br/><br/><pre>" + u.escapeHTML(failure.getTrace()) + "</pre>");
+                    afterClassLogComment("Failure occurred: " + message + "<br/><br/><pre>" + u.escapeHTML(failure.getTrace()) + "</pre>");
                 }
             } else {
                 testClassHtmlLog.insertBlock("NoTestCases", null);
@@ -265,7 +265,7 @@ public final class HtmlRunReporter extends RunListener {
      * Can be used in methods annotated with @BeforeClass annotation.
      * @param comment that should be logged.
      */
-    public void beforeClassComment(final String comment) {
+    public void beforeClassLogComment(final String comment) {
         props.setProperty("BeforeAfterClassMessage", comment);
         testClassHtmlLog.insertBlock("BeforeAfterClassMessage", props);
     }
@@ -274,8 +274,8 @@ public final class HtmlRunReporter extends RunListener {
      * Can be used in methods annotated with @AfterClass annotation.
      * @param comment that should be logged.
      */
-    public void afterClassComment(final String comment) {
-        beforeClassComment(comment);
+    public void afterClassLogComment(final String comment) {
+        beforeClassLogComment(comment);
     }
 
     private void initDataDrivenLog() {

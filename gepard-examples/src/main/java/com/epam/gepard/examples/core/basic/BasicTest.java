@@ -19,6 +19,7 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.generic.GepardTestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ import org.junit.Test;
  * @author tkohegyi
  */
 @TestClass(id = "DEMO-1", name = "Sample, basic test")
-public class BasicTest {
+public class BasicTest implements GepardTestClass {
 
     @Test
     public void annotatedJunit4TestThatNeedPass() {

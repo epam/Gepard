@@ -1,5 +1,6 @@
 #########################################
 # Tests for demonstration purpose only
+# Structure of a row is the following: `packagename.classname[,[feederdescriptor][,blockerstring]]`
 #########################################
 
 com.epam.gepard.examples.core.basic.BasicTest
@@ -16,22 +17,22 @@ com.epam.gepard.examples.core.basic.SampleParallelTestA,,AAA
 com.epam.gepard.examples.core.basic.SampleParallelTestB,,BBB
 com.epam.gepard.examples.core.basic.SampleParallelTestC,9,AAA*
 
-# Sample usage of feeders and data driven tests
+# Sample usage of feederdescriptor for data driven tests
+# Possibilities are:
 #     * - param //if param is a number, use SimpleMultiplierFeeder class
-#     * - feederclass
+#     * - :param  //with default feeder class specified in gepard.properties
 #     * - feederclass
 #     * - feederclass:param
 #     * - feederclass:param@feederdescriptor
 #     * - feederclass@feederdescriptor
-#     * - :param  //with default feeder class
 com.epam.gepard.examples.core.basic.SampleOtherTest
 com.epam.gepard.examples.core.basic.SampleAfterBeforeTest,9
 com.epam.gepard.examples.core.basic.SampleAfterClassBeforeClassTest,9
 com.epam.gepard.examples.core.basic.SampleBadAfterClassBeforeClassTest
 com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSV,SimpleMultiplierDataFeeder:11
-com.epam.gepard.examples.core.datadriven.DataDrivenSampleTest,SimpleMultiplierDataFeeder:11@SingleRowSelectorDataFeeder:2,10
-com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVTestParameterTest,11
-com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVB,SimpleMultiplierDataFeeder:11@BruteMultiplierDataFeeder:5,2
+com.epam.gepard.examples.core.datadriven.DataDrivenSampleTest,SimpleMultiplierDataFeeder:11@SingleRowSelectorDataFeeder:2
+com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVTestParameterTest
+com.epam.gepard.examples.core.datadriven.DataDrivenSampleTestCSVB,SimpleMultiplierDataFeeder:11@BruteMultiplierDataFeeder:5
 com.epam.gepard.examples.core.datadriven.LabelBasedDataFeederTest,:[]+[feeders.ONE:3:LABEL1]x[feeders.TWO:::RANDOM]
 
 # test data handling error
