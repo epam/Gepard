@@ -58,7 +58,7 @@ public class SampleOtherTest implements GepardTestClass {
 
     @Test
     public void setSystemUnderTestVersion() {
-        logComment("This is a sample on how to set the AUT (System Under Test) value, that is visible in the test report.");
+        logComment("This is a sample on how to set the SUT (System Under Test) value, that is visible in the test report.");
         Util util = new Util();
         AllTestRunner.setSystemUnderTestVersion(util.getGepardVersion());
     }
