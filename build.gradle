@@ -18,6 +18,8 @@
 ===========================================================================*/
 apply plugin: "sonar-runner"
 
+ext.myLocalRepository='file://C:/tmp/myRepo/'
+
 allprojects {
     group = 'com.epam.gepard'
     apply plugin: 'idea'
@@ -91,6 +93,15 @@ subprojects {
             }
         }
     }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "${myLocalRepository}")
+            }
+        }
+    }
+
 }
 
 sonarRunner {

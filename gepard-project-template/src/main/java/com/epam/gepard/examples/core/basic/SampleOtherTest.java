@@ -20,8 +20,10 @@ package com.epam.gepard.examples.core.basic;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import com.epam.gepard.util.Util;
+import org.junit.Test;
+
 
 /**
  * This sample test class shows basic functions. Like using:
@@ -33,26 +35,30 @@ import com.epam.gepard.util.Util;
  * @author tkohegyi
  */
 @TestClass(id = "DEMO", name = "Basic Results, Sample")
-public class SampleOtherTest extends OtherTestCase {
+public class SampleOtherTest implements GepardTestClass {
 
-    public void testTestWithTwoStepsPassed() {
+    @Test
+    public void testWithTwoStepsPassed() {
         logStep("Step 1");
         logStep("Step 2");
         logComment("And so on...");
     }
 
-    public void testNotApplicableTest() {
+    @Test
+    public void notApplicableTest() {
         logStep("Test: N/A test case");
         naTestCase("test N/A purpose");
     }
 
-    public void testTestCaseIsUnderConstructionPassed() {
+    @Test
+    public void testCaseIsUnderConstructionPassed() {
         logStep("Test: Dummy Test Case, passed result");
         dummyTestCase();
     }
 
-    public void testSetApplicationUnderTestVersion() {
-        logComment("This is a sample on how to set the AUT (Application Under Test) value, that is visible in the test report.");
+    @Test
+    public void setSystemUnderTestVersion() {
+        logComment("This is a sample on how to set the AUT (System Under Test) value, that is visible in the test report.");
         Util util = new Util();
         AllTestRunner.setSystemUnderTestVersion(util.getGepardVersion());
     }

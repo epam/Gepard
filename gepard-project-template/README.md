@@ -12,13 +12,15 @@ Easily expandable (like for Selenium, Android native application test).
     * **gepard-gherkin-jbehave**: Example extension for using JBehave
     * **gepard-gherkin-cucumber**: Example extension for using Cucumber
     * **gepard-selenium**: Example extension for using Selenium
+    * **gepard-rest**: Example extension for rest api tests, and Jira connection extension
     * **gepard-examples**: Lot's of examples
-    * **gepard-project-template**: start your test project here
+    * **gepard-project-template**: START YOUR NEW TEST PROJECT WITH IT
 
 #Quick intro for end users
 ####Requirements
-* JRE 7
+* JRE 8
 * The latest release of Gepard.
+* Join to **[Gepard-Users mail list](https://groups.google.com/forum/#!forum/gepard-users)**, and share your experience and questions.
 
 ####Running
 `gradlew run`
