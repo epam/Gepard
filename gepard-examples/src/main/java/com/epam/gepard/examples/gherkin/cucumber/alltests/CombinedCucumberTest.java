@@ -1,8 +1,7 @@
 package com.epam.gepard.examples.gherkin.cucumber.alltests;
 
-
-import com.epam.gepard.gherkin.cucumber.CucumberTestCase;
 import com.epam.gepard.annotations.TestClass;
+import com.epam.gepard.gherkin.cucumber.CucumberTestCase;
 
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems

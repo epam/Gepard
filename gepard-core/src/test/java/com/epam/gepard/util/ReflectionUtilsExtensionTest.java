@@ -19,14 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -71,55 +64,6 @@ public class ReflectionUtilsExtensionTest {
         //WHEN
         ReflectionUtilsExtension.valueOf(Math.class, "12");
         //THEN exception is exopected
-    }
-
-    @Test
-    public void testValueOfWhenClassIsAnnotatedAndFieldIsArray() throws Exception {
-        //GIVEN
-        Field field = FieldMockOne.class.getDeclaredField("array");
-        String value = "1,2,3,4";
-        String separator = "doesNotMatter";
-        String[] expected = new String[]{"1", "2", "3", "4"};
-        //WHEN
-        String[] result = (String[]) ReflectionUtilsExtension.valueOf(field, value, separator);
-        //THEN
-        assertArrayEquals(expected, result);
-    }
-
-    @Test
-    public void testValueOfWhenClassIsAnnotatedAndFieldIsList() throws Exception {
-        //GIVEN
-        Field field = FieldMockOne.class.getDeclaredField("list");
-        String value = "1,2,3,4";
-        String separator = ",";
-        List<String> expected = new ArrayList<String>();
-        expected.add("1");
-        expected.add("2");
-        expected.add("3");
-        expected.add("4");
-        //WHEN
-        @SuppressWarnings("unchecked")
-        List<String> result = (List) ReflectionUtilsExtension.valueOf(field, value, separator);
-        //THEN
-        assertEquals(expected, result);
-    }
-
-    @Test
-    public void testValueOfWhenClassIsAnnotatedAndFieldIsSet() throws Exception {
-        //GIVEN
-        Field field = FieldMockOne.class.getDeclaredField("set");
-        String value = "1,2,3,4";
-        String separator = ",";
-        Set<String> expected = new HashSet<String>();
-        expected.add("1");
-        expected.add("2");
-        expected.add("3");
-        expected.add("4");
-        //WHEN
-        @SuppressWarnings("unchecked")
-        Set<String> result = (Set) ReflectionUtilsExtension.valueOf(field, value, separator);
-        //THEN
-        assertEquals(expected, result);
     }
 
 }

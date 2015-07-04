@@ -1,6 +1,7 @@
 package com.epam.gepard.generic;
 
-import com.epam.gepard.annotations.TestParameter;
+import com.epam.gepard.annotations.TestClass;
+import org.junit.Test;
 
 /*==========================================================================
  Copyright 2004-2015 EPAM Systems
@@ -23,13 +24,19 @@ import com.epam.gepard.annotations.TestParameter;
 
 /**
  * Used for testing.
+ *
  * @author Adam_Csaba_Kiraly
  */
-public class TestMock {
+@TestClass(id = "TEST", name = "Self-Test Class")
+public class TestMock implements GepardTestClass {
 
-    @TestParameter
     private String one;
-    @TestParameter
     private String two;
 
+    /**
+     * Just and empty and always passing test.
+     */
+    @Test
+    public void emptyTest() {
+    }
 }

@@ -17,17 +17,14 @@ package com.epam.gepard.examples.gherkin.cucumber.alltests;
  You should have received a copy of the GNU General Public License
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
-
-import com.epam.gepard.gherkin.cucumber.CucumberTestCaseConnector;
-import com.epam.gepard.gherkin.cucumber.ParentCucumberTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import cucumber.api.java.en.Given;
 
 /**
  * Glue code for the parent cucumber test case.
  * Missing method in glue code, should be NA.
  */
-@ParentCucumberTestCase(name = "com.epam.gepard.examples.gherkin.cucumber.alltests.CombinedCucumberTest")
-public class MissingGlueCodeFeature extends CucumberTestCaseConnector {
+public class MissingGlueCodeFeature implements GepardTestClass {
 
     /**
      * Sample Cucumber glue code.

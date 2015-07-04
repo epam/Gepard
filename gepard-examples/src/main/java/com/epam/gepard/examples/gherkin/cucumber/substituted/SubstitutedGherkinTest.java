@@ -23,6 +23,7 @@ import com.epam.gepard.gherkin.cucumber.CucumberTestCase;
 /**
  * Wrapper Junit test for Cucumber glue code placed next to this class.
  */
+
 @TestClass(id = "Cucumber Test", name = "SubstitutedGherkinTest - Email confirmation")
 public class SubstitutedGherkinTest extends CucumberTestCase {
 }

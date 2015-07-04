@@ -54,6 +54,9 @@ public class BruteMultiplierDataFeeder implements GepardDataFeeder {
 
     /**
      * This Data Feeder just multiplies the data as many times as requested in the parameter.
+     * @param className is the name of the caller test class
+     * @param inputParameterArray is the original data parameter array
+     * @return with the updated data parameter array
      */
     @Override
     public DataDrivenParameterArray calculateParameterArray(final String className, final DataDrivenParameterArray inputParameterArray) {

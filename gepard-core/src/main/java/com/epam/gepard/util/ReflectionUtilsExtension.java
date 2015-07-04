@@ -19,20 +19,10 @@ package com.epam.gepard.util;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import com.epam.gepard.annotations.TestParameter;
 import com.epam.gepard.util.helper.BooleanValuer;
 import com.epam.gepard.util.helper.DoubleValuer;
 import com.epam.gepard.util.helper.FloatValuer;
@@ -138,63 +128,4 @@ public final class ReflectionUtilsExtension {
         return result;
     }
 
-    /**
-     * Returns an array, a set or a list holding the values of the specified String.
-     * If it is a collection the contained object must implement the valueOf method or should be
-     * a primitive type.
-     * @param field the field to get the type from
-     * @param value the value to be set
-     * @param separator the separator of the values
-     * @return the array or collection holding the data
-     * @throws Exception in case no valueOf method found
-     */
-    @SuppressWarnings("unchecked")
-    public static Object valueOf(final Field field, final String value, final String separator) throws Exception {
-        Object ret = null;
-        Collection collection = null;
-        Type genericType = null;
-
-        if (Set.class.isAssignableFrom(field.getType())) {
-            collection = new HashSet<Object>();
-        } else if (List.class.isAssignableFrom(field.getType())) {
-            collection = new ArrayList<Object>();
-        }
-
-        if (collection != null) {
-            //Fill the collection
-            genericType = getGenericType(field);
-            for (String s : value.split(separator)) {
-                collection.add(valueOf((Class) genericType, s));
-            }
-            ret = collection;
-        } else {
-            //Fill the array
-            String[] contents = value.split(field.getAnnotation(TestParameter.class).separator());
-            ret = Array.newInstance(field.getType().getComponentType(), contents.length);
-
-            for (int i = 0; i < contents.length; i++) {
-                Array.set(ret, i, contents[i]);
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Returns the generic type for a field if exists else null.
-     * @param field the field
-     * @return the generic type
-     */
-    private static Type getGenericType(final Field field) {
-        Type genericType = null;
-
-        if (field.getGenericType() instanceof ParameterizedType) {
-            Type[] fieldArgTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
-            if (fieldArgTypes.length > 0) {
-                genericType = fieldArgTypes[0];
-            }
-        }
-
-        return genericType;
-    }
 }

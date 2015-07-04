@@ -25,7 +25,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
+import com.epam.gepard.logger.HtmlRunReporter;
+import org.junit.runner.Computer;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,17 +43,19 @@ import com.epam.gepard.logger.XmlRunReporter;
  */
 public class TestClassExecutionThread extends Thread {
 
+    public static final InheritableThreadLocal<TestClassExecutionData> CLASS_DATA_IN_CONTEXT = new InheritableThreadLocal<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestClassExecutionThread.class);
+    private static final Semaphore AVAILABLE = new Semaphore(1, false);
+
     /**
      * Key is the blocker, value is the lock of the blocker.
      */
     private static Map<String, BlockingInfo> testClassBlockingMap = new LinkedHashMap<>(); //blocking TClass map
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestClassExecutionThread.class);
-
-    private static final Semaphore AVAILABLE = new Semaphore(1, false);
 
     //TC executor
-    private boolean enabled; // = false; //weather TC execution enabled for this thread or not
     private final JUnitCore core = new JUnitCore();
+    private boolean enabled; // = false; //weather TC execution enabled for this thread or not
     private TestClassExecutionData classData; // = null; //points to the actual tc, under exec
     private String xmlResultPath;
 
@@ -225,15 +231,25 @@ public class TestClassExecutionThread extends Thread {
     }
 
     private void execClass(final TestClassExecutionData o) {
-        o.tick(); //this thread is healthy
         classData = o;
+        CLASS_DATA_IN_CONTEXT.set(o);
         try {
-            o.setDeathTimeout(o.getTimeout()); //set the TC timeout
-            core.run(o.getTC());
+            HtmlRunReporter reporter = o.getHtmlRunReporter();
+            reporter.hiddenBeforeTestClassExecution();
+            core.addListener(reporter);
+
+            Result result = core.run(Computer.serial(), o.getTestClass());
+            for (Failure failure : result.getFailures()) {
+                LOGGER.debug(failure.toString());
+            }
+            classData.setCountOfRuns(result.getRunCount());
+            core.removeListener(reporter);
+            reporter.hiddenAfterTestClassExecution();
         } catch (Throwable e) {
             //this is gas
             LOGGER.debug("Thread: got EX during JUnitCore execution.", e);
         }
+        CLASS_DATA_IN_CONTEXT.set(null);
         classData = null;
     }
 

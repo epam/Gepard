@@ -22,6 +22,7 @@ package com.epam.gepard.examples.soapui;
 import com.epam.gepard.annotations.TestClass;
 import com.epam.gepard.common.Environment;
 import com.eviware.soapui.tools.SoapUIMockServiceRunner;
+import org.junit.Test;
 
 /**
  * This test class is to provide example usage of SoapUI via Gepard.
@@ -32,10 +33,10 @@ public class SoapUITestBase extends SoapUITestCase {
 
     /**
      * Simple test that loads the project file and executes it.
-     * @throws Exception in case of test failure
      */
-    public void testSoapUISampleAuthenticationExample() {
-        String projectFile = getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat(
+    @Test
+    public void soapUISampleAuthenticationExample() {
+        String projectFile = getTestClassExecutionData().getEnvironment().getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat(
                 "/soapui-examples/Sample-Authentication-Project-soapui-project.xml");
         setProjectFile(projectFile); // Specify test project XML local file path, can use URL instead
         //run the SoapUI test
@@ -46,8 +47,11 @@ public class SoapUITestBase extends SoapUITestCase {
      * Simple test that loads the project file and executes it.
      * @throws Exception in case of test failure
      */
-    public void testSoapUISampleSOAPProjectExample() throws Exception {
-        String projectFile = getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-SOAP-Project-soapui-project.xml");
+    @Test
+    public void soapUISampleSOAPProjectExample() throws Exception {
+        dummyTestCase(); // this is just a trial, don't use it
+        String projectFile = getTestClassExecutionData().getEnvironment()
+                .getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-SOAP-Project-soapui-project.xml");
 
         //run the mock service first
         SoapUIMockServiceRunner mockServiceRunner = new SoapUIMockServiceRunner();
@@ -65,8 +69,11 @@ public class SoapUITestBase extends SoapUITestCase {
      * Simple test that loads the project file and executes it.
      * @throws Exception in case of test failure
      */
-    public void testSoapUISampleRESTProjectExample() throws Exception {
-        String projectFile = getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-REST-Project-soapui-project.xml");
+    @Test
+    public void soapUISampleRESTProjectExample() throws Exception {
+        dummyTestCase(); // this is just a trial, don't use it
+        String projectFile = getTestClassExecutionData().getEnvironment()
+                .getProperty(Environment.GEPARD_TEST_RESOURCE_PATH).concat("/soapui-examples/Sample-REST-Project-soapui-project.xml");
 
         //run the mock service first
         SoapUIMockServiceRunner mockServiceRunner = new SoapUIMockServiceRunner();

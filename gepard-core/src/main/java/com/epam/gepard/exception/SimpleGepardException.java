@@ -31,4 +31,14 @@ public class SimpleGepardException extends RuntimeException {
     public SimpleGepardException(final String message) {
         super(message);
     }
+
+    /**
+     * Constructs a new exception.
+     * @param message is the error text.
+     * @param cause is the root cause of this exception.
+     */
+    public SimpleGepardException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
 }

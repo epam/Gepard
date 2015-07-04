@@ -18,7 +18,7 @@ package com.epam.gepard.selenium.browsers;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.selenium.SeleniumTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 
 /**
  * This browser utility class contains all the Chrome specific methods.
@@ -29,9 +29,10 @@ public class ChromeBrowserHandler extends BrowserHandlerBase {
     /**
      * Constructor of the class.
      *
-     * @param tc parameter specifies the Test Case object
+     * @param tc parameter specifies the Test Class object
+     * @param wdu parameter specifies the WebDriver Util object
      */
-    public ChromeBrowserHandler(SeleniumTestCase tc) {
-        super(tc);
+    public ChromeBrowserHandler(final GepardTestClass tc, final WebDriverUtil wdu) {
+        super(tc, wdu);
     }
 }

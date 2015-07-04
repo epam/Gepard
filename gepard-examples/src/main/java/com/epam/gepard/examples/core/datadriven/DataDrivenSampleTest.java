@@ -19,7 +19,10 @@ package com.epam.gepard.examples.core.datadriven;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * The presented approach below shown the lowest level access to data parameters.
@@ -27,15 +30,17 @@ import com.epam.gepard.generic.OtherTestCase;
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-2", name = "Data Driven Test Sample")
-public class DataDrivenSampleTest extends OtherTestCase {
+@TestClass(id = "DEMO-11", name = "Data Driven Test Sample")
+public class DataDrivenSampleTest implements GepardTestClass {
 
+    @Test
     public void testDoNotUseData() {
         logComment("This TC does not use data at all.");
     }
 
+    @Test
     public void testDoUseData() {
-        String[] parameters = getClassData().getDrivenData().getParameters();
+        String[] parameters = getTestClassExecutionData().getDrivenData().getParameters();
         logComment("First check if we have data available as we expect...");
         assertTrue("Test is missing parameters!", parameters != null); //we need parameters
         assertTrue("Test is missing correct number of parameters!", parameters.length >= 3); //we need 2 parameters for this TC, so check it now

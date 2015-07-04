@@ -27,7 +27,7 @@ This will execute lots of example tests from gepard-examples module.
 #Quick intro for developers/contributors
 
 ####Requirements
-* Java JDK 7 (or JDK 8)
+* Java JDK 8
 
 ####Advised working environment
 * Eclipse / IntelliJ

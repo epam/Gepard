@@ -68,8 +68,7 @@ public class ResultCollectorTest {
     @Test
     public void testWaitForExecutionEndAndCollectResults() throws InterruptedException {
         //GIVEN
-        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
-        Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<String, TestClassExecutionData>();
+        Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<>();
         TestClassExecutionData executionData = new TestClassExecutionData("testID", environment);
         Whitebox.setInternalState(executionData, "lock", -1);
         Whitebox.setInternalState(executionData, "testURL", "testURL");
@@ -92,8 +91,7 @@ public class ResultCollectorTest {
     @Test
     public void testWaitForExecutionEndAndCollectResultsWithTwoDatas() throws InterruptedException {
         //GIVEN
-        environment.setProperty(Environment.GEPARD_TEST_TIMEOUT, "1");
-        Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<String, TestClassExecutionData>();
+        Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<>();
         TestClassExecutionData executionData = new TestClassExecutionData("testID", environment);
         Whitebox.setInternalState(executionData, "lock", -1);
         Whitebox.setInternalState(executionData, "testURL", "testURL");

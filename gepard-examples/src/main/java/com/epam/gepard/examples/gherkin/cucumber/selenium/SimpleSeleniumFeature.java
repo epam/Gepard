@@ -18,10 +18,13 @@ package com.epam.gepard.examples.gherkin.cucumber.selenium;
  You should have received a copy of the GNU General Public License
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
+import com.epam.gepard.generic.GepardTestClass;
+import com.epam.gepard.selenium.browsers.WebDriverUtil;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import org.junit.Assert;
-import org.openqa.selenium.WebDriver;
 
-import com.epam.gepard.gherkin.cucumber.ParentCucumberTestCase;
+//import com.epam.gepard.gherkin.cucumber.ParentCucumberTestCase;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -31,18 +34,33 @@ import cucumber.api.java.en.When;
  * Glue code for the parent cucumber test case.
  * Both feature and glue code is ok, test should pass.
  */
-@ParentCucumberTestCase(name = "com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest")
-public class SimpleSeleniumFeature extends CucumberAndSeleniumTestCaseConnector {
+//@ParentCucumberTestCase(name = "com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest")
+public class SimpleSeleniumFeature implements GepardTestClass {
 
-    private WebDriver wd;
+    private WebDriverUtil webDriverUtil = new WebDriverUtil(this);
+
+    /**
+     * Be aware that this is the cucumber @Before method, not the JUnit @Before method.
+     */
+    @Before
+    public void buildWebDriverInstance() {
+        webDriverUtil.buildWebDriverInstance("http://www.epam.com");
+    }
+
+    /**
+     * Be aware that this is the cucumber @After method, not the JUnit @After method.
+     */
+    @After
+    public void destroyWebDriverInstance() {
+        webDriverUtil.destroyWebDriverInstance();
+    }
 
     /**
      * Sample Cucumber glue code, this part pass.
      */
     @Given("^I have access to Selenium$")
     public void iHaveAccessToSelenium() {
-        wd = getTestCase().getWebDriver();
-        Assert.assertNotNull(wd);
+        Assert.assertNotNull(webDriverUtil);
     }
 
     /**
@@ -52,9 +70,8 @@ public class SimpleSeleniumFeature extends CucumberAndSeleniumTestCaseConnector 
     @When("^I visit page: '(.+)'$")
     public void iVisitPageUrl(String url) {
         logComment("Open URL: " + url);
-        wd.get(url);
-        getTestCase().getSeleniumUtil().waitPageLoad(getTestCase().getSelenium());
-        getTestCase().logEvent("Page loaded", true);
+        webDriverUtil.getWebDriver().get(url);
+        webDriverUtil.logEvent("Page loaded", true);
     }
 
     /**
@@ -63,7 +80,7 @@ public class SimpleSeleniumFeature extends CucumberAndSeleniumTestCaseConnector 
      */
     @Then("^I should find in title: '(.+)'$")
     public void iShouldFindInTitlePart(String titlePart) {
-        String title = wd.getTitle();
+        String title = webDriverUtil.getWebDriver().getTitle();
         Assert.assertTrue("Page title differs from what expected: " + titlePart + ", meanwhile found:" + title, title.contains(titlePart));
     }
 

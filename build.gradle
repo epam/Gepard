@@ -38,13 +38,13 @@ subprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
 
-    sourceCompatibility = 1.7
+    sourceCompatibility = 1.8
 
     def checkstyleCommonReportDir = new File(rootProject.buildDir.absolutePath , '/reports/checkstyle')
     def checkstyleSubProjectReportFile = new File(project.buildDir.absolutePath , '/reports/checkstyle/main.xml')
     checkstyle.configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
     checkstyle.configProperties = ['samedir' : "$rootDir/config/checkstyle"]
-    checkstyle.toolVersion = '6.1.1'
+    checkstyle.toolVersion = '5.9'
     checkstyle.ignoreFailures = true
     checkstyleMain << {
         //noinspection GroovyAssignabilityCheck

@@ -19,58 +19,35 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
-
-import java.util.Date;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.Timeout;
 
 /**
  * This test shows different timeout error handling mechanisms within Gepard.
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-1", name = "Timeout Handling, Sample")
-public class SampleTimeoutHandlingTest extends OtherTestCase {
+@TestClass(id = "DEMO-4", name = "Timeout Handling, Sample")
+public class SampleTimeoutHandlingTest implements GepardTestClass {
 
-    public void testSimpleTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
-        Thread.sleep(30000); //30 sec
+    //CHECKSTYLE.OFF
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(5);
+    //CHECKSTYLE.ON
+
+    @Test(timeout = 2000)
+    public void simpleMethodTimeoutTest() throws InterruptedException {
+        logStep("Test the built in JUnit timeout for this class. Timeout is 2 sec meanwhile this test runs (or would run) for 4 secs.");
+        Thread.sleep(4000); //4 sec
         org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 
-    public void testDoNotLetTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
-        logComment("So this test must pass");
-        for (int i = 0; i < 5; i++) {
-            logStep("We may sleep, TC still not fail, count: " + i);
-            Thread.sleep(1000); //1 sec, but 5 times, it is far enough to test its activity reliability
-        }
-        logComment("We WON!");
-    }
-
-    public void testLetTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In gepard.properties, the timeout was set to 2 secs for this class, but we keep this thread alive.");
-        logComment("So this test must pass");
-        for (int i = 0; i < 5; i++) {
-            logStep("We may sleep, TC still not fail, count: " + i);
-            Thread.sleep(1000); //1 sec, but 20 time, it is far enough to test its activity reliability
-        }
-        logComment("We WON!");
-        logStep("But now, we continue and let this TC fail with timeout.");
+    @Test
+    public void simpleClassLevelTimeoutTest() throws InterruptedException {
+        logStep("Test the built in class level timeout. Class level Timeout is 5 sec meanwhile this test runs (or would run) for 10 secs.");
         Thread.sleep(10000); //10 sec
-        org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
-    }
-
-    public void testTimeoutWithoutInterruptPossibilityTest() {
-        logStep("Test the built in timeout. In gepard.properties, the timeout was set to 2 secs for this class.");
-        logComment("But now we do not let this test interrupted. Normal timeout is expected.");
-        Date start = new Date();
-        Date end = new Date(start.getTime() + 10000);
-        while (true) { //10 sec activity without interrupt possibility
-            Date now = new Date();
-            if (now.getTime() > end.getTime()) {
-                break;
-            }
-        }
         org.junit.Assert.fail("THIS IS BAD, TIMEOUT HAS ELAPSED, STILL WE ARE LIVING!");
     }
 

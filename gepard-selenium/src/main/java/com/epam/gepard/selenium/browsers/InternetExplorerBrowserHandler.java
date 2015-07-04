@@ -18,7 +18,7 @@ package com.epam.gepard.selenium.browsers;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.selenium.SeleniumTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 
 /**
  * This browser utility class contains all the Internet Explorer specific methods.
@@ -28,10 +28,11 @@ public class InternetExplorerBrowserHandler extends BrowserHandlerBase {
 
     /**
      * Constructor of the class.
-     * @param tc parameter specifies the Test Case object
+     * @param tc parameter specifies the Test Class object
+     * @param wdu parameter specifies the WebDriver Util object
      */
-    public InternetExplorerBrowserHandler(SeleniumTestCase tc) {
-        super(tc);
+    public InternetExplorerBrowserHandler(final GepardTestClass tc, final WebDriverUtil wdu) {
+        super(tc, wdu);
     }
 
 }

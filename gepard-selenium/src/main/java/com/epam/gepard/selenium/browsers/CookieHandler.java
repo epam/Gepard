@@ -18,7 +18,6 @@ package com.epam.gepard.selenium.browsers;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.selenium.SeleniumTestCase;
 import com.epam.gepard.util.Util;
 
 import java.text.MessageFormat;
@@ -50,11 +49,11 @@ public class CookieHandler {
     /**
      * Delete all cookies on domain.
      *
-     * @param tc parameter specifies the Test Case object
+     * @param wdu parameter specifies the Web Driver Util object
      */
-    public void deleteAllCookiesOnDomain(final SeleniumTestCase tc) {
-        tc.getSelenium().deleteAllVisibleCookies();
-        tc.logComment("[CookieHandler] All the cookies deleted for the current domain.");
+    public void deleteAllCookiesOnDomain(final WebDriverUtil wdu) {
+        wdu.getSelenium().deleteAllVisibleCookies();
+        wdu.getGepardTestClass().logComment("[CookieHandler] All the cookies deleted for the current domain.");
     }
 
     public void setDomains(final String[] domains) {
@@ -64,74 +63,74 @@ public class CookieHandler {
     /**
      * Delete cookie on domain.
      *
-     * @param tc   parameter specifies the Test Case object
+     * @param wdu  parameter specifies the Test Case object
      * @param name the name
      */
-    public void deleteCookieOnDomain(final SeleniumTestCase tc, String name) {
-        tc.getSelenium().deleteCookie(name, "path=/, domain=" + getDomain(tc));
+    public void deleteCookieOnDomain(final WebDriverUtil wdu, String name) {
+        wdu.getSelenium().deleteCookie(name, "path=/, domain=" + getDomain(wdu));
     }
 
-    private String getDomain(final SeleniumTestCase tc) {
-        return tc.getSelenium().getLocation().replaceAll(".*://[^.]{2,3}", "").replaceAll("\\/.*", "");
+    private String getDomain(final WebDriverUtil wdu) {
+        return wdu.getSelenium().getLocation().replaceAll(".*://[^.]{2,3}", "").replaceAll("\\/.*", "");
     }
 
     /**
-     * Updates a cookie. First calls the {@link #deleteCookieOnDomain(SeleniumTestCase tc, String name)},
-     * then the {@link #createCookie(SeleniumTestCase, String, String)} method with the given parameters.
+     * Updates a cookie. First calls the {@link #deleteCookieOnDomain(WebDriverUtil wdu, String name)},
+     * then the {@link #createCookie(WebDriverUtil, String, String)} method with the given parameters.
      *
-     * @param tc    the TestCase
+     * @param wdu   the TestCase
      * @param name  the name
      * @param value the value
      */
-    public void updateCookie(final SeleniumTestCase tc, String name, String value) {
-        deleteCookieOnDomain(tc, name);
-        createCookie(tc, name, value);
+    public void updateCookie(final WebDriverUtil wdu, String name, String value) {
+        deleteCookieOnDomain(wdu, name);
+        createCookie(wdu, name, value);
     }
 
     /**
      * Creates the cookie.
      *
-     * @param tc     the TestCase
+     * @param wdu     the TestCase
      * @param name   the name
      * @param value  the value
      * @param maxAge the max age
      */
-    public void createCookie(final SeleniumTestCase tc, String name, String value, String maxAge) {
-        tc.getSelenium().createCookie(name + "=" + value, MessageFormat.format("path=/, max_age={0}, domain={1}", maxAge, getDomain(tc)));
+    public void createCookie(final WebDriverUtil wdu, String name, String value, String maxAge) {
+        wdu.getSelenium().createCookie(name + "=" + value, MessageFormat.format("path=/, max_age={0}, domain={1}", maxAge, getDomain(wdu)));
     }
 
     /**
      * Creates the cookie.
      *
-     * @param tc    the TestCase
+     * @param wdu   the TestCase
      * @param name  the name
      * @param value the value
      */
-    public void createCookie(final SeleniumTestCase tc, String name, String value) {
-        createCookie(tc, name, value, "3600");
+    public void createCookie(final WebDriverUtil wdu, String name, String value) {
+        createCookie(wdu, name, value, "3600");
     }
 
     /**
      * Gets the cookie.
      *
-     * @param tc the tc
+     * @param wdu the tc
      * @return the cookie
      */
-    public String getCookie(final SeleniumTestCase tc) {
-        return tc.getSelenium().getCookie();
+    public String getCookie(final WebDriverUtil wdu) {
+        return wdu.getSelenium().getCookie();
     }
 
     /**
      * Gets all the cookies for the opened page.
      *
-     * @param tc is the test case object
+     * @param wdu is the test case object
      * @return with the cookies
      */
-    public Map<String, String> getAllCookies(SeleniumTestCase tc) {
+    public Map<String, String> getAllCookies(WebDriverUtil wdu) {
         Map<String, String> retval = new HashMap<String, String>();
 
         try {
-            String[] cookies = tc.getSelenium().getCookie().split(COOKIE_SEPARATOR);
+            String[] cookies = wdu.getSelenium().getCookie().split(COOKIE_SEPARATOR);
             for (String cookie : cookies) {
 
                 String key = util.parseData(cookie, "^(.*?)=");
@@ -139,7 +138,7 @@ public class CookieHandler {
                 retval.put(key, value);
             }
         } catch (Exception e) {
-            tc.logWarning("Unable to get cookies!");
+            wdu.getGepardTestClass().logWarning("Unable to get cookies!");
         }
 
         return retval;
@@ -148,16 +147,16 @@ public class CookieHandler {
     /**
      * Gets the cookie by name.
      *
-     * @param tc   the tc
+     * @param wdu   the tc
      * @param name the name
      * @return the cookie by name
      */
-    public static String getCookieByName(final SeleniumTestCase tc, String name) {
+    public static String getCookieByName(final WebDriverUtil wdu, String name) {
         String cookie = "";
         try {
-            cookie = tc.getSelenium().getCookieByName(name);
+            cookie = wdu.getSelenium().getCookieByName(name);
         } catch (Exception e) {
-            tc.logWarning("[CookieHandler][getCookieByName] No such cookie: " + name);
+            wdu.getGepardTestClass().logWarning("[CookieHandler][getCookieByName] No such cookie: " + name);
         }
         return cookie;
     }

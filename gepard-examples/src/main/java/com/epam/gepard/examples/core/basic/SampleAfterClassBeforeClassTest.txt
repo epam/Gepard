@@ -3,13 +3,12 @@
 # Use % sign as separator!
 # Params: BFAIL, BNA, AFAIL, ANA
 ##################################
-false%false%false%false
-false%true%false%false
-true%false%false%false
-false%false%true%false
-false%false%false%true
-true%false%true%false
-true%false%false%true
-false%true%true%false
-false%true%false%true
-
+NoInfluence%false%false%false%false
+BeforeNA%false%true%false%false
+BeforeFail%true%false%false%false
+AfterFail%false%false%true%false
+AfterNA%false%false%false%true
+BeforeAfterFail%true%false%true%false
+BeforeFailAfterNA%true%false%false%true
+BeforeNAAfterFail%false%true%true%false
+BeforeNAAfterNA%false%true%false%true

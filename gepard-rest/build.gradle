@@ -1,0 +1,9 @@
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    compile project(':gepard-core')
+    compile 'net.sourceforge.htmlunit:htmlunit:2.15'
+    compile 'xerces:xercesImpl:2.6.2-jxb-1.0.6'
+    compile 'org.json:org.json:2.0'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
+}

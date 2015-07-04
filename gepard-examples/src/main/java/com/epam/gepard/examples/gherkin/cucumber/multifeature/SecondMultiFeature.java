@@ -18,15 +18,13 @@ package com.epam.gepard.examples.gherkin.cucumber.multifeature;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.gherkin.cucumber.CucumberTestCaseConnector;
-import com.epam.gepard.gherkin.cucumber.ParentCucumberTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import cucumber.api.java.en.Given;
 
 /**
  * Glue code for the parent cucumber test case.
  */
-@ParentCucumberTestCase(name = "com.epam.gepard.examples.gherkin.cucumber.multifeature.MultiFeaturesTest")
-public class SecondMultiFeature extends CucumberTestCaseConnector {
+public class SecondMultiFeature implements GepardTestClass {
 
     /**
      * Sample Cucumber glue code.

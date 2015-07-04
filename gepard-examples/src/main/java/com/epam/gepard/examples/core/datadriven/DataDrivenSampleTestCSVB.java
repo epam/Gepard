@@ -19,15 +19,18 @@ package com.epam.gepard.examples.core.datadriven;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Sample data driven test with data in CSV.
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-2", name = "Data Driven Test Sample - CVS")
-public class DataDrivenSampleTestCSVB extends OtherTestCase {
+@TestClass(id = "DEMO-13", name = "Data Driven Test Sample - CVS")
+public class DataDrivenSampleTestCSVB implements GepardTestClass {
 
     private static final int NUMBER_OF_PARAMETERS = 3;
     private static final int ROW_FOUR = 4;
@@ -36,9 +39,10 @@ public class DataDrivenSampleTestCSVB extends OtherTestCase {
      * This test does not use any data value, but use info of which data row is actually running,
      * and if it is the 4th row, set this TC as NA.
      */
+    @Test
     public void testDoNotUseData() {
         logComment("This TC does not use data at all.");
-        if (getClassData().getDrivenDataRowNo() == ROW_FOUR) {  //in case we are at row 4 (that is the 5th execution), set this TC as N/A
+        if (getTestClassExecutionData().getDrivenDataRowNo() == ROW_FOUR) {  //in case we are at row 4 (that is the 5th execution), set this TC as N/A
             naTestCase("To test this as well");
         }
     }
@@ -46,8 +50,9 @@ public class DataDrivenSampleTestCSVB extends OtherTestCase {
     /**
      * This TC shows a special access to the data array. This is the "low level" access.
      */
+    @Test
     public void testDoUseData() {
-        String[] parameters = getClassData().getDrivenData().getParameters();
+        String[] parameters = getTestClassExecutionData().getDrivenData().getParameters();
         logComment("First check if we have data available as we expect...");
         assertTrue("Test is missing parameters!", parameters != null); //we need parameters
         assertTrue("Test is missing correct number of parameters!", parameters.length == NUMBER_OF_PARAMETERS); //we need 2 parameters for this TC, so check it now
@@ -55,7 +60,7 @@ public class DataDrivenSampleTestCSVB extends OtherTestCase {
         logStep("Test if we can use the params:");
         logEvent("Param 1:" + parameters[0] + ", Param 2:" + parameters[1] + ", Param 3:" + parameters[2]);
         logStep("Test fails, if Param 2 is 'WILLFAIL'");
-        if (getClassData().getDrivenDataRowNo() == 2) {
+        if (getTestClassExecutionData().getDrivenDataRowNo() == 2) {
             dummyTestCase(); //in case we are at row 2 (that is the 3th execution), set this TC as Dummy one
         }
         assertTrue("This need to be failed.", parameters[2].compareTo("WILLFAIL") != 0); //fail the TC if the specific parameter has special value

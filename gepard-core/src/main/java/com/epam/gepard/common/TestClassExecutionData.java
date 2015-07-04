@@ -19,9 +19,7 @@ package com.epam.gepard.common;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import java.util.concurrent.Future;
-
-import junit.framework.Test;
+import com.epam.gepard.logger.HtmlRunReporter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.datadriven.DataDrivenParameters;
 import com.epam.gepard.datadriven.DataFeederLoader;
-import com.epam.gepard.inspector.TestCaseSet;
 
 /**
  * This class holds Test Class execution information.
@@ -54,6 +51,8 @@ public final class TestClassExecutionData {
     private int countFailed;
     private int countNA;
     private int countDummy;
+    private boolean isProblematic;
+    private int countOfRuns;
     /**
      * To store the data driven parameters for this test class run.
      */
@@ -66,8 +65,6 @@ public final class TestClassExecutionData {
     private DataFeederLoader dataFeederLoader;
 
     private int lock; //Thread lock handling. 0 = not locked, waiting for lock.
-    private Future task;
-    private TestCaseSet testCaseSet;
 
     private final String id;
     /**
@@ -76,13 +73,6 @@ public final class TestClassExecutionData {
     private String blockerString;
     private boolean selfEnabledBlocker;
 
-    /**
-     * Store the class level timeout info.
-     */
-    //Timeout handler
-    private long heart; // 0 healthy, <0 less healthy
-    private final long defaultTimeout;
-    private long timeout;
     /**
      * The test name that will appear in the log.
      */
@@ -93,10 +83,11 @@ public final class TestClassExecutionData {
     private String testScriptId = "0.000";
 
     private StringBuilder systemOut;
-    private Test tc;
+    private Class<?> testClass;
 
     private String originalLine;
     private Environment environment;
+    private HtmlRunReporter htmlRunReporter;
 
     /**
      * Test execution data for a Test Class (inherited TestCase class).
@@ -105,92 +96,40 @@ public final class TestClassExecutionData {
      */
     public TestClassExecutionData(final String id, final Environment environment) {
         this.environment = environment;
-        this.defaultTimeout = Long.parseLong(environment.getProperty(Environment.GEPARD_TEST_TIMEOUT));
-        setDeathTimeout(defaultTimeout); //initiate the timeout
         systemOut = new StringBuilder();
         this.id = id;
+        isProblematic = false;
+    }
+
+    public Class getTestClass() {
+        return testClass;
+    }
+
+    public void setTestClass(final Class<?> testClass) {
+        this.testClass = testClass;
     }
 
     public String getID() {
         return id;
     }
 
-    public Future getTask() {
-        return task;
-    }
-
-    public void setTask(final Future task) {
-        this.task = task;
-    }
-
-    public TestCaseSet getTestCaseSet() {
-        return testCaseSet;
-    }
-
     public DataFeederLoader getDataFeederLoader() {
         return dataFeederLoader;
     }
 
-    // THREAD TIMEOUT HANDLING
-
     /**
-     * Store the class level timeout info.
-     *
-     * @return the class level test execution timeout.
+     * Set the class as problematic (probably issue in @BeforeClass or @AfterClass methods.
      */
-    public long getTimeout() {
-        return timeout;
+    public void setItAsProblematic() {
+        isProblematic = true;
     }
 
     /**
-     * Sets the class level test execution timeout.
-     *
-     * @param timeout to be set.
+     * Get info if the test class execution was problematic or not.
+     * @return with the boolean info
      */
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
-    }
-
-    /**
-     * Set the timeout of the TC execution.
-     *
-     * @param deathTimeout is the timeout is seconds.
-     */
-    public void setDeathTimeout(final long deathTimeout) {
-        this.timeout = deathTimeout;
-    }
-
-    /**
-     * Get the timeout of the TC execution.
-     *
-     * @return with the actual timeout.
-     */
-    public long getDeathTimeout() {
-        return timeout;
-    }
-
-    /**
-     * Decrease the health status. Used to count the timeout ticks.
-     * The thread tries to keep it at 0, this methods counts how old this value is, i.e. how long the thread does nothing.
-     */
-    public void timeoutTick() {
-        heart--;
-    }
-
-    /**
-     * Getter of class execution heart healthy factor.
-     *
-     * @return with the health level. The lower is the less healthy, 0 is the best status.
-     */
-    public long getHealth() {
-        return heart;
-    }
-
-    /**
-     * Set the class execution healthy. Its heart is ticking.
-     */
-    public void tick() {
-        heart = 0;
+    public boolean isProblematic() {
+        return isProblematic;
     }
 
     // THREAD LOCK HANDLING
@@ -240,7 +179,7 @@ public final class TestClassExecutionData {
      * The test name that will appear in the log.
      * @return with the annotated name of the test class.
      */
-    public String getTestStriptName() {
+    public String getTestScriptName() {
         return testScriptName;
     }
 
@@ -248,7 +187,7 @@ public final class TestClassExecutionData {
      * Sets the test class name from annotation.
      * @param testScriptName is the given name.
      */
-    public void setTestStriptName(final String testScriptName) {
+    public void setTestScriptName(final String testScriptName) {
         this.testScriptName = testScriptName;
     }
 
@@ -256,20 +195,12 @@ public final class TestClassExecutionData {
      * The TS ID that will appear in the log.
      * @return with the annotated ID value.
      */
-    public String getTestStriptId() {
+    public String getTestScriptId() {
         return testScriptId;
     }
 
-    public void setTestStriptId(final String testScriptId) {
+    public void setTestScriptId(final String testScriptId) {
         this.testScriptId = testScriptId;
-    }
-
-    public void setTC(final Test tc) {
-        this.tc = tc;
-    }
-
-    public Test getTC() {
-        return tc;
     }
 
     public int getRunned() {
@@ -288,7 +219,6 @@ public final class TestClassExecutionData {
         synchronized (systemOut) {
             systemOut.append(message).append("\n");
         }
-        tick(); //reset timeout counter
     }
 
     /**
@@ -329,11 +259,10 @@ public final class TestClassExecutionData {
 
     /**
      * Load data driven parameters for the specific run (row) of the test class.
-     * @param parameterNames will be used as names of the parameters.
      */
-    public void loadParameters(final String[] parameterNames) {
+    public void loadParameters() {
         if (dataFeederLoader != null) {
-            setParameters(dataFeederLoader.getParameterRow(className, drivenDataRowNo, parameterNames));
+            setParameters(dataFeederLoader.getParameterRow(className, drivenDataRowNo));
         } else {
             AllTestRunner.CONSOLE_LOG.info("Loaded: " + className + ", Non-Data-driven test");
         }
@@ -349,10 +278,6 @@ public final class TestClassExecutionData {
 
     public String getOriginalLine() {
         return originalLine;
-    }
-
-    public void setTestCaseSet(final TestCaseSet testCaseSet) {
-        this.testCaseSet = testCaseSet;
     }
 
     public int getDrivenDataRowNo() {
@@ -425,5 +350,21 @@ public final class TestClassExecutionData {
 
     public Environment getEnvironment() {
         return environment;
+    }
+
+    public void setHtmlRunReporter(HtmlRunReporter htmlRunReporter) {
+        this.htmlRunReporter = htmlRunReporter;
+    }
+
+    public HtmlRunReporter getHtmlRunReporter() {
+        return htmlRunReporter;
+    }
+
+    public int getCountOfRuns() {
+        return countOfRuns;
+    }
+
+    public void setCountOfRuns(int countOfRuns) {
+        this.countOfRuns = countOfRuns;
     }
 }

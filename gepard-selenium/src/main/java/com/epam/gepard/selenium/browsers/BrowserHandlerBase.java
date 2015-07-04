@@ -18,7 +18,7 @@ package com.epam.gepard.selenium.browsers;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
-import com.epam.gepard.selenium.SeleniumTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import org.openqa.selenium.Dimension;
 
 /**
@@ -27,44 +27,18 @@ import org.openqa.selenium.Dimension;
  * @author robert_ambrus, tamas_kohegyi
  */
 public abstract class BrowserHandlerBase {
-    private SeleniumTestCase tc;
+    private WebDriverUtil wdu;
+    private GepardTestClass tc;
 
     /**
      * Constructor of the class.
      *
-     * @param tc parameter specifies the Test Case object
+     * @param tc parameter specifies the Test Class object
+     * @param wdu parameter specifies the WebDriver Util object
      */
-    public BrowserHandlerBase(SeleniumTestCase tc) {
+    public BrowserHandlerBase(final GepardTestClass tc, final WebDriverUtil wdu) {
         this.tc = tc;
-    }
-
-    /**
-     * Restart the browser with the default settings (clear cookies, enable javascript support).
-     * @param domains are the list of domains from where we should take care about the cookies.
-     */
-    public void restartBrowser(final String[] domains) {
-        CookieHandler cookieHandler = new CookieHandler(domains);
-        restartBrowser(cookieHandler, true, true);
-    }
-
-    /**
-     * Restart the browser with the specified settings.
-     *
-     * @param clearCookies      parameter specifies whether clear cookies
-     * @param javascriptSupport parameter specifies whether enable javascript support
-     * @param cookieHandler parameter specifies the handler class of the cookies
-     */
-    public void restartBrowser(final CookieHandler cookieHandler, final boolean clearCookies, final boolean javascriptSupport) {
-        //clear domain cookies if necessary
-        if (clearCookies) {
-            cookieHandler.deleteAllCookiesOnDomain(tc);
-        }
-
-        //set javascript support
-        setJavascriptSupport(javascriptSupport);
-
-        //restart browser
-        tc.restartBrowser();
+        this.wdu = wdu;
     }
 
     /**
@@ -93,13 +67,16 @@ public abstract class BrowserHandlerBase {
      */
     public void setBrowserSize(Dimension dimension) {
         if (dimension == null) {
-            tc.getSelenium().windowMaximize();
+            wdu.getSelenium().windowMaximize();
         } else {
-            tc.getSelenium().getEval("window.resizeTo(" + dimension.getWidth() + "," + dimension.getHeight() + "); window.moveTo(0,0);");
+            wdu.getSelenium().getEval("window.resizeTo(" + dimension.getWidth() + "," + dimension.getHeight() + "); window.moveTo(0,0);");
         }
     }
 
-    SeleniumTestCase getTc() {
+    GepardTestClass getTc() {
         return tc;
+    }
+    WebDriverUtil getWebDriverUtil() {
+        return wdu;
     }
 }

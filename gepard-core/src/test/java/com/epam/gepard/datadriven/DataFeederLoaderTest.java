@@ -50,14 +50,12 @@ public class DataFeederLoaderTest {
     @Mock
     private DataDrivenParameterArray outputParameterArray;
 
-    private Environment environment;
-
     private DataFeederLoader underTest;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        environment = new Environment();
+        Environment environment = new Environment();
         underTest = new DataFeederLoader("com.epam.test.TestClass", "", environment);
     }
 
@@ -122,11 +120,11 @@ public class DataFeederLoaderTest {
         String className = "com.epam.test.TestClass";
         int rowNumber = 1;
         String[] arrayElement = new String[]{"something"};
-        String[] parameterNames = new String[]{"test"};
+        String[] parameterNames = new String[]{"PAR0"};
         Whitebox.setInternalState(underTest, "parameterArray", parameterArray);
         given(parameterArray.get(rowNumber)).willReturn(arrayElement);
         //WHEN
-        DataDrivenParameters actual = underTest.getParameterRow(className, rowNumber, parameterNames);
+        DataDrivenParameters actual = underTest.getParameterRow(className, rowNumber);
         //THEN
         Assert.assertArrayEquals(parameterNames, actual.getParameterNames());
         Assert.assertArrayEquals(arrayElement, actual.getParameters());
@@ -143,7 +141,7 @@ public class DataFeederLoaderTest {
         given(parameterArray.get(rowNumber)).willReturn(arrayElement);
         given(parameterArray.getParameterNames()).willReturn(parameterNames);
         //WHEN
-        DataDrivenParameters actual = underTest.getParameterRow(className, rowNumber, null);
+        DataDrivenParameters actual = underTest.getParameterRow(className, rowNumber);
         //THEN
         Assert.assertArrayEquals(parameterNames, actual.getParameterNames());
         Assert.assertArrayEquals(arrayElement, actual.getParameters());

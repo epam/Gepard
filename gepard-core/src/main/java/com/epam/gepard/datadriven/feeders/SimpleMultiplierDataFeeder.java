@@ -65,6 +65,9 @@ public class SimpleMultiplierDataFeeder implements GepardDataFeeder {
 
     /**
      * This Data Feeder handles the txt and cvs files.
+     * @param className is the name of the caller test class
+     * @param inputParameterArray is the original data parameter array
+     * @return with the updated data parameter array
      */
     @Override
     public DataDrivenParameterArray calculateParameterArray(final String className, final DataDrivenParameterArray inputParameterArray) {

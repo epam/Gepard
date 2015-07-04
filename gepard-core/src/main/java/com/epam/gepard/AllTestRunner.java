@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Properties;
 
+import com.epam.gepard.helper.DateHelper;
 import junit.textui.TestRunner;
 
 import org.slf4j.Logger;
@@ -36,16 +37,13 @@ import com.epam.gepard.common.helper.ResultCollector;
 import com.epam.gepard.common.helper.TestFailureReporter;
 import com.epam.gepard.common.threads.ExecutorThreadManager;
 import com.epam.gepard.common.threads.RemoteControlHandlerThread;
-import com.epam.gepard.common.threads.TimeoutHandlerThread;
 import com.epam.gepard.common.threads.handler.RemoteControlHandler;
-import com.epam.gepard.common.threads.handler.TimeoutHandler;
 import com.epam.gepard.common.threads.helper.ServerSocketFactory;
 import com.epam.gepard.exception.ComplexGepardException;
 import com.epam.gepard.exception.ShutDownException;
 import com.epam.gepard.filter.ExpressionTestFilter;
 import com.epam.gepard.generic.GenericListTestSuite;
 import com.epam.gepard.helper.AllTestResults;
-import com.epam.gepard.inspector.TestFactory;
 import com.epam.gepard.logger.LogFileWriter;
 import com.epam.gepard.logger.LogFinalizer;
 import com.epam.gepard.logger.LogFolderCreator;
@@ -82,12 +80,10 @@ public class AllTestRunner extends TestRunner {
 
     private static String systemUnderTestVersion;
 
-    private static TimeoutHandlerThread gepardTimeout;
     private static RemoteControlHandlerThread gepardRemote;
 
     private static ExecutorThreadManager executorThreadManager = new ExecutorThreadManager();
 
-    private final TimeoutHandler timeoutHandler = new TimeoutHandler();
     private final RemoteControlHandler remoteControlHandler = new RemoteControlHandler();
 
     private ReportFinalizer reportFinalizer;
@@ -163,8 +159,6 @@ public class AllTestRunner extends TestRunner {
                 AllTestRunner.gepardRemote.start(); //start remote control
             }
 
-            //initiate the timeout handler thread
-            initiateTheTimeoutHandlerThread(this);
             //if full remote control, then wait for the kill sign
             if (environment.getBooleanProperty(Environment.GEPARD_REMOTE_FULL_CONTROL)) {
                 initiateGepardRemoteControl();
@@ -175,7 +169,7 @@ public class AllTestRunner extends TestRunner {
                     ExitCode.EXIT_CODE_BAD_SETUP);
         }
         try {
-            runAll(testListFile, consoleWriter);
+            runAll(testListFile);
         } catch (ShutDownException e) {
             exitFromGepard(e.getExitCode());
         } catch (ComplexGepardException e) {
@@ -185,12 +179,6 @@ public class AllTestRunner extends TestRunner {
                     ExitCode.EXIT_CODE_UNKNOWN_ERROR);
         }
         exitFromGepard();
-    }
-
-    private void initiateTheTimeoutHandlerThread(final AllTestRunner runner) {
-        AllTestRunner.gepardTimeout = new TimeoutHandlerThread(runner.getTimeoutHandler());
-        AllTestRunner.gepardTimeout.setName("GEPARD Timeout Handler"); //set its name
-        AllTestRunner.gepardTimeout.start(); //start remote control
     }
 
     private void initProperties(final Environment environment, final String propFileList) {
@@ -222,10 +210,6 @@ public class AllTestRunner extends TestRunner {
         AllTestRunner.exitCode = exitCode;
     }
 
-    public static TimeoutHandlerThread getGepardTimeout() {
-        return gepardTimeout;
-    }
-
     public static RemoteControlHandlerThread getGepardRemote() {
         return gepardRemote;
     }
@@ -236,9 +220,8 @@ public class AllTestRunner extends TestRunner {
      * @param testListFile is the config file of tests.
      * @throws Exception in case of tc failure
      */
-    void runAll(final String testListFile, final ConsoleWriter consoleWriter) throws Exception {
+    void runAll(final String testListFile) throws Exception {
         logFolderCreator.prepareOutputFolders();
-        setupTestFactory();
         //---------------
         GenericListTestSuite gSuite = tryToCreateTestSuiteList(testListFile);
 
@@ -256,14 +239,13 @@ public class AllTestRunner extends TestRunner {
         //now the test is running, we have nothing else to do just prepare the summary result, first the header
         Properties props = new Properties();
         Calendar cal = Calendar.getInstance();
-        props.setProperty("Date", gSuite.formatDate(cal));
+        DateHelper dateHelper = new DateHelper();
+        props.setProperty("Date", dateHelper.getShortStringFromDate(cal));
         //set up Loggers
         LogFileWriter htmlLog = logFileWriterFactory.createSpecificLogWriter("index.html", "html", Environment.GEPARD_HTML_RESULT_PATH, environment);
         LogFileWriter csvLog = logFileWriterFactory.createSpecificLogWriter("results.csv", "csv", Environment.GEPARD_CSV_RESULT_PATH, environment);
         LogFileWriter quickLog = logFileWriterFactory.createSpecificLogWriter("results.plain", "plain", Environment.GEPARD_RESULT_PATH, environment);
         prepareHeaders(props, htmlLog, csvLog, quickLog);
-
-        Environment.setScript(Environment.createTestScript("" + GenericListTestSuite.formatDateTime(cal)));
 
         resultCollector.waitForExecutionEndAndCollectResults(allTestResults, htmlLog, csvLog);
         //Test Execution is ended
@@ -276,8 +258,6 @@ public class AllTestRunner extends TestRunner {
 
         logFinalizer.finalizeLogs(props, htmlLog, csvLog, quickLog, executorThreadManager.getThreadCount());
         CONSOLE_LOG.info("\n");
-        //final check
-        consoleWriter.printStatusAfterTestRunCheck();
 
         failureReporter.generateTestlistFailure(); // generate the testlist-failure.txt file to help re-execution
         CONSOLE_LOG.info("Gepard Test Done.");
@@ -287,12 +267,6 @@ public class AllTestRunner extends TestRunner {
         String threads = environment.getProperty(Environment.GEPARD_THREADS);
         String xmlResultPath = environment.getProperty(Environment.GEPARD_XML_RESULT_PATH);
         executorThreadManager.initiateAndStartExecutorThreads(threads, xmlResultPath);
-    }
-
-    private void setupTestFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        String tfactory = environment.getProperty(Environment.GEPARD_INSPECTOR_TEST_FACTORY);
-        CONSOLE_LOG.info("");
-        Environment.setFactory((TestFactory) Class.forName(tfactory).newInstance());
     }
 
     private void prepareHeaders(final Properties props, final LogFileWriter htmlLog, final LogFileWriter csvLog, final LogFileWriter quickLog) {
@@ -312,7 +286,7 @@ public class AllTestRunner extends TestRunner {
         String filterClass = environment.getProperty(Environment.GEPARD_FILTER_CLASS);
         String filterExpr = environment.getProperty(Environment.GEPARD_FILTER_EXPRESSION);
         ExpressionTestFilter filter = tryToCreateTestFilter(filterClass, filterExpr);
-        GenericListTestSuite gSuite = null;
+        GenericListTestSuite gSuite;
         if (testListFile != null) {
             gSuite = new GenericListTestSuite(testListFile, filter, environment);
         } else {
@@ -369,10 +343,6 @@ public class AllTestRunner extends TestRunner {
         if (shouldExit) {
             exitFromGepard(exitCode);
         }
-    }
-
-    public TimeoutHandler getTimeoutHandler() {
-        return timeoutHandler;
     }
 
     public RemoteControlHandler getRemoteControlHandler() {

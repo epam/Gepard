@@ -19,9 +19,14 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.common.TestClassExecutionData;
+import com.epam.gepard.common.threads.TestClassExecutionThread;
+import com.epam.gepard.generic.GepardTestClass;
+import com.epam.gepard.logger.HtmlRunReporter;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * This TC is to test behavior of Gepard.
@@ -29,54 +34,66 @@ import org.junit.BeforeClass;
  * In case parameter 1 is true, that cause forced N/A at beforetestcase
  * In case parameter 3 is true, that cause forced failure at aftertestcase
  * In case parameter 4 is true, that cause forced N/A at aftertestcase
- * <p/>
+ * <p>
  * The trick is that failure or setting N/A during beforetestcase or aftertestcase should not influence the result of the test case.
  *
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-1", name = "Basic AfterClass/BeforeClass Test Sample")
-public class SampleAfterClassBeforeClassTest extends OtherTestCase {
+@TestClass(id = "DEMO-8", name = "Basic AfterClass/BeforeClass Test Sample")
+public class SampleAfterClassBeforeClassTest implements GepardTestClass {
 
     @BeforeClass
-    public void beforeClass() {
+    public static void beforeClass() {
+        TestClassExecutionData classData = TestClassExecutionThread.CLASS_DATA_IN_CONTEXT.get();
+        HtmlRunReporter reporter = classData.getHtmlRunReporter();
+        reporter.beforeClassComment("We started the BeforeClass method.");
         Boolean b;
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[0]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[1]);
         if (b) {
             org.junit.Assert.fail("forced fail at beforeClass");
         }
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[1]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[2]);
         if (b) {
-            naTestCase("forced N/A at beforeClass");
+            reporter.naTestCase("forced N/A at beforeClass");
         }
+        reporter.beforeClassComment("We finished the BeforeClass method.");
     }
 
     @AfterClass
-    public void afterClass() {
+    public static void afterClass() {
+        TestClassExecutionData classData = TestClassExecutionThread.CLASS_DATA_IN_CONTEXT.get();
+        HtmlRunReporter reporter = classData.getHtmlRunReporter();
+        reporter.afterClassComment("We started the AfterClass method.");
         Boolean b;
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[2]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[3]);
         if (b) {
-            org.junit.Assert.fail("forced fail at afterCass");
+            org.junit.Assert.fail("forced fail at AfterClass");
         }
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[3]);
+        b = Boolean.valueOf(classData.getDrivenData().getParameters()[4]);
         if (b) {
-            naTestCase("forced N/A at afterClass");
+            reporter.naTestCase("forced N/A at AfterClass");
         }
+        reporter.afterClassComment("We finished the AfterClass method.");
     }
 
+    @Test
     public void testMustPass() {
-        logComment("Par0:" + getClassData().getDrivenData().getParameters()[0]
-                + ", Par1:" + getClassData().getDrivenData().getParameters()[1]
-                + ", Par2:" + getClassData().getDrivenData().getParameters()[2]
-                + ", Par3:" + getClassData().getDrivenData().getParameters()[3]);
+        logComment("Par0:" + getTestClassExecutionData().getDrivenData().getParameters()[0]
+                + ", Par1:" + getTestClassExecutionData().getDrivenData().getParameters()[1]
+                + ", Par2:" + getTestClassExecutionData().getDrivenData().getParameters()[2]
+                + ", Par3:" + getTestClassExecutionData().getDrivenData().getParameters()[3]
+                + ", Par4:" + getTestClassExecutionData().getDrivenData().getParameters()[4]);
     }
 
+    @Test
     public void testMustNA() {
         naTestCase("Set to N/A");
     }
 
+    @Test
     public void testMustFail() {
-        fail("Set to FAILED");
+        Assert.fail("Set to FAILED");
     }
 
 }

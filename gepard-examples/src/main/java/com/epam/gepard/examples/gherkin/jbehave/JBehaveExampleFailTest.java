@@ -20,6 +20,7 @@ along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
+import org.junit.Test;
 
 /**
  * Test for gherkin_example_fail.story.
@@ -31,5 +32,10 @@ public class JBehaveExampleFailTest extends JBehaveGlueCodeExampleTest {
     @Override
     protected String getStoryPath() {
         return "stories/gherkin_example_fail.story";
+    }
+
+    @Test
+    public void runJBehaveExampleFailTest() {
+        testRunJBehave();
     }
 }

@@ -19,19 +19,22 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Just to show how Gepard runs tests in parallel.
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-1", name = "Basic Parallel Test - A")
-public class SampleParallelTestA extends OtherTestCase {
+@TestClass(id = "DEMO-5", name = "Basic Parallel Test - A")
+public class SampleParallelTestA implements GepardTestClass {
 
     /**
      * This test actually should always pass.
      */
+    @Test
     public void testMustPass() {
         logComment("This is empty so must pass...");
     }
@@ -39,9 +42,10 @@ public class SampleParallelTestA extends OtherTestCase {
     /**
      * This test actually should always fail.
      */
+    @Test
     public void testFailedTest() {
         logComment("Test: failed test case");
-        org.junit.Assert.fail("Forced TC failure.");
+        Assert.fail("Forced TC failure.");
     }
 
 }

@@ -19,15 +19,17 @@ package com.epam.gepard.examples.core.datadriven;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Sample data driven test with data in CSV.
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-2", name = "Data Driven Test Sample - CVS")
-public class DataDrivenSampleTestCSV extends OtherTestCase {
+@TestClass(id = "DEMO-10", name = "Data Driven Test Sample - CVS")
+public class DataDrivenSampleTestCSV implements GepardTestClass {
 
     private final int threeTestDataIsExpected = 3;
     private final int fourthRow = 4;
@@ -35,9 +37,10 @@ public class DataDrivenSampleTestCSV extends OtherTestCase {
      * This test method do not rely on any test data,
      * but the result depends on the which row is actually called.
      */
+    @Test
     public void testDoNotUseData() {
         logComment("This TC does not use data at all.");
-        if (getClassData().getDrivenDataRowNo() == fourthRow) {  //in case we are at row 4 (that is the 5th execution), set this TC as N/A
+        if (getTestClassExecutionData().getDrivenDataRowNo() == fourthRow) {  //in case we are at row 4 (that is the 5th execution), set this TC as N/A
             naTestCase("To test this as well");
         }
     }
@@ -45,19 +48,20 @@ public class DataDrivenSampleTestCSV extends OtherTestCase {
     /**
      * This test shows a special way of accessing the test data.
      */
+    @Test
     public void testDoUseData() {
-        String[] parameters = getClassData().getDrivenData().getParameters();
+        String[] parameters = getTestClassExecutionData().getDrivenData().getParameters();
         logComment("First check if we have data available as we expect...");
-        assertTrue("Test is missing parameters!", parameters != null); //we need parameters
-        assertTrue("Test is missing correct number of parameters!", parameters.length == threeTestDataIsExpected); //we need 2 parameters for this TC, so check it now
+        Assert.assertTrue("Test is missing parameters!", parameters != null); //we need parameters
+        Assert.assertTrue("Test is missing correct number of parameters!", parameters.length == threeTestDataIsExpected); //we need 2 parameters for this TC, so check it now
         logComment("Ok. We have exactly 3 params.");
         logStep("Test if we can use the params:");
         logEvent("Param 1:" + parameters[0] + ", Param 2:" + parameters[1] + ", Param 3:" + parameters[2]);
         logStep("Test fails, if Param 2 is 'WILLFAIL'");
-        if (getClassData().getDrivenDataRowNo() == 2) {
+        if (getTestClassExecutionData().getDrivenDataRowNo() == 2) {
             dummyTestCase(); //in case we are at row 2 (that is the 3th execution), set this TC as Dummy one
         }
-        assertTrue("This need to be failed.", parameters[2].compareTo("WILLFAIL") != 0); //fail the TC if the specific parameter has special value
+        Assert.assertTrue("This need to be failed.", parameters[2].compareTo("WILLFAIL") != 0); //fail the TC if the specific parameter has special value
     }
 
 }

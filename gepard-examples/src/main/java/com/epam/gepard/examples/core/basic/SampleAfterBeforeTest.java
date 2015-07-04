@@ -19,9 +19,12 @@ package com.epam.gepard.examples.core.basic;
 ===========================================================================*/
 
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.exception.SimpleGepardException;
+import com.epam.gepard.generic.GepardTestClass;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This TC is to test behavior of Gepard.
@@ -35,48 +38,62 @@ import org.junit.Before;
  * @author tkohegyi
  */
 
-@TestClass(id = "DEMO-1", name = "Basic After/Before Test Sample")
-public class SampleAfterBeforeTest extends OtherTestCase {
+@TestClass(id = "DEMO-7", name = "Basic After/Before Test Sample")
+public class SampleAfterBeforeTest implements GepardTestClass {
 
     @Before
     public void before() {
-        Boolean b;
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[0]);
-        if (b) {
-            org.junit.Assert.fail("forced fail at beforeTestCase");
+        if (getTestClassExecutionData() == null) {
+            throw new SimpleGepardException("Gepard framework is missing.");
         }
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[1]);
+        logComment("We started the Before method.");
+        Boolean b;
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[1]);
+        if (b) {
+            Assert.fail("forced fail at beforeTestCase");
+        }
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[2]);
         if (b) {
             naTestCase("forced N/A at beforeTestCase");
         }
+        logComment("We finished the Before method.");
     }
 
     @After
     public void after() {
-        Boolean b;
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[2]);
-        if (b) {
-            org.junit.Assert.fail("forced fail at afterTestCase");
+        if (getTestClassExecutionData() == null) {
+            throw new SimpleGepardException("Gepard framework is missing.");
         }
-        b = Boolean.valueOf(getClassData().getDrivenData().getParameters()[3]);
+        logComment("We started the After method.");
+        Boolean b;
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[3]);
+        if (b) {
+            Assert.fail("forced fail at afterTestCase");
+        }
+        b = Boolean.valueOf(getTestClassExecutionData().getDrivenData().getParameters()[4]);
         if (b) {
             naTestCase("forced N/A at afterTestCase");
         }
+        logComment("We finished the After method.");
     }
 
+    @Test
     public void testTestMustPass() {
-        logComment("Par0:" + getClassData().getDrivenData().getParameters()[0]
-                + ", Par1:" + getClassData().getDrivenData().getParameters()[1]
-                + ", Par2:" + getClassData().getDrivenData().getParameters()[2]
-                + ", Par3:" + getClassData().getDrivenData().getParameters()[3]);
+        logComment("Par0:" + getTestClassExecutionData().getDrivenData().getParameters()[0]
+                + ", Par1:" + getTestClassExecutionData().getDrivenData().getParameters()[1]
+                + ", Par2:" + getTestClassExecutionData().getDrivenData().getParameters()[2]
+                + ", Par3:" + getTestClassExecutionData().getDrivenData().getParameters()[3]
+                + ", Par4:" + getTestClassExecutionData().getDrivenData().getParameters()[4]);
     }
 
+    @Test
     public void testTestMustNA() {
         naTestCase("Set to N/A");
     }
 
+    @Test
     public void testTestMustFail() {
-        fail("Set to FAILED");
+        Assert.fail("Set to FAILED");
     }
 
 }

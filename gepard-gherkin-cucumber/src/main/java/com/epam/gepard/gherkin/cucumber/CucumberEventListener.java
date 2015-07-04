@@ -19,6 +19,12 @@ package com.epam.gepard.gherkin.cucumber;
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
 
+import com.epam.gepard.exception.SimpleGepardException;
+import com.epam.gepard.generic.GepardTestClass;
+import com.epam.gepard.logger.HtmlRunReporter;
+import com.epam.gepard.logger.LogFileWriter;
+import cucumber.api.PendingException;
+import gherkin.formatter.model.Scenario;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -26,23 +32,17 @@ import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cucumber.api.PendingException;
+import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * Listener class optimized for use with Cucumber.
  */
-public class CucumberEventListener extends RunListener {
+public class CucumberEventListener extends RunListener implements GepardTestClass {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CucumberEventListener.class);
-    private CucumberTestCase testCase;
-
-    /**
-     * Constructor to use Cucumber notification hooks.
-     * @param testCase is the runner Test Class, that provides the logging framework.
-     */
-    public CucumberEventListener(final CucumberTestCase testCase) {
-        this.testCase = testCase;
-    }
+    private boolean failedScenario;
+    private int step = 1; // used to count scenarios executed within this Test Class execution
 
     /**
      * Called before any tests have been run.
@@ -50,7 +50,7 @@ public class CucumberEventListener extends RunListener {
      * @param description describes the tests to be run
      */
     public void testRunStarted(Description description) {
-        testCase.logComment("testRunStarted: " + description.toString());
+        logComment("testRunStarted: " + description.toString());
     }
 
     /**
@@ -59,7 +59,7 @@ public class CucumberEventListener extends RunListener {
      * @param result the summary of the test run, including all the tests that failed
      */
     public void testRunFinished(Result result) {
-        testCase.logComment("testRunFinished: " + result.toString());
+        logComment("testRunFinished: " + result.toString());
     }
 
     /**
@@ -70,9 +70,11 @@ public class CucumberEventListener extends RunListener {
      */
     public void testStarted(Description description) {
         if (description.isSuite()) {
-            testCase.logScenarioStarted(testCase.getTestName(), description.toString());
+            failedScenario = false;
+            logScenarioStarted(description);
         } else if (!description.isTest()) {
-            LOGGER.error("UNDISCOVERED PATH: testStarted/???:  " + description.toString());
+            String errorMessage = "UNDISCOVERED PATH: testStarted/???:  " + description.toString();
+            LOGGER.error(errorMessage);
         }
     }
 
@@ -83,9 +85,10 @@ public class CucumberEventListener extends RunListener {
      */
     public void testFinished(Description description) {
         if (description.isSuite()) {
-            testCase.logScenarioEnded();
+            logScenarioEnded(failedScenario);
         } else if (!description.isTest()) {
-            LOGGER.error("UNDISCOVERED PATH: testFinished/???:  " + description.toString());
+            String errorMessage = "UNDISCOVERED PATH: testFinished/???:  " + description.toString();
+            LOGGER.error(errorMessage);
         }
     }
 
@@ -103,25 +106,39 @@ public class CucumberEventListener extends RunListener {
                     throw t;
                 } else {
                     String consoleMessage = "FAILURE: " + d.toString();
-                    //String htmlMessage = u.alertText("FAILURE: ") + u.escapeHTML(d.toString());
-                    testCase.setFailed(true, consoleMessage);
-                    testCase.logComment(consoleMessage);
+                    failedScenario = true;
+                    logComment(consoleMessage);
+                    setFailed(consoleMessage);
                 }
             } catch (PendingException e) {
                 //testCase.naTestCase("missing glue code."); this does not work, if we do this, the scenario passes
                 String cause = e.toString();
                 String consoleMessage = "N/A: " + cause;
-                //String htmlMessage = u.alertText("N/A: ") + u.escapeHTML(cause);
-                testCase.setFailed(true, cause);
-                testCase.logComment(consoleMessage);
+                failedScenario = true;
+                logComment(consoleMessage);
+                setFailed(cause);
             } catch (Throwable t) {
                 //something still wrong
                 String cause = t.toString();
                 String consoleMessage = "FAILURE: " + cause;
-                //String htmlMessage = u.alertText("FAILURE: ") + u.escapeHTML(cause);
-                testCase.setFailed(true, consoleMessage);
-                testCase.logComment(consoleMessage);
+                failedScenario = true;
+                logComment(consoleMessage);
+                setFailed(consoleMessage);
             }
+        }
+    }
+
+    /**
+     * Set isFailed indicator.
+     *
+     * @param consoleErrorMessage is the error message to be logged.
+     */
+    public void setFailed(final String consoleErrorMessage) {
+        String naCase = "cucumber.api.PendingException: TODO: implement me";
+        if (consoleErrorMessage.contains(naCase)) {
+            naTestCase("cucumber.api.PendingException: TODO: implement me");
+        } else {
+            getTestClassExecutionData().getHtmlRunReporter().setTestFailed(new SimpleGepardException(consoleErrorMessage));
         }
     }
 
@@ -144,15 +161,68 @@ public class CucumberEventListener extends RunListener {
         if (description.isSuite()) {
             String message = "UNDISCOVERED SCENARIO PATH: " + description.toString();
             LOGGER.error(message);
-            testCase.logComment(message);
+            naTestCase(message);
         } else if (description.isTest()) {
             String message = "UNDISCOVERED TEST PATH: " + description.toString();
             LOGGER.error(message);
-            testCase.logComment(message);
+            naTestCase(message);
         } else {
             String message = "UNDISCOVERED ??? PATH: " + description.toString();
             LOGGER.error(message);
-            testCase.logComment(message);
+            naTestCase(message);
         }
     }
+
+    /**
+     * Write "Scenario" and "Example" information.
+     *
+     * @param example is the content of the example row.
+     */
+    public void logScenarioStarted(final Description example) {
+        String innerScenario;
+        try {
+            Field privateSerializableField = Description.class.getDeclaredField("fUniqueId");
+            privateSerializableField.setAccessible(true);
+            Serializable scenarioCandidate = (Serializable) privateSerializableField.get(example);
+            Scenario scenario = (Scenario) scenarioCandidate;
+            innerScenario = scenario.getName();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.error("Cannot access Scenario object at: " + example.toString(), e);
+            innerScenario = getTestClassExecutionData().getTestScriptName();
+        }
+        innerScenario = innerScenario.replace('\uFF5F', '(').replace('\uFF60', ')'); //Unicode to Console (partial transfer)
+        String consoleInfo = "Scenario: \"" + innerScenario + "\"";
+        if (example != null) {
+            consoleInfo += " with Example row: " + example.toString();
+        }
+        HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();
+        LogFileWriter htmlLog = reporter.getTestMethodHtmlLog();
+        if (htmlLog != null) {
+            htmlLog.insertText(
+                    "<tr><td align=\"center\">&nbsp;&nbsp;" + step + ".&nbsp;&nbsp;</td><td bgcolor=\"#b0e0b0\"> " + consoleInfo + "</td></tr>\n");
+        }
+        reporter.systemOutPrintLn(step + ". " + consoleInfo);
+        step++;
+    }
+
+    /**
+     * Write "Scenario finished" message at the end of the scenario.
+     *
+     * @param isFailedScenario that notifies this method whether passed or failed type of scenario end should be reported.
+     */
+    public void logScenarioEnded(final boolean isFailedScenario) {
+        HtmlRunReporter reporter = getTestClassExecutionData().getHtmlRunReporter();
+        LogFileWriter htmlLog = reporter.getTestMethodHtmlLog();
+        String colorInfo = "bgcolor=\"#b0e0b0\">";
+        String testPassed = "Scenario finished.";
+        if (isFailedScenario) {
+            colorInfo = "bgcolor=\"#e0b0b0\">";
+            testPassed = "Scenario finished with failure.";
+        }
+        if (htmlLog != null) {
+            htmlLog.insertText("<tr><td>&nbsp;</td><td " + colorInfo + testPassed + "</td></tr>");
+        }
+        reporter.systemOutPrintLn(testPassed);
+    }
+
 }

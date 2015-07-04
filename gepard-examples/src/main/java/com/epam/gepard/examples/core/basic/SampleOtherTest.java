@@ -20,8 +20,9 @@ package com.epam.gepard.examples.core.basic;
 
 import com.epam.gepard.AllTestRunner;
 import com.epam.gepard.annotations.TestClass;
-import com.epam.gepard.generic.OtherTestCase;
+import com.epam.gepard.generic.GepardTestClass;
 import com.epam.gepard.util.Util;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -34,9 +35,10 @@ import org.junit.Test;
  *
  * @author tkohegyi
  */
-@TestClass(id = "DEMO-1", name = "Basic Results, Sample")
-public class SampleOtherTest extends OtherTestCase {
+@TestClass(id = "DEMO-6", name = "Basic Results, Sample")
+public class SampleOtherTest implements GepardTestClass {
 
+    @Test
     public void testTestMustPass() {
         logComment("This is empty so must pass...");
     }
@@ -48,39 +50,39 @@ public class SampleOtherTest extends OtherTestCase {
         logComment("And so on...");
     }
 
+    @Test
     public void testFailedTest() {
         logComment("Test: failed test case");
-        org.junit.Assert.fail("Forced TC failure.");
+        Assert.fail("Forced TC failure.");
     }
 
+    @Test
     public void testNotApplicableTest() {
         logStep("Test: N/A test case");
         naTestCase("test N/A purpose");
     }
 
+    @Test
     public void testTestCaseIsUnderConstructionPassed() {
         logStep("Test: Dummy Test Case, passed result");
         dummyTestCase();
     }
 
+    @Test
     public void testTestCaseIsUnderConstructionFailed() {
         logStep("Test: Dummy Test Case, failed result");
         dummyTestCase();
-        org.junit.Assert.fail("Ups.");
+        Assert.fail("Ups.");
     }
 
+    @Test
     public void testTestCaseIsUnderConstructionNotApplicable() {
         logStep("Test: Dummy Test Case, N/A");
         dummyTestCase();
         naTestCase("To test dummy and N/A pair");
     }
 
-    public void testTimeoutTest() throws InterruptedException {
-        logStep("Test the build in timeout. In testlist.txt, the timeout was set to 1 secs for this class.");
-        Thread.sleep(30000); //30 sec
-        org.junit.Assert.fail("THIS IS BAD NO TIMEOUT OCCURRED!");
-    }
-
+    @Test
     public void testSetSystemUnderTestVersion() {
         logComment("This is a sample on how to set the SUT (System Under Test) value, that is visible in the test report.");
         Util util = new Util();
