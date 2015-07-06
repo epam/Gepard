@@ -651,6 +651,19 @@ public final class HtmlRunReporter extends RunListener {
     }
 
     /**
+     * Put stack trace into the log.
+     *
+     * @param comment Comment message
+     * @param t       is the exception object
+     */
+    public void logStackTrace(final String comment, final Throwable t) {
+        Util u = new Util();
+        String trace = u.escapeHTML(Util.getStackTrace(t));
+        String description = "<code><small><br><pre>" + trace + "</pre></small></code>";
+        logComment(comment + " (dump stack trace)", description);
+    }
+
+    /**
      * Get step information for div tags in html log.
      * @return with the actual div step.
      */
@@ -663,5 +676,20 @@ public final class HtmlRunReporter extends RunListener {
      */
     public void increaseDivStep() {
         divStep++;
+    }
+
+    /**
+     * Get test case step information in html log.
+     * @return with the actual div step.
+     */
+    public int getStep() {
+        return step;
+    }
+
+    /**
+     * Increase the test case step counter.
+     */
+    public void increaseStep() {
+        step++;
     }
 }
