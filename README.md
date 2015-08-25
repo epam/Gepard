@@ -41,6 +41,8 @@ The project can be built by executing the following command from project root fo
 
 `gradlew clean build`
 
+Actual build status: [![Build Status](https://travis-ci.org/epam/Gepard.svg?branch=master)](https://travis-ci.org/epam/Gepard)
+
 ##Detailed information
 * Check the Wiki and Issues on GitHub
 * Check further documentation at http://epam.github.io/Gepard/
