@@ -34,7 +34,6 @@ import cucumber.api.java.en.When;
  * Glue code for the parent cucumber test case.
  * Both feature and glue code is ok, test should pass.
  */
-//@ParentCucumberTestCase(name = "com.epam.gepard.examples.gherkin.cucumber.selenium.CucumberWithSeleniumTest")
 public class SimpleSeleniumFeature implements GepardTestClass {
 
     private WebDriverUtil webDriverUtil = new WebDriverUtil(this);

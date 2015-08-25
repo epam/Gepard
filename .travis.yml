@@ -1,0 +1,15 @@
+language: java
+jdk:
+ - oraclejdk8
+before_install:
+ - chmod +x gradlew
+install:
+ - mkdir $HOME/localrepo/
+script:
+ - ./gradlew -PbuildTag=$TRAVIS_BUILD_NUMBER clean run -PlocalRepository=file:///$HOME/localrepo/
+branches:
+  only:
+  - master
+notifications:
+  email:
+  - tkohegyi2@gmail.com
