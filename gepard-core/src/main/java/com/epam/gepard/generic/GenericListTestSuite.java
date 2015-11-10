@@ -47,22 +47,20 @@ import java.util.Set;
  */
 public class GenericListTestSuite {
 
+    private static final int TESTLIST_CLASS_NAME_FIELD = 0;
+    private static final int TESTLIST_FEEDER_DESCRIPTOR_FIELD = 1;
+    private static final int TESTLIST_BLOCKER_FIELD = 2;
     /**
      * Gepard level global map, to store anything you believe is important to be stored during the tests.
      * So you may use it.
      * Uniqueness of the key is your responsibility. Having a key naming convention is useful.
      */
     private static Map<String, Object> globalDataStorage = Collections.synchronizedMap(new LinkedHashMap<>());
-
     /**
      * Gepard level global map, to store all the test classes those are executed.
      * Do NOT touch it, otherwise you will do nasty things. It is used internally by Gepard.
      */
     private static Map<String, TestClassExecutionData> testClassMap = new LinkedHashMap<>(); //global TestClass exec info
-
-    private static final int TESTLIST_CLASS_NAME_FIELD = 0;
-    private static final int TESTLIST_FEEDER_DESCRIPTOR_FIELD = 1;
-    private static final int TESTLIST_BLOCKER_FIELD = 2;
     private int actualDataRow; //this is used during the load of the tests, do NOT use it during execution
     private String actualTestClassName; //this is used during the load of the tests, do NOT use it during execution
 
@@ -122,6 +120,32 @@ public class GenericListTestSuite {
             }
         }
         listReader.close();
+    }
+
+    public static Map<String, Object> getGlobalDataStorage() {
+        return globalDataStorage;
+    }
+
+    public static void setGlobalDataStorage(final Map<String, Object> globalDataStorage) {
+        GenericListTestSuite.globalDataStorage = globalDataStorage;
+    }
+
+    /**
+     * Returns the {@link TestClassExecutionData} that belongs to the given id.
+     *
+     * @param testClassId the given id of the test class
+     * @return the {@link TestClassExecutionData} that belongs to the given id.
+     */
+    public static TestClassExecutionData getTestClassExecutionData(final String testClassId) {
+        return testClassMap.get(testClassId);
+    }
+
+    public static Set<String> getTestClassIds() {
+        return testClassMap.keySet();
+    }
+
+    public static void setTestClassMap(final Map<String, TestClassExecutionData> testClassMap) {
+        GenericListTestSuite.testClassMap = new LinkedHashMap<>(testClassMap);
     }
 
     /**
@@ -219,7 +243,7 @@ public class GenericListTestSuite {
             classData.setTestScriptName(clazz.getAnnotation(TestClass.class).name() + extension);
         } else {
             //no proper annotation at Test Class, cannot continue
-            AllTestRunner.CONSOLE_LOG.info("\nERROR: @TestClass annotation is missing at class: " + clazz.getCanonicalName() + "Please fix!");
+            AllTestRunner.CONSOLE_LOG.info("\nERROR: @TestClass annotation is missing at class: " + clazz.getCanonicalName() + " - Please fix!");
             AllTestRunner.exitFromGepard(ExitCode.EXIT_CODE_TEST_CLASS_ANNOTATION_MISSING);
         }
     }
@@ -266,32 +290,6 @@ public class GenericListTestSuite {
 
     public int getTestClassCount() {
         return testClassMap.size();
-    }
-
-    public static Map<String, Object> getGlobalDataStorage() {
-        return globalDataStorage;
-    }
-
-    public static void setGlobalDataStorage(final Map<String, Object> globalDataStorage) {
-        GenericListTestSuite.globalDataStorage = globalDataStorage;
-    }
-
-    /**
-     * Returns the {@link TestClassExecutionData} that belongs to the given id.
-     *
-     * @param testClassId the given id of the test class
-     * @return the {@link TestClassExecutionData} that belongs to the given id.
-     */
-    public static TestClassExecutionData getTestClassExecutionData(final String testClassId) {
-        return testClassMap.get(testClassId);
-    }
-
-    public static Set<String> getTestClassIds() {
-        return testClassMap.keySet();
-    }
-
-    public static void setTestClassMap(final Map<String, TestClassExecutionData> testClassMap) {
-        GenericListTestSuite.testClassMap = new LinkedHashMap<>(testClassMap);
     }
 
 }
