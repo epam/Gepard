@@ -16,34 +16,34 @@ Easily expandable (like for Selenium, Android native application test).
     * **gepard-examples**: Lot's of examples
     * **gepard-project-template**: start your test project here
 
-#Quick intro for end users
-####Requirements
+# Quick intro for end users
+#### Requirements
 * Java JDK 8.
 * Get _gepard-project-template_ zip from Github release page, and read [Gepard Users' Guide](https://github.com/epam/Gepard/wiki/Gepard-Users'-Guide) wiki page as starting point.
 * Join to **[Gepard-Users mail list](https://groups.google.com/forum/#!forum/gepard-users)**, and share your experience and questions.
 * Get _gepard-examples_ module from Git, and see example tests and tips there.
 
-####Running
+#### Running
 `gradlew run`
 This will execute lots of example tests from gepard-examples module.
 
-#Quick intro for developers/contributors
+# Quick intro for developers/contributors
 
-####Requirements
+#### Requirements
 * Java JDK 8.
 
-####Advised working environment
+#### Advised working environment
 * Eclipse / IntelliJ
 * Gradle, Checkstyle, Git Integration for the IDE
 
-####Building with Gradle
+#### Building with Gradle
 The project can be built by executing the following command from project root folder:
 
 `gradlew clean build`
 
 Actual build status: [![Build Status](https://travis-ci.org/epam/Gepard.svg?branch=master)](https://travis-ci.org/epam/Gepard)
 
-##Detailed information
+## Detailed information
 * Check the Wiki and Issues on GitHub
 * Check further documentation at http://epam.github.io/Gepard/
 
@@ -63,7 +63,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Gepard. If not, see <http://www.gnu.org/licenses/>.
 
-##Contribution
+## Contribution
 
 There are three ways you can help us:
 
