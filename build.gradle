@@ -16,7 +16,16 @@
  You should have received a copy of the GNU General Public License
  along with Gepard.  If not, see <http://www.gnu.org/licenses/>.
 ===========================================================================*/
-apply plugin: "sonar-runner"
+plugins {
+    id "org.sonarqube" version "3.0"
+}
+
+ext {
+    nettyVersion = '4.1.51.Final'
+    jUnitVersion = '4.13.1'
+    mockitoAllVersion = '1.10.19'
+    mockitoCoreVersion = '3.3.3'
+}
 
 ext.myLocalRepository='file://C:/tmp/myRepo/'
 
@@ -48,15 +57,16 @@ subprojects {
     checkstyle.configProperties = ['samedir' : "$rootDir/config/checkstyle"]
     checkstyle.toolVersion = '5.9'
     checkstyle.ignoreFailures = true
-    checkstyleMain << {
-        //noinspection GroovyAssignabilityCheck
-        ant.xslt(in: reports.xml.destination,
-                style: new File("$rootDir/config/checkstyle/checkstyle-noframes-sorted.xsl"),
-                out: new File(checkstyleCommonReportDir, project.name + '-main.html'))
-        copy {  //collect xml-s
-            from checkstyleSubProjectReportFile
-            into checkstyleCommonReportDir
-            rename { String filename -> project.name + '-main.xml' }
+    checkstyleMain {
+        doLast {
+            ant.xslt(in: reports.xml.destination,
+                    style: new File("$rootProject.rootDir/config/checkstyle/checkstyle-noframes-sorted.xsl"),
+                    out: new File(checkstyleCommonReportDir, project.name + '-main.html'))
+            copy {  //collect xml-s
+                from checkstyleSubProjectReportFile
+                into checkstyleCommonReportDir
+                rename { String filename -> project.name + '-main.xml' }
+            }
         }
     }
 
@@ -70,12 +80,12 @@ subprojects {
         into("$buildDir/distributions")
     }
 
-    task createPom << {
+/*    task createPom << {
         pom {
         }.writeTo("$buildDir/distributions/$project.name-${version}.pom")
     }
     createPom.dependsOn(copyJarToDistributions)
-
+*/
     task sourceZip(type: Zip) {
         from 'src'
         classifier 'sources'
@@ -104,48 +114,17 @@ subprojects {
 
 }
 
-sonarRunner {
-    sonarProperties {
-        property "sonar.host.url", "${sonar_host_url}"
-        property "sonar.jdbc.url", "${sonar_jdbc_url}"
-        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
-        property "sonar.jdbc.username", "${sonar_jdbc_username}"
-        property "sonar.jdbc.password", "${sonar_jdbc_password}"
+/*
+jacoco {
+    toolVersion = "0.8.6"
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
 }
-
-configurations {
-    jacoco {
-    }
-}
-
-dependencies {
-    jacoco 'org.jacoco:org.jacoco.ant:0.6.2.201302030002'
-}
-
-task jacocoReport(type: JacocoReport) {
-    dependsOn = subprojects.test
-    subprojects.each {
-        additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-        sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-        classDirectories = files(subprojects.sourceSets.main.output)
-        executionData = files(subprojects.jacocoTestReport.executionData)
-        reports {
-            html.enabled = true
-            xml.enabled = true
-            csv.enabled = false
-            html.destination "build/reports/jacoco"
-        }
-        onlyIf = {
-            true
-        }
-        doFirst {
-            executionData = files(executionData.findAll {
-                it.exists()
-            })
-        }
-    }
-}
+test.finalizedBy jacocoTestReport
+ */
 
 task createJavadocs(type: Javadoc) {
     destinationDir file("$buildDir/javadoc")
@@ -153,9 +132,10 @@ task createJavadocs(type: Javadoc) {
     classpath = files(subprojects*.javadoc*.classpath)
     failOnError false
 }
-
+/*
 task createProjectTemplateZip << {
     ant.zip(destfile: project.buildDir.absolutePath + "/gepard-project-template-$version" + ".zip") {
         fileset(dir: rootProject.rootDir.absolutePath + '/gepard-project-template', defaultexcludes:"no")
     }
 }
+*/
