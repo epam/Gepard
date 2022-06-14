@@ -20,7 +20,7 @@ Easily expandable (like for Selenium, Android native application test).
 #### Requirements
 * Java JDK 8.
 * Get _gepard-project-template_ zip from Github release page, and read [Gepard Users' Guide](https://github.com/epam/Gepard/wiki/Gepard-Users'-Guide) wiki page as starting point.
-* To share your experienca and ask questions, pls contact to the mainatiners, or submit an issue.
+* To share your experience and ask questions, pls contact to the maintainers, or submit an issue.
 * Get _gepard-examples_ module from Git, and see example tests and tips there.
 
 #### Running
